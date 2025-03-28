@@ -41,7 +41,53 @@ exports.edit=(req,res)=>{
                 res.redirect('/client')
             }
 
+                    
     });
+ 
+}
+
+    exports.eliminar=(req,res)=>{
+        const codigo=(req.body.codigo);
+        const nombre=(req.body.nombre);
+        const apellido=(req.body.apellido);
+        const edad=(req.body.edad);
+        const telefono=(req.body.telefono);
+        const cuidad=(req.body.cuidad);
+        
+        conexion.query("update client set  ?  where codigo =?",[{nombre:nombre,apellido:apellido,edad:edad,
+            telefono:telefono,cuidad:cuidad},codigo],(error,resultado)=>{
+                if(error){
+                    console.log(error);
+                }
+                else{
+                    res.redirect('/client')
+                }
+    
+               
+        });
+
+}
+
+        exports.ver=(req,res)=>{
+            const codigo=(req.body.codigo);
+            const nombre=(req.body.nombre);
+            const apellido=(req.body.apellido);
+            const edad=(req.body.edad);
+            const telefono=(req.body.telefono);
+            const cuidad=(req.body.cuidad);
+            
+            conexion.query("update client set  ?  where codigo =?",[{nombre:nombre,apellido:apellido,edad:edad,
+                telefono:telefono,cuidad:cuidad},codigo],(error,resultado)=>{
+                    if(error){
+                        console.log(error);
+                    }
+                    else{
+                        res.redirect('/client')
+                    }
+        
+                   
+            });
+        
     
 
 };
