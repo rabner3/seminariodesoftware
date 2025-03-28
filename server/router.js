@@ -3,8 +3,8 @@ const router=express.Router();
 
 const conexion=require('./database/db');
 
-router.get('/Cliente',(req,res)=>{
-    conexion.query("select * from clientes",(error,resultado)=>{
+router.get('/client',(req,res)=>{
+    conexion.query("select * from client",(error,resultado)=>{
             if(error){
                 console.log(error);
                 return;
@@ -15,8 +15,8 @@ router.get('/Cliente',(req,res)=>{
     });
 });
 
-router.get('/Cliente2',(req,res)=>{
-    conexion.query("select * from clientes",(error,resultado)=>{
+router.get('/client',(req,res)=>{
+    conexion.query("select * from client",(error,resultado)=>{
             if(error){
                 console.log(error);
                 return;
@@ -24,7 +24,7 @@ router.get('/Cliente2',(req,res)=>{
             else{
            // res.send(resultado);
             //let hola="hola y adios";
-            res.render('cliente/index',{clientes:resultado});
+            res.render('client/index',{clientes:resultado});
             }
     });
 });
@@ -32,7 +32,7 @@ router.get('/Cliente2',(req,res)=>{
 //Ruta para llenar formulario de crear cliente
 router.get('/crear',(req,res)=>{
     
-  res.render('cliente/crear');
+  res.render('client/crear');
 });
 
 
@@ -44,13 +44,13 @@ router.post('/save',metodos.save);
 
 router.get('/editar/:id',(req,res)=>{
 const codigo=req.params.id;
-conexion.query("select * from clientes where codigo = ?",[codigo],(error,resultado)=>{
+conexion.query("select * from client where codigo = ?",[codigo],(error,resultado)=>{
     if (error){
         console.log(error);
         return
     }
     else{
-        res.render('cliente/editar',{clientes:resultado}); }
+        res.render('client/editar',{clientes:resultado}); }
         
 
     });    
