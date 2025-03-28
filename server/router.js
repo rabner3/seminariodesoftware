@@ -61,16 +61,5 @@ conexion.query("select * from clientes where codigo = ?",[codigo],(error,resulta
 
 
 
-router.get('/Empleados',(req,res)=>{
-res.send('Esta la ruta de Empleados');
-});
-router.get('/Empleados2',(req,res)=>{
-res.render('empleado/index');
-});
-
-
-
-
-
 
 module.exports=router;
