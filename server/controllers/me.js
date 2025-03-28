@@ -7,13 +7,13 @@ exports.save=(req,res)=>{
     const telefono=(req.body.telefono);
     const cuidad=(req.body.cuidad);
     
-    conexion.query('insert into clientes set ?', {nombre:nombre,apellido:apellido,edad:edad,
+    conexion.query('insert into client set ?', {nombre:nombre,apellido:apellido,edad:edad,
     telefono:telefono,cuidad:cuidad},(error,resultado=>{
         if(error){
             console.log(error);
         }
         else{
-            res.redirect('/cliente2')
+            res.redirect('/client')
         }
 
 
@@ -32,13 +32,13 @@ exports.edit=(req,res)=>{
     const telefono=(req.body.telefono);
     const cuidad=(req.body.cuidad);
     
-    conexion.query("update clientes set  ?  where codigo =?",[{nombre:nombre,apellido:apellido,edad:edad,
+    conexion.query("update client set  ?  where codigo =?",[{nombre:nombre,apellido:apellido,edad:edad,
         telefono:telefono,cuidad:cuidad},codigo],(error,resultado)=>{
             if(error){
                 console.log(error);
             }
             else{
-                res.redirect('/cliente2')
+                res.redirect('/client')
             }
 
     });
