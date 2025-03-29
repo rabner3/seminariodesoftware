@@ -86,10 +86,10 @@ exports.save=(req,res)=>{
     const email=(req.body.email);
     const especialidad=(req.body.especialidad);
     const puesto=(req.body.puesto);
-    const f=(req.body.puesto);
     
-    conexion.query('insert into client set ?', {nombre:nombre,apellido:apellido,edad:edad,
-    telefono:telefono,cuidad:cuidad},(error,resultado=>{
+    
+    conexion.query('insert into client set ?', {id_asignacion:id_asignacion,id_usuario:id_usuario,id_equipo:id_equipo,
+    fecha_asignacion:fecha_asignacion,motivo_asignacion:motivo_asignacion,creado_por:creado_por,fecha_creacion:fecha_creacion,id_auditoria:id_auditoria,tabla_afectada:tabla_afectada,id_registro:id_registro,accion:accion,id_tecnico:id_tecnico,fecha_accion:fecha_accion,valores_anteriores:valores_anteriores,valores_nuevos:valores_nuevos,id_origen:id_origen,id_bitacora:id_bitacora,observaciones:observaciones,id_usuario_responsable:id_usuario_responsable,id_reparacion:id_reparacion,tipo_accion:tipo_accion,descripcion:descripcion,duracion_minutos:duracion_minutos,id_departamento:id_departamento,nombre:nombre,codigo:codigo,id_responsable:id_responsable,estado:estado,fecha_actualizacion:fecha_actualizacion,id_diagnostico:id_diagnostico,causa_raiz:causa_raiz,solucion_propuesta:solucion_propuesta,fecha_dianostico:fecha_dianostico,tipo:tipo,marca:marca,modelo:modelo,numero_serie:numero_serie,procesador:procesador,ram:ram,almacenamiento:almacenamiento,sistema_operativo:sistema_operativo,fecha_compra:fecha_compra,garantia_hasta:garantia_hasta,fecha_registro:fecha_registro,actualizacion:actualizacion,id_estadistica:id_estadistica,periodo:periodo,fecha:fecha,valor:valor,detalle:detalle,id_notificacion:id_notificacion,id_usuario_destino:id_usuario_destino,id_tecnico_destino:id_tecnico_destino,titulo:titulo,mensaje:mensaje,fecha_envio:fecha_envio,fecha_lectura:fecha_lectura,id_referencia:id_referencia,id_parte:id_parte,id_cantidad:id_cantidad,proveedor:proveedor,codigo_referencia:codigo_referencia,id_solicitud:id_solicitud,fecha_reparacion:fecha_reparacion,fecha_inicio:fecha_inicio,fecha_fin:fecha_fin,costo_estimado:costo_estimado,costo_final:costo_final,tiempo_final:tiempo_final,id_reparacion_partes:id_reparacion_partes,cantidad:cantidad,costo_unitario:costo_unitario,id_reporte:id_reporte,id_usuario_generador:id_usuario_generador,formato:formato,ruta_archivo:ruta_archivo,fecha_generacion:fecha_generacion,parametro:parametro,urgencia:urgencia,fecha_solicitud:fecha_solicitud,fecha_cierre:fecha_cierre,comentario_cierre:comentario_cierre,email:email,especialidad:especialidad,puesto:puesto},codigo,(error,resultado=>{
         if(error){
             console.log(error);
         }
@@ -191,20 +191,26 @@ exports.edit=(req,res)=>{
     const email=(req.body.email);
     const especialidad=(req.body.especialidad);
     const puesto=(req.body.puesto);
-    const f=(req.body.puesto);
     
-    conexion.query("update client set  ?  where codigo =?",[{nombre:nombre,apellido:apellido,edad:edad,
-        telefono:telefono,cuidad:cuidad},codigo],(error,resultado)=>{
+    
+    conexion.query('insert into client set ?', {id_asignacion:id_asignacion,id_usuario:id_usuario,id_equipo:id_equipo,
+        fecha_asignacion:fecha_asignacion,motivo_asignacion:motivo_asignacion,creado_por:creado_por,fecha_creacion:fecha_creacion,id_auditoria:id_auditoria,tabla_afectada:tabla_afectada,id_registro:id_registro,accion:accion,id_tecnico:id_tecnico,fecha_accion:fecha_accion,valores_anteriores:valores_anteriores,valores_nuevos:valores_nuevos,id_origen:id_origen,id_bitacora:id_bitacora,observaciones:observaciones,id_usuario_responsable:id_usuario_responsable,id_reparacion:id_reparacion,tipo_accion:tipo_accion,descripcion:descripcion,duracion_minutos:duracion_minutos,id_departamento:id_departamento,nombre:nombre,codigo:codigo,id_responsable:id_responsable,estado:estado,fecha_actualizacion:fecha_actualizacion,id_diagnostico:id_diagnostico,causa_raiz:causa_raiz,solucion_propuesta:solucion_propuesta,fecha_dianostico:fecha_dianostico,tipo:tipo,marca:marca,modelo:modelo,numero_serie:numero_serie,procesador:procesador,ram:ram,almacenamiento:almacenamiento,sistema_operativo:sistema_operativo,fecha_compra:fecha_compra,garantia_hasta:garantia_hasta,fecha_registro:fecha_registro,actualizacion:actualizacion,id_estadistica:id_estadistica,periodo:periodo,fecha:fecha,valor:valor,detalle:detalle,id_notificacion:id_notificacion,id_usuario_destino:id_usuario_destino,id_tecnico_destino:id_tecnico_destino,titulo:titulo,mensaje:mensaje,fecha_envio:fecha_envio,fecha_lectura:fecha_lectura,id_referencia:id_referencia,id_parte:id_parte,id_cantidad:id_cantidad,proveedor:proveedor,codigo_referencia:codigo_referencia,id_solicitud:id_solicitud,fecha_reparacion:fecha_reparacion,fecha_inicio:fecha_inicio,fecha_fin:fecha_fin,costo_estimado:costo_estimado,costo_final:costo_final,tiempo_final:tiempo_final,id_reparacion_partes:id_reparacion_partes,cantidad:cantidad,costo_unitario:costo_unitario,id_reporte:id_reporte,id_usuario_generador:id_usuario_generador,formato:formato,ruta_archivo:ruta_archivo,fecha_generacion:fecha_generacion,parametro:parametro,urgencia:urgencia,fecha_solicitud:fecha_solicitud,fecha_cierre:fecha_cierre,comentario_cierre:comentario_cierre,email:email,especialidad:especialidad,puesto:puesto},codigo,(error,resultado=>{
             if(error){
                 console.log(error);
             }
             else{
                 res.redirect('/client')
             }
+    
+    
+        }
+        
+        ));
+    
 
-                    
-    });
- 
+
+
+   
 }
 
     exports.eliminar=(req,res)=>{
@@ -293,20 +299,22 @@ exports.edit=(req,res)=>{
     const email=(req.body.email);
     const especialidad=(req.body.especialidad);
     const puesto=(req.body.puesto);
-    const f=(req.body.puesto);
-        
-        conexion.query("update client set  ?  where codigo =?",[{nombre:nombre,apellido:apellido,edad:edad,
-            telefono:telefono,cuidad:cuidad},codigo],(error,resultado)=>{
-                if(error){
-                    console.log(error);
-                }
-                else{
-                    res.redirect('/client')
-                }
     
-               
-        });
-
+        
+    conexion.query('insert into client set ?', {id_asignacion:id_asignacion,id_usuario:id_usuario,id_equipo:id_equipo,
+        fecha_asignacion:fecha_asignacion,motivo_asignacion:motivo_asignacion,creado_por:creado_por,fecha_creacion:fecha_creacion,id_auditoria:id_auditoria,tabla_afectada:tabla_afectada,id_registro:id_registro,accion:accion,id_tecnico:id_tecnico,fecha_accion:fecha_accion,valores_anteriores:valores_anteriores,valores_nuevos:valores_nuevos,id_origen:id_origen,id_bitacora:id_bitacora,observaciones:observaciones,id_usuario_responsable:id_usuario_responsable,id_reparacion:id_reparacion,tipo_accion:tipo_accion,descripcion:descripcion,duracion_minutos:duracion_minutos,id_departamento:id_departamento,nombre:nombre,codigo:codigo,id_responsable:id_responsable,estado:estado,fecha_actualizacion:fecha_actualizacion,id_diagnostico:id_diagnostico,causa_raiz:causa_raiz,solucion_propuesta:solucion_propuesta,fecha_dianostico:fecha_dianostico,tipo:tipo,marca:marca,modelo:modelo,numero_serie:numero_serie,procesador:procesador,ram:ram,almacenamiento:almacenamiento,sistema_operativo:sistema_operativo,fecha_compra:fecha_compra,garantia_hasta:garantia_hasta,fecha_registro:fecha_registro,actualizacion:actualizacion,id_estadistica:id_estadistica,periodo:periodo,fecha:fecha,valor:valor,detalle:detalle,id_notificacion:id_notificacion,id_usuario_destino:id_usuario_destino,id_tecnico_destino:id_tecnico_destino,titulo:titulo,mensaje:mensaje,fecha_envio:fecha_envio,fecha_lectura:fecha_lectura,id_referencia:id_referencia,id_parte:id_parte,id_cantidad:id_cantidad,proveedor:proveedor,codigo_referencia:codigo_referencia,id_solicitud:id_solicitud,fecha_reparacion:fecha_reparacion,fecha_inicio:fecha_inicio,fecha_fin:fecha_fin,costo_estimado:costo_estimado,costo_final:costo_final,tiempo_final:tiempo_final,id_reparacion_partes:id_reparacion_partes,cantidad:cantidad,costo_unitario:costo_unitario,id_reporte:id_reporte,id_usuario_generador:id_usuario_generador,formato:formato,ruta_archivo:ruta_archivo,fecha_generacion:fecha_generacion,parametro:parametro,urgencia:urgencia,fecha_solicitud:fecha_solicitud,fecha_cierre:fecha_cierre,comentario_cierre:comentario_cierre,email:email,especialidad:especialidad,puesto:puesto},codigo,(error,resultado=>{
+            if(error){
+                console.log(error);
+            }
+            else{
+                res.redirect('/client')
+            }
+    
+    
+        }
+        
+        ));
+    
 }
 
         exports.ver=(req,res)=>{
@@ -395,20 +403,22 @@ exports.edit=(req,res)=>{
     const email=(req.body.email);
     const especialidad=(req.body.especialidad);
     const puesto=(req.body.puesto);
-    const f=(req.body.puesto); 
+    
             
-            conexion.query("update client set  ?  where codigo =?",[{nombre:nombre,apellido:apellido,edad:edad,
-                telefono:telefono,cuidad:cuidad},codigo],(error,resultado)=>{
-                    if(error){
-                        console.log(error);
-                    }
-                    else{
-                        res.redirect('/client')
-                    }
+    conexion.query('insert into client set ?', {id_asignacion:id_asignacion,id_usuario:id_usuario,id_equipo:id_equipo,
+        fecha_asignacion:fecha_asignacion,motivo_asignacion:motivo_asignacion,creado_por:creado_por,fecha_creacion:fecha_creacion,id_auditoria:id_auditoria,tabla_afectada:tabla_afectada,id_registro:id_registro,accion:accion,id_tecnico:id_tecnico,fecha_accion:fecha_accion,valores_anteriores:valores_anteriores,valores_nuevos:valores_nuevos,id_origen:id_origen,id_bitacora:id_bitacora,observaciones:observaciones,id_usuario_responsable:id_usuario_responsable,id_reparacion:id_reparacion,tipo_accion:tipo_accion,descripcion:descripcion,duracion_minutos:duracion_minutos,id_departamento:id_departamento,nombre:nombre,codigo:codigo,id_responsable:id_responsable,estado:estado,fecha_actualizacion:fecha_actualizacion,id_diagnostico:id_diagnostico,causa_raiz:causa_raiz,solucion_propuesta:solucion_propuesta,fecha_dianostico:fecha_dianostico,tipo:tipo,marca:marca,modelo:modelo,numero_serie:numero_serie,procesador:procesador,ram:ram,almacenamiento:almacenamiento,sistema_operativo:sistema_operativo,fecha_compra:fecha_compra,garantia_hasta:garantia_hasta,fecha_registro:fecha_registro,actualizacion:actualizacion,id_estadistica:id_estadistica,periodo:periodo,fecha:fecha,valor:valor,detalle:detalle,id_notificacion:id_notificacion,id_usuario_destino:id_usuario_destino,id_tecnico_destino:id_tecnico_destino,titulo:titulo,mensaje:mensaje,fecha_envio:fecha_envio,fecha_lectura:fecha_lectura,id_referencia:id_referencia,id_parte:id_parte,id_cantidad:id_cantidad,proveedor:proveedor,codigo_referencia:codigo_referencia,id_solicitud:id_solicitud,fecha_reparacion:fecha_reparacion,fecha_inicio:fecha_inicio,fecha_fin:fecha_fin,costo_estimado:costo_estimado,costo_final:costo_final,tiempo_final:tiempo_final,id_reparacion_partes:id_reparacion_partes,cantidad:cantidad,costo_unitario:costo_unitario,id_reporte:id_reporte,id_usuario_generador:id_usuario_generador,formato:formato,ruta_archivo:ruta_archivo,fecha_generacion:fecha_generacion,parametro:parametro,urgencia:urgencia,fecha_solicitud:fecha_solicitud,fecha_cierre:fecha_cierre,comentario_cierre:comentario_cierre,email:email,especialidad:especialidad,puesto:puesto},codigo,(error,resultado=>{
+            if(error){
+                console.log(error);
+            }
+            else{
+                res.redirect('/client')
+            }
+    
+    
+        }
         
-                   
-            });
-        
+        ));
+    
     
 
 };
