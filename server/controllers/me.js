@@ -42,7 +42,7 @@ exports.save=(req,res)=>{
     const ram=(req.body.ram);
     const almacenamiento=(req.body.almacenamiento);
     const sistema_operativo=(req.body.sistema_operativo);
-    const fecha_compra_=(req.body.fecha_compra);
+    const fecha_compra=(req.body.fecha_compra);
     const garantia_hasta=(req.body.garantia_hasta);
     const fecha_registro=(req.body.fecha_registro);
     const actualizacion=(req.body.actualizacion);
@@ -147,7 +147,7 @@ exports.edit=(req,res)=>{
     const ram=(req.body.ram);
     const almacenamiento=(req.body.almacenamiento);
     const sistema_operativo=(req.body.sistema_operativo);
-    const fecha_compra_=(req.body.fecha_compra);
+    const fecha_compra=(req.body.fecha_compra);
     const garantia_hasta=(req.body.garantia_hasta);
     const fecha_registro=(req.body.fecha_registro);
     const actualizacion=(req.body.actualizacion);
@@ -255,7 +255,7 @@ exports.edit=(req,res)=>{
         const ram=(req.body.ram);
         const almacenamiento=(req.body.almacenamiento);
         const sistema_operativo=(req.body.sistema_operativo);
-        const fecha_compra_=(req.body.fecha_compra);
+        const fecha_compra=(req.body.fecha_compra);
         const garantia_hasta=(req.body.garantia_hasta);
         const fecha_registro=(req.body.fecha_registro);
         const actualizacion=(req.body.actualizacion);
@@ -358,7 +358,7 @@ exports.edit=(req,res)=>{
             const ram=(req.body.ram);
             const almacenamiento=(req.body.almacenamiento);
             const sistema_operativo=(req.body.sistema_operativo);
-            const fecha_compra_=(req.body.fecha_compra);
+            const fecha_compra=(req.body.fecha_compra);
             const garantia_hasta=(req.body.garantia_hasta);
             const fecha_registro=(req.body.fecha_registro);
             const actualizacion=(req.body.actualizacion);
