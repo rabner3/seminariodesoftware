@@ -1,8 +1,8 @@
 // Archivo: models/asignacionModel.jsconst db = require('../config/db'); // Asegúrate que la ruta es correcta
 
-class AsignacionModel {
+class TicketsModel {
     // Modificamos getAllAsignaciones para incluir datos básicos de usuario y equipo
-    static getAllAsignaciones() {
+    static getAllTickets() {
         // Seleccionamos campos específicos y les damos alias para claridad
         const sql = `
             SELECT
@@ -40,7 +40,7 @@ class AsignacionModel {
     }
 
     // Modificamos getAsignacionById para incluir datos detallados
-    static getAsignacionById(id) {
+    static getTicketsById(id) {
         const sql = `
             SELECT
                 a.*,
@@ -72,20 +72,20 @@ class AsignacionModel {
     }
 
     // Los métodos create, update, delete no necesitan cambiar JOINs generalmente
-    static createAsignacion(asignacionData) {
+    static createTickets(ticketsData) {
         // Solo insertamos en la tabla asignaciones
-        return db.query('INSERT INTO asignaciones SET ?', asignacionData);
+        return db.query('INSERT INTO tickets SET ?', ticketsData);
     }
 
-    static updateAsignacion(id, asignacionData) {
+    static updateTickets(id, ticketsData) {
         // Solo actualizamos la tabla asignaciones
-        return db.query('UPDATE asignaciones SET ? WHERE id_asignacion = ?', [asignacionData, id]);
+        return db.query('UPDATE tickets SET ? WHERE id_tickets = ?', [ticketsData, id]);
     }
 
-    static deleteAsignacion(id) {
+    static deleteTickets(id) {
         // Solo eliminamos de la tabla asignaciones
-        return db.query('DELETE FROM asignaciones WHERE id_asignacion = ?', [id]);
+        return db.query('DELETE FROM tickets WHERE id_tickets = ?', [id]);
     }
 }
 
-module.exports = AsignacionModel;
+module.exports = TicketsModel;

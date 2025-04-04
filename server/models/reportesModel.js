@@ -1,8 +1,8 @@
 // Archivo: models/asignacionModel.jsconst db = require('../config/db'); // Asegúrate que la ruta es correcta
 
-class AsignacionModel {
+class ReportesModel {
     // Modificamos getAllAsignaciones para incluir datos básicos de usuario y equipo
-    static getAllAsignaciones() {
+    static getAllReportes() {
         // Seleccionamos campos específicos y les damos alias para claridad
         const sql = `
             SELECT
@@ -40,7 +40,7 @@ class AsignacionModel {
     }
 
     // Modificamos getAsignacionById para incluir datos detallados
-    static getAsignacionById(id) {
+    static getReportesById(id) {
         const sql = `
             SELECT
                 a.*,
@@ -72,20 +72,20 @@ class AsignacionModel {
     }
 
     // Los métodos create, update, delete no necesitan cambiar JOINs generalmente
-    static createAsignacion(asignacionData) {
+    static createReportes(reportesData) {
         // Solo insertamos en la tabla asignaciones
-        return db.query('INSERT INTO asignaciones SET ?', asignacionData);
+        return db.query('INSERT INTO reportes SET ?', reportesData);
     }
 
-    static updateAsignacion(id, asignacionData) {
+    static updateReportes(id, reportesData) {
         // Solo actualizamos la tabla asignaciones
-        return db.query('UPDATE asignaciones SET ? WHERE id_asignacion = ?', [asignacionData, id]);
+        return db.query('UPDATE reportes SET ? WHERE id_reportes = ?', [reportesData, id]);
     }
 
-    static deleteAsignacion(id) {
+    static deleteReportes(id) {
         // Solo eliminamos de la tabla asignaciones
-        return db.query('DELETE FROM asignaciones WHERE id_asignacion = ?', [id]);
+        return db.query('DELETE FROM reportes WHERE id_reportes = ?', [id]);
     }
 }
 
-module.exports = AsignacionModel;
+module.exports = ReportesModel;

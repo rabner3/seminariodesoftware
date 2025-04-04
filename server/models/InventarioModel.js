@@ -1,8 +1,8 @@
 // Archivo: models/asignacionModel.jsconst db = require('../config/db'); // Asegúrate que la ruta es correcta
 
-class AsignacionModel {
+class InventarioModel {
     // Modificamos getAllAsignaciones para incluir datos básicos de usuario y equipo
-    static getAllAsignaciones() {
+    static getAllInventario() {
         // Seleccionamos campos específicos y les damos alias para claridad
         const sql = `
             SELECT
@@ -40,7 +40,7 @@ class AsignacionModel {
     }
 
     // Modificamos getAsignacionById para incluir datos detallados
-    static getAsignacionById(id) {
+    static getInventarioById(id) {
         const sql = `
             SELECT
                 a.*,
@@ -72,20 +72,20 @@ class AsignacionModel {
     }
 
     // Los métodos create, update, delete no necesitan cambiar JOINs generalmente
-    static createAsignacion(asignacionData) {
-        // Solo insertamos en la tabla asignaciones
-        return db.query('INSERT INTO asignaciones SET ?', asignacionData);
+    static createInventario(inventarioData) {
+        // Solo insertamos en la tabla inventario
+        return db.query('INSERT INTO inventario SET ?', inventarioData);
     }
 
-    static updateAsignacion(id, asignacionData) {
-        // Solo actualizamos la tabla asignaciones
-        return db.query('UPDATE asignaciones SET ? WHERE id_asignacion = ?', [asignacionData, id]);
+    static updateInventario(id, inventarioData) {
+        // Solo actualizamos la tabla inventario
+        return db.query('UPDATE inventario SET ? WHERE id_inventario = ?', [inventarioData, id]);
     }
 
-    static deleteAsignacion(id) {
-        // Solo eliminamos de la tabla asignaciones
-        return db.query('DELETE FROM asignaciones WHERE id_asignacion = ?', [id]);
+    static deleteInventario(id) {
+        // Solo eliminamos de la tabla inventario
+        return db.query('DELETE FROM inventario WHERE id_inventario = ?', [id]);
     }
 }
 
-module.exports = AsignacionModel;
+module.exports = InventarioModel;
