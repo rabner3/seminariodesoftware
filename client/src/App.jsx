@@ -1,8 +1,10 @@
+// client/src/App.jsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import Home from './pages/Home';
 import Usuarios from './pages/Usuarios';
+import Equipos from './pages/Equipos';
 import axios from 'axios';
 
 const user = {
