@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import Home from './pages/Home';
 import Usuarios from './pages/Usuarios';
+import axios from 'axios';
 
 const user = {
   name: 'LAGOS343',

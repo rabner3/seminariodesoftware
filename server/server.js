@@ -3,9 +3,20 @@ require('dotenv').config(); // Carga .env al inicio
 const express = require('express');
 const cors = require('cors');
 
-// Importar Rutas (solo las que existen)
+// Importar todas las rutas
 const asignacionRoutes = require('./routes/asignacionRoutes');
-// Importa otras rutas aquí si las tienes (ej: equiposRoutes, usuariosRoutes, etc.)
+const usuariosRoutes = require('./routes/usuariosRoutes');
+const equiposRoutes = require('./routes/equiposRoutes');
+const departamentosRoutes = require('./routes/departamentosRoutes');
+const tecnicosRoutes = require('./routes/tecnicosRoutes');
+const solicitudesRoutes = require('./routes/solicitudesRoutes');
+const reparacionesRoutes = require('./routes/reparacionesRoutes');
+const diagnosticosRoutes = require('./routes/diagnosticosRoutes');
+const partesRoutes = require('./routes/partesRoutes');
+const reportesRoutes = require('./routes/reportesRoutes');
+const notificacionesRoutes = require('./routes/notificacionesRoutes');
+const estadisticasRoutes = require('./routes/estadisticasRoutes');
+const auditoriaRoutes = require('./routes/auditoriaRoutes');
 
 const app = express();
 
@@ -21,7 +32,18 @@ app.use(express.urlencoded({ extended: true }));
 
 // Rutas de la API (con prefijo /api)
 app.use('/api/asignaciones', asignacionRoutes);
-// Monta otras rutas aquí: app.use('/api/equipos', equipoRoutes);
+app.use('/api/usuarios', usuariosRoutes);
+app.use('/api/equipos', equiposRoutes);
+app.use('/api/departamentos', departamentosRoutes);
+app.use('/api/tecnicos', tecnicosRoutes);
+app.use('/api/solicitudes', solicitudesRoutes);
+app.use('/api/reparaciones', reparacionesRoutes);
+app.use('/api/diagnosticos', diagnosticosRoutes);
+app.use('/api/partes', partesRoutes);
+app.use('/api/reportes', reportesRoutes);
+app.use('/api/notificaciones', notificacionesRoutes);
+app.use('/api/estadisticas', estadisticasRoutes);
+app.use('/api/auditoria', auditoriaRoutes);
 
 // Ruta simple de bienvenida (opcional)
 app.get('/api', (req, res) => {
