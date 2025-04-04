@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const equiposController = require('../controllers/equiposController');
 
+router.get('/ultimoId', equiposController.getUltimoId);
 router.get('/', equiposController.getAllEquipos);
 router.get('/:id', equiposController.getEquipoById);
 router.post('/', equiposController.createEquipo);

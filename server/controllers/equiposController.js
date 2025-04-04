@@ -1,4 +1,4 @@
-
+// server/controllers/equiposController.js
 const EquiposModel = require('../models/EquiposModel');
 
 exports.getAllEquipos = async (req, res, next) => {
@@ -22,10 +22,21 @@ exports.getEquipoById = async (req, res, next) => {
     }
 };
 
+// Nuevo método para obtener el último ID
+exports.getUltimoId = async (req, res, next) => {
+    try {
+        const [resultado] = await EquiposModel.getUltimoId();
+        const ultimoId = resultado[0]?.max_id || 1000; // Si no hay equipos, comenzar en 1000
+        res.json({ ultimoId });
+    } catch (error) {
+        next(error);
+    }
+};
+
 exports.createEquipo = async (req, res, next) => {
     try {
         const [result] = await EquiposModel.createEquipo(req.body);
-        res.status(201).json({ id_equipo: result.insertId, ...req.body });
+        res.status(201).json({ id_equipo: req.body.id_equipo, ...req.body });
     } catch (error) {
         next(error);
     }

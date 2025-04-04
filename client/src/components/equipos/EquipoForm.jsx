@@ -25,6 +25,20 @@ function EquipoForm({ equipo, onSave, onCancel }) {
     useEffect(() => {
         // Si tenemos un equipo para editar, actualizamos el formData
         if (equipo) {
+            // Formateamos las fechas para el input type="date"
+            const formatearFecha = (fechaStr) => {
+                if (!fechaStr) return '';
+                // Convertir a objeto Date
+                const fecha = new Date(fechaStr);
+                // Formatear a YYYY-MM-DD que es el formato que acepta input type="date"
+                return fecha.toISOString().split('T')[0];
+            };
+
+            console.log("Fechas originales:", {
+                fecha_compra: equipo.fecha_compra,
+                garantia_hasta: equipo.garantia_hasta
+            });
+
             setFormData({
                 tipo: equipo.tipo || '',
                 marca: equipo.marca || '',
@@ -34,8 +48,8 @@ function EquipoForm({ equipo, onSave, onCancel }) {
                 ram: equipo.ram || '',
                 almacenamiento: equipo.almacenamiento || '',
                 sistema_operativo: equipo.sistema_operativo || '',
-                fecha_compra: equipo.fecha_compra || '',
-                garantia_hasta: equipo.garantia_hasta || '',
+                fecha_compra: formatearFecha(equipo.fecha_compra),
+                garantia_hasta: formatearFecha(equipo.garantia_hasta),
                 id_departamento: equipo.id_departamento || '',
                 estado: equipo.estado || 'disponible',
                 observaciones: equipo.observaciones || ''
@@ -69,13 +83,24 @@ function EquipoForm({ equipo, onSave, onCancel }) {
         setError(null);
 
         try {
+            // Copia los datos del formulario para no modificar el estado directamente
+            const datosParaEnviar = { ...formData };
+            
             let response;
             if (equipo) {
                 // Actualizar equipo existente
-                response = await axios.put(`http://localhost:8080/api/equipos/${equipo.id_equipo}`, formData);
+                response = await axios.put(`http://localhost:8080/api/equipos/${equipo.id_equipo}`, datosParaEnviar);
             } else {
+                // Para crear un nuevo equipo, necesitamos obtener un ID
+                // Primero obtenemos el último ID de equipo
+                const ultimoIdResponse = await axios.get('http://localhost:8080/api/equipos/ultimoId');
+                const nuevoId = ultimoIdResponse.data.ultimoId + 1;
+                
+                // Agregar el ID al objeto de datos
+                datosParaEnviar.id_equipo = nuevoId;
+                
                 // Crear nuevo equipo
-                response = await axios.post('http://localhost:8080/api/equipos', formData);
+                response = await axios.post('http://localhost:8080/api/equipos', datosParaEnviar);
             }
 
             setLoading(false);

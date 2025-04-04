@@ -21,7 +21,11 @@ class EquiposModel {
         return db.query(query, [id]);
     }
 
-    // Los otros métodos pueden quedar igual
+    // Nuevo método para obtener el último ID
+    static async getUltimoId() {
+        return db.query('SELECT MAX(id_equipo) as max_id FROM equipos');
+    }
+
     static async createEquipo(equipoData) {
         return db.query('INSERT INTO equipos SET ?', [equipoData]);
     }
