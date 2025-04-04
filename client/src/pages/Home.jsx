@@ -1,3 +1,4 @@
+// client/src/pages/Home.jsx
 import { useEffect, useContext } from 'react';
 import { TitleContext } from '../context/TitleContext';
 
@@ -9,7 +10,7 @@ function Home() {
   }, []);
 
   return (
-    <div class="contenedor-padre" id="contenedor-padre">
+    <div className="contenedor-padre" id="contenedor-padre">
       <h1>Bienvenido al Proyecto Seminario</h1>
     </div>
   );
