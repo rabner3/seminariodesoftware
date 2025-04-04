@@ -1,4 +1,4 @@
-// Archivo: models/asignacionModel.jsconst db = require('../config/db'); // Asegúrate que la ruta es correcta
+db = require('../config/db'); // Asegúrate que la ruta es correcta
 
 class AsignacionModel {
     // Modificamos getAllAsignaciones para incluir datos básicos de usuario y equipo
