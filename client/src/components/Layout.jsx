@@ -1,14 +1,17 @@
 import React from 'react';
+import { TitleContext } from '../context/TitleContext';
 import { Link } from 'react-router-dom';
 import '../assets/site.css';
 
 const Layout = ({ children, user }) => {
+  const { title } = useContext(TitleContext);
+
   return (
     <div>
       {/* Barra superior */}
       <div className="top-bar">
         <h3>PROYECTO SEMINARIO</h3>
-        <h2>INICIO</h2>
+        <h2>{title}</h2>
 
         {user ? (
           <div className="user-login-container" title={`${user.name} - ${user.role}`}>
