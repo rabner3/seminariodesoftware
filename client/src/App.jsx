@@ -5,7 +5,7 @@ import Layout from './components/Layout';
 import Home from './pages/Home';
 import Usuarios from './pages/Usuarios';
 import Equipos from './pages/Equipos';
-import axios from 'axios';
+
 
 const user = {
   name: 'LAGOS343',

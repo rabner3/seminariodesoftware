@@ -1,6 +1,7 @@
 // client/src/components/equipos/EquipoDetalle.jsx
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import './EquipoStyles.css';
 
 function EquipoDetalle({ id, onClose, onEdit, onDelete }) {
     const [equipo, setEquipo] = useState(null);
@@ -40,6 +41,17 @@ function EquipoDetalle({ id, onClose, onEdit, onDelete }) {
         }
     };
 
+    // Función para formatear fechas
+    const formatearFecha = (fechaStr) => {
+        if (!fechaStr) return 'No especificado';
+        const fecha = new Date(fechaStr);
+        return fecha.toLocaleDateString('es-ES', { 
+            day: '2-digit', 
+            month: '2-digit', 
+            year: 'numeric' 
+        });
+    };
+
     const handleDelete = async () => {
         if (window.confirm('¿Está seguro de eliminar este equipo?')) {
             try {
@@ -51,12 +63,24 @@ function EquipoDetalle({ id, onClose, onEdit, onDelete }) {
         }
     };
 
-    if (loading) return <p>Cargando información del equipo...</p>;
+    if (loading) return <div className="container-widgets loading-container"><p>Cargando información del equipo...</p></div>;
     if (error) return <div className="errors"><p>{error}</p></div>;
-    if (!equipo) return <p>No se encontró información del equipo.</p>;
+    if (!equipo) return <div className="container-widgets"><p>No se encontró información del equipo.</p></div>;
+
+    // Función para obtener la clase CSS según el estado
+    const getEstadoClass = (estado) => {
+        switch (estado) {
+            case 'disponible': return 'estado-badge estado-disponible';
+            case 'asignado': return 'estado-badge estado-asignado';
+            case 'en_reparacion': return 'estado-badge estado-en_reparacion';
+            case 'descarte': return 'estado-badge estado-descarte';
+            case 'baja': return 'estado-badge estado-baja';
+            default: return 'estado-badge';
+        }
+    };
 
     return (
-        <div className="container-widgets">
+        <div className="container-widgets equipo-detalle-container">
             <div className="container-botones">
                 <button className="button azul-claro" onClick={() => onEdit(equipo)}>
                     Editar Equipo
@@ -69,32 +93,32 @@ function EquipoDetalle({ id, onClose, onEdit, onDelete }) {
                 </button>
             </div>
 
-            <h2>Detalle del Equipo {equipo.id_equipo}</h2>
+            <h2 className="section-title">Detalle del Equipo {equipo.id_equipo}</h2>
 
             <div className="container-detalles">
                 <div className="contenedor-columnas">
                     <div className="form-items">
                         <label>Tipo:</label>
-                        <p>{equipo.tipo}</p>
+                        <p>{equipo.tipo || 'No especificado'}</p>
                     </div>
                     <div className="form-items">
                         <label>Marca:</label>
-                        <p>{equipo.marca}</p>
+                        <p>{equipo.marca || 'No especificado'}</p>
                     </div>
                     <div className="form-items">
                         <label>Modelo:</label>
-                        <p>{equipo.modelo}</p>
+                        <p>{equipo.modelo || 'No especificado'}</p>
                     </div>
                 </div>
 
                 <div className="contenedor-columnas">
                     <div className="form-items">
                         <label>Número de Serie:</label>
-                        <p>{equipo.numero_serie}</p>
+                        <p>{equipo.numero_serie || 'No especificado'}</p>
                     </div>
                     <div className="form-items">
                         <label>Estado:</label>
-                        <p>{equipo.estado}</p>
+                        <p><span className={getEstadoClass(equipo.estado)}>{equipo.estado}</span></p>
                     </div>
                     <div className="form-items">
                         <label>Departamento:</label>
@@ -124,16 +148,16 @@ function EquipoDetalle({ id, onClose, onEdit, onDelete }) {
                     </div>
                     <div className="form-items">
                         <label>Fecha de Compra:</label>
-                        <p>{equipo.fecha_compra || 'No especificado'}</p>
+                        <p>{formatearFecha(equipo.fecha_compra)}</p>
                     </div>
                     <div className="form-items">
                         <label>Garantía Hasta:</label>
-                        <p>{equipo.garantia_hasta || 'No especificado'}</p>
+                        <p>{formatearFecha(equipo.garantia_hasta)}</p>
                     </div>
                 </div>
 
                 {equipo.observaciones && (
-                    <div className="form-items">
+                    <div className="form-group">
                         <label>Observaciones:</label>
                         <p>{equipo.observaciones}</p>
                     </div>
@@ -141,29 +165,33 @@ function EquipoDetalle({ id, onClose, onEdit, onDelete }) {
             </div>
 
             {/* Historial de asignaciones */}
-            <div className="container-widgets">
+            <div className="historial-section">
                 <h3>Historial de Asignaciones</h3>
                 {asignaciones.length > 0 ? (
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Usuario</th>
-                                <th>Motivo</th>
-                                <th>Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {asignaciones.map(asignacion => (
-                                <tr key={asignacion.id_asignacion}>
-                                    <td>{new Date(asignacion.fecha_asignacion).toLocaleDateString()}</td>
-                                    <td>{asignacion.nombre_usuario} {asignacion.apellido_usuario}</td>
-                                    <td>{asignacion.motivo_asignacion}</td>
-                                    <td>{asignacion.estado_asignacion}</td>
+                    <div className="container-flow-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Usuario</th>
+                                    <th>Motivo</th>
+                                    <th>Estado</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {asignaciones.map(asignacion => (
+                                    <tr key={asignacion.id_asignacion}>
+                                        <td>{formatearFecha(asignacion.fecha_asignacion)}</td>
+                                        <td>{asignacion.nombre_usuario} {asignacion.apellido_usuario}</td>
+                                        <td>{asignacion.motivo_asignacion}</td>
+                                        <td><span className={`estado-badge ${asignacion.estado_asignacion === 'activa' ? 'estado-disponible' : 'estado-baja'}`}>
+                                            {asignacion.estado_asignacion}
+                                        </span></td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 ) : (
                     <p>Este equipo no tiene historial de asignaciones.</p>
                 )}

@@ -1,6 +1,7 @@
 // client/src/components/equipos/EquipoForm.jsx
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import './EquipoStyles.css';
 
 function EquipoForm({ equipo, onSave, onCancel }) {
     const [formData, setFormData] = useState({
@@ -18,7 +19,16 @@ function EquipoForm({ equipo, onSave, onCancel }) {
         estado: 'disponible',
         observaciones: ''
     });
+    
+    // Estado para manejar la asignación inmediata
+    const [asignarInmediatamente, setAsignarInmediatamente] = useState(false);
+    const [asignacionData, setAsignacionData] = useState({
+        id_usuario: '',
+        motivo_asignacion: '',
+    });
+    
     const [departamentos, setDepartamentos] = useState([]);
+    const [usuarios, setUsuarios] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -33,11 +43,6 @@ function EquipoForm({ equipo, onSave, onCancel }) {
                 // Formatear a YYYY-MM-DD que es el formato que acepta input type="date"
                 return fecha.toISOString().split('T')[0];
             };
-
-            console.log("Fechas originales:", {
-                fecha_compra: equipo.fecha_compra,
-                garantia_hasta: equipo.garantia_hasta
-            });
 
             setFormData({
                 tipo: equipo.tipo || '',
@@ -57,6 +62,7 @@ function EquipoForm({ equipo, onSave, onCancel }) {
         }
 
         fetchDepartamentos();
+        fetchUsuarios();
     }, [equipo]);
 
     const fetchDepartamentos = async () => {
@@ -68,12 +74,52 @@ function EquipoForm({ equipo, onSave, onCancel }) {
         }
     };
 
+    // Nuevo método para cargar usuarios
+    const fetchUsuarios = async () => {
+        try {
+            const response = await axios.get('http://localhost:8080/api/usuarios');
+            setUsuarios(response.data);
+        } catch (err) {
+            setError('Error al cargar usuarios: ' + err.message);
+        }
+    };
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
             [name]: value
         }));
+    };
+
+    // Nuevo manejador para los campos de asignación
+    const handleAsignacionChange = (e) => {
+        const { name, value } = e.target;
+        setAsignacionData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    // Manejador para el checkbox de asignar inmediatamente
+    const handleAsignarCheckbox = (e) => {
+        const checked = e.target.checked;
+        setAsignarInmediatamente(checked);
+        // Si se marca la casilla, cambiamos el estado del equipo a 'asignado'
+        if (checked) {
+            setFormData(prev => ({
+                ...prev,
+                estado: 'asignado'
+            }));
+        } else {
+            // Si se desmarca, volvemos al estado 'disponible' si no está en edición
+            if (!equipo) {
+                setFormData(prev => ({
+                    ...prev,
+                    estado: 'disponible'
+                }));
+            }
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -85,10 +131,11 @@ function EquipoForm({ equipo, onSave, onCancel }) {
             // Copia los datos del formulario para no modificar el estado directamente
             const datosParaEnviar = { ...formData };
             
-            let response;
+            let equipoGuardado;
             if (equipo) {
                 // Actualizar equipo existente
-                response = await axios.put(`http://localhost:8080/api/equipos/${equipo.id_equipo}`, datosParaEnviar);
+                const response = await axios.put(`http://localhost:8080/api/equipos/${equipo.id_equipo}`, datosParaEnviar);
+                equipoGuardado = response.data;
             } else {
                 // Para crear un nuevo equipo, necesitamos obtener un ID
                 // Primero obtenemos el último ID de equipo
@@ -99,12 +146,31 @@ function EquipoForm({ equipo, onSave, onCancel }) {
                 datosParaEnviar.id_equipo = nuevoId;
                 
                 // Crear nuevo equipo
-                response = await axios.post('http://localhost:8080/api/equipos', datosParaEnviar);
+                const response = await axios.post('http://localhost:8080/api/equipos', datosParaEnviar);
+                equipoGuardado = response.data;
+                
+                // Si se marcó la opción de asignar inmediatamente, creamos la asignación
+                if (asignarInmediatamente && asignacionData.id_usuario) {
+                    const fechaActual = new Date().toISOString().split('T')[0];
+                    
+                    const asignacionNueva = {
+                        id_equipo: nuevoId,
+                        id_usuario: asignacionData.id_usuario,
+                        fecha_asignacion: fechaActual,
+                        motivo_asignacion: asignacionData.motivo_asignacion || 'Asignación inicial',
+                        estado: 'activa',
+                        creado_por: 1, // Aquí deberías usar el ID del usuario actual (logueado)
+                        fecha_creacion: new Date().toISOString()
+                    };
+                    
+                    // Crear la asignación
+                    await axios.post('http://localhost:8080/api/asignaciones', asignacionNueva);
+                }
             }
 
             setLoading(false);
             // Llamar a la función de callback con los datos guardados
-            onSave(response.data);
+            onSave(equipoGuardado);
         } catch (err) {
             setError('Error al guardar el equipo: ' + err.message);
             setLoading(false);
@@ -112,7 +178,7 @@ function EquipoForm({ equipo, onSave, onCancel }) {
     };
 
     return (
-        <div className="container-widgets form-container">
+        <div className="container-widgets equipo-form-container">
             <h2 className="section-title">{equipo ? 'Editar Equipo' : 'Nuevo Equipo'}</h2>
 
             {error && (
@@ -275,6 +341,7 @@ function EquipoForm({ equipo, onSave, onCancel }) {
                             value={formData.estado}
                             onChange={handleChange}
                             required
+                            disabled={asignarInmediatamente}
                         >
                             <option value="disponible">Disponible</option>
                             <option value="asignado">Asignado</option>
@@ -295,6 +362,59 @@ function EquipoForm({ equipo, onSave, onCancel }) {
                         rows="3"
                     ></textarea>
                 </div>
+
+                {/* Nueva sección para asignación inmediata (solo en modo creación) */}
+                {!equipo && (
+                    <div className="asignacion-section">
+                        <div className="form-group">
+                            <label className="asignacion-checkbox">
+                                <input
+                                    type="checkbox"
+                                    checked={asignarInmediatamente}
+                                    onChange={handleAsignarCheckbox}
+                                />
+                                Asignar este equipo inmediatamente a un usuario
+                            </label>
+                        </div>
+
+                        {asignarInmediatamente && (
+                            <div>
+                                <div className="contenedor-columnas">
+                                    <div className="form-group form-items">
+                                        <label className="form-label">Usuario:</label>
+                                        <select
+                                            className="form-select"
+                                            name="id_usuario"
+                                            value={asignacionData.id_usuario}
+                                            onChange={handleAsignacionChange}
+                                            required={asignarInmediatamente}
+                                        >
+                                            <option value="">Seleccione un usuario</option>
+                                            {usuarios.map(usuario => (
+                                                <option key={usuario.id_usuarios} value={usuario.id_usuarios}>
+                                                    {usuario.nombre} {usuario.apellido} ({usuario.email})
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div className="form-group">
+                                    <label className="form-label">Motivo de la asignación:</label>
+                                    <textarea
+                                        className="form-textarea"
+                                        name="motivo_asignacion"
+                                        value={asignacionData.motivo_asignacion}
+                                        onChange={handleAsignacionChange}
+                                        rows="2"
+                                        placeholder="Ejemplo: Equipo nuevo para el área de..., Reemplazo de equipo anterior, etc."
+                                        required={asignarInmediatamente}
+                                    ></textarea>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                )}
 
                 <div className="container-botones">
                     <button
