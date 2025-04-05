@@ -53,14 +53,14 @@ app.use('/api/bitacoras-reparacion', bitacorasReparRoutes);
 app.use('/api/estadisticas-avanzadas', estadisticasAvanzadasRoutes);
 app.use('/api/reportes-avanzados', reportesAvanzadosRoutes);
 
-// Ruta simple de bienvenida (opcional)
+
 app.get('/api', (req, res) => {
     res.json({ message: "Bienvenido a la API del proyecto." });
 });
 
-// Middleware básico de manejo de errores (colocar al final)
+// Middleware básico de manejo de errores
 app.use((err, req, res, next) => {
-    console.error(err.stack);
+    console.error(err.stack);s
     const statusCode = err.statusCode || 500;
     const message = process.env.NODE_ENV === 'production' ? 'Internal Server Error' : err.message;
     res.status(statusCode).json({ error: message });
