@@ -1,4 +1,5 @@
-db = require('../config/db'); // Asegúrate que la ruta es correcta
+// server/models/asignacionModel.js
+const db = require('../config/db'); // Asegúrate que la ruta es correcta
 
 class AsignacionModel {
     // Modificamos getAllAsignaciones para incluir datos básicos de usuario y equipo
@@ -37,6 +38,37 @@ class AsignacionModel {
         // db.query devuelve una promesa con [rows, fields]
         // Solo necesitamos las filas (rows)
         return db.query(sql);
+    }
+
+    // Nuevo método para filtrar asignaciones por equipo
+    static getAsignacionesByEquipo(idEquipo) {
+        const sql = `
+            SELECT
+                a.id_asignacion,
+                a.fecha_asignacion,
+                a.motivo_asignacion,
+                a.estado AS estado_asignacion,
+                a.fecha_finalizacion,
+                a.motivo_finalizacion,
+                a.fecha_creacion AS fecha_creacion_asignacion,
+                e.id_equipo,
+                e.tipo AS tipo_equipo,
+                e.marca AS marca_equipo,
+                e.modelo AS modelo_equipo,
+                u.id_usuarios,
+                u.nombre AS nombre_usuario,
+                u.apellido AS apellido_usuario,
+                u.email AS email_usuario,
+                cr.id_usuarios AS id_creador,
+                cr.nombre AS nombre_creador
+            FROM asignaciones AS a
+            LEFT JOIN equipos AS e ON a.id_equipo = e.id_equipo
+            LEFT JOIN usuarios AS u ON a.id_usuario = u.id_usuarios
+            LEFT JOIN usuarios AS cr ON a.creado_por = cr.id_usuarios
+            WHERE a.id_equipo = ?
+            ORDER BY a.fecha_asignacion DESC
+        `;
+        return db.query(sql, [idEquipo]);
     }
 
     // Modificamos getAsignacionById para incluir datos detallados

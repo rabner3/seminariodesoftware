@@ -26,7 +26,6 @@ function EquipoDetalle({ id, onClose, onEdit, onDelete }) {
             }
 
             // Cargar las asignaciones de este equipo (historial)
-            // Nota: Esta API tendría que implementarse en el backend
             try {
                 const asignResponse = await axios.get(`http://localhost:8080/api/asignaciones?id_equipo=${id}`);
                 setAsignaciones(asignResponse.data);

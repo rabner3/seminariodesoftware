@@ -1,15 +1,23 @@
-
+// server/controllers/asignacionController.js
 const AsignacionModel = require('../models/asignacionModel');
 
-exports.getAllAsignaciones = async (req, res, next) => { // Añadir next para manejo de errores
+exports.getAllAsignaciones = async (req, res, next) => {
     try {
-        // db.query devuelve [rows, fields], nos quedamos con rows ([asignaciones])
-        const [asignaciones] = await AsignacionModel.getAllAsignaciones();
-        res.json(asignaciones); // El array ahora contiene objetos con datos unidos
+        let asignaciones;
+        
+        // Si hay un id_equipo en la consulta, filtramos por ese equipo
+        if (req.query.id_equipo) {
+            const [filtradas] = await AsignacionModel.getAsignacionesByEquipo(req.query.id_equipo);
+            asignaciones = filtradas;
+        } else {
+            // Obtener todas las asignaciones si no hay filtro
+            const [todas] = await AsignacionModel.getAllAsignaciones();
+            asignaciones = todas;
+        }
+        
+        res.json(asignaciones);
     } catch (error) {
-        // Pasamos el error al siguiente middleware (el de manejo de errores)
         next(error);
-        // O manejo básico: res.status(500).json({ error: error.message });
     }
 };
 
@@ -29,7 +37,6 @@ exports.getAsignacionById = async (req, res, next) => {
     }
 };
 
-// create, update, delete no cambian su lógica principal aquí
 exports.createAsignacion = async (req, res, next) => {
     try {
         // Validar req.body aquí sería ideal
