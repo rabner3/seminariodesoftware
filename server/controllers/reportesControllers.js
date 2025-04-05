@@ -3,7 +3,7 @@ const ReportesModel = require('../models/reportesModel');
 exports.getAllReportes = async (req, res, next) => { // Añadir next para manejo de errores
     try {
         // db.query devuelve [rows, fields], nos quedamos con rows ([asignaciones])
-        const [resportes] = await ReportesModel.getAllReportes();
+        const [reportes] = await ReportesModel.getAllReportes();
         res.json(reportes); // El array ahora contiene objetos con datos unidos
     } catch (error) {
         // Pasamos el error al siguiente middleware (el de manejo de errores)

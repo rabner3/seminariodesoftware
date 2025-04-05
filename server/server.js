@@ -17,6 +17,10 @@ const reportesRoutes = require('./routes/reportesRoutes');
 const notificacionesRoutes = require('./routes/notificacionesRoutes');
 const estadisticasRoutes = require('./routes/estadisticasRoutes');
 const auditoriaRoutes = require('./routes/auditoriaRoutes');
+const bitacorasAsignRoutes = require('./routes/bitacorasAsignRoutes');
+const bitacorasReparRoutes = require('./routes/bitacorasReparRoutes');
+const estadisticasAvanzadasRoutes = require('./routes/estadisticasAvanzadasRoutes');
+const reportesAvanzadosRoutes = require('./routes/reportesAvanzadosRoutes');
 
 const app = express();
 
@@ -44,6 +48,10 @@ app.use('/api/reportes', reportesRoutes);
 app.use('/api/notificaciones', notificacionesRoutes);
 app.use('/api/estadisticas', estadisticasRoutes);
 app.use('/api/auditoria', auditoriaRoutes);
+app.use('/api/bitacoras-asignacion', bitacorasAsignRoutes);
+app.use('/api/bitacoras-reparacion', bitacorasReparRoutes);
+app.use('/api/estadisticas-avanzadas', estadisticasAvanzadasRoutes);
+app.use('/api/reportes-avanzados', reportesAvanzadosRoutes);
 
 // Ruta simple de bienvenida (opcional)
 app.get('/api', (req, res) => {

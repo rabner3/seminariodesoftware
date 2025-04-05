@@ -41,10 +41,10 @@ exports.createTickets = async (req, res, next) => {
     }
 };
 
-exports.updateTickects = async (req, res, next) => {
+exports.updateTickets = async (req, res, next) => {
     try {
         // Validar req.body y req.params.id aquí sería ideal
-        const [result] = await TicketsModel.updateTickects(req.params.id, req.body);
+        const [result] = await TicketsModel.updateTickets(req.params.id, req.body);
         // AffectedRows indica si se actualizó algo
         if (result.affectedRows === 0) {
             return res.status(404).json({ message: 'Tickets not found or no data changed' });
