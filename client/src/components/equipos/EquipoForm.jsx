@@ -56,7 +56,6 @@ function EquipoForm({ equipo, onSave, onCancel }) {
             });
         }
 
-        // Cargar los departamentos para el select
         fetchDepartamentos();
     }, [equipo]);
 
