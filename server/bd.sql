@@ -370,6 +370,10 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   `telefono` varchar(8) DEFAULT NULL,
   `puesto` varchar(50) DEFAULT NULL,
   `id_departamento` int(11) DEFAULT NULL,
+  `password_hash` varchar(255) DEFAULT NULL,
+  `rol` enum('admin','tecnico','usuario') DEFAULT 'usuario',
+  `token_reset` varchar(100) DEFAULT NULL,
+  `ultimo_login` datetime DEFAULT NULL, 
   `estado` enum('activo','inactivo') DEFAULT NULL,
   `fecha_registro` datetime DEFAULT NULL,
   `fecha_actualizacion` datetime DEFAULT NULL,
@@ -380,7 +384,7 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   KEY `fk_usuario_creador` (`creado_por`),
   CONSTRAINT `fk_usuario_creador` FOREIGN KEY (`creado_por`) REFERENCES `usuarios` (`id_usuarios`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `fk_usuario_departamento` FOREIGN KEY (`id_departamento`) REFERENCES `departamentos` (`id_departamento`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+)
 
 -- Volcando datos para la tabla proyecto.usuarios: ~0 rows (aproximadamente)
 

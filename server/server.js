@@ -21,6 +21,7 @@ const bitacorasAsignRoutes = require('./routes/bitacorasAsignRoutes');
 const bitacorasReparRoutes = require('./routes/bitacorasReparRoutes');
 const estadisticasAvanzadasRoutes = require('./routes/estadisticasAvanzadasRoutes');
 const reportesAvanzadosRoutes = require('./routes/reportesAvanzadosRoutes');
+const authRoutes = require('./routes/authRoutes');
 
 const app = express();
 
@@ -52,6 +53,7 @@ app.use('/api/bitacoras-asignacion', bitacorasAsignRoutes);
 app.use('/api/bitacoras-reparacion', bitacorasReparRoutes);
 app.use('/api/estadisticas-avanzadas', estadisticasAvanzadasRoutes);
 app.use('/api/reportes-avanzados', reportesAvanzadosRoutes);
+app.use('/api/auth', authRoutes);
 
 
 app.get('/api', (req, res) => {

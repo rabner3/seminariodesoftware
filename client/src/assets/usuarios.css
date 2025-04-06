@@ -1,0 +1,89 @@
+/* Estilos específicos para la página de login */
+.login-container {
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.login-container h2 {
+    margin-bottom: 30px;
+    color: #333;
+    text-align: center;
+}
+
+/* Estilos para el manejo de roles */
+.rol-admin {
+    background-color: #ff8a65;
+    color: white;
+}
+
+.rol-tecnico {
+    background-color: #4fc3f7;
+    color: white;
+}
+
+.rol-usuario {
+    background-color: #81c784;
+    color: white;
+}
+
+/* Estilos para la tabla de usuarios */
+.usuarios-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.usuarios-table th {
+    background-color: #f0f0f0;
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: bold;
+    color: #333;
+    border-bottom: 2px solid #ddd;
+}
+
+.usuarios-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+}
+
+.usuarios-table tr:hover td {
+    background-color: #f9f9f9;
+}
+
+/* Estilos para la sección de cambio de contraseña */
+.password-section {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px dashed #ccc;
+}
+
+.password-section h3 {
+    margin-bottom: 15px;
+    color: #009496;
+}
+
+/* Responsividad para móviles */
+@media (max-width: 768px) {
+    .login-container {
+        max-width: 90%;
+        margin: 30px auto;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .usuarios-table {
+        font-size: 14px;
+    }
+
+    .usuarios-table td,
+    .usuarios-table th {
+        padding: 8px 10px;
+    }
+}
