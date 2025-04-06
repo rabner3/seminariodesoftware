@@ -1,0 +1,117 @@
+/* client/src/components/equipos/EquipoStyles.css */
+
+/* Estilos específicos para componentes de equipos */
+.equipo-form-container .form-group {
+    margin-bottom: 25px;
+  }
+  
+  .equipo-form-container .form-label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+  
+  .equipo-form-container .form-input,
+  .equipo-form-container .form-select,
+  .equipo-form-container .form-textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+  
+  .equipo-form-container .contenedor-columnas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 25px;
+  }
+  
+  .equipo-form-container .form-items {
+    flex: 1;
+    min-width: 250px;
+  }
+  
+  /* Estilos para la vista de detalles */
+  .equipo-detalle-container .container-detalles label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  
+  .equipo-detalle-container .container-detalles p {
+    padding: 8px 0;
+    margin: 0 0 15px 0;
+    border-bottom: 1px solid #eee;
+  }
+  
+  /* Estilos para el checkbox de asignación */
+  .asignacion-checkbox {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #f5f5f5;
+    border-radius: 5px;
+  }
+  
+  .asignacion-checkbox input[type="checkbox"] {
+    margin-right: 10px;
+    width: 18px;
+    height: 18px;
+  }
+  
+  /* Sección de asignación */
+  .asignacion-section {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+  }
+  
+  /* Botones con más espacio */
+  .equipo-form-container .container-botones,
+  .equipo-detalle-container .container-botones {
+    gap: 15px;
+    margin-top: 25px;
+  }
+  
+  /* Estilos para el historial de asignaciones */
+  .historial-section {
+    margin-top: 30px;
+  }
+  
+  .historial-section h3 {
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  /* Estado con colores */
+  .estado-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  
+  .estado-disponible {
+    background-color: #d4edda;
+    color: #155724;
+  }
+  
+  .estado-asignado {
+    background-color: #cce5ff;
+    color: #004085;
+  }
+  
+  .estado-en_reparacion {
+    background-color: #fff3cd;
+    color: #856404;
+  }
+  
+  .estado-descarte, .estado-baja {
+    background-color: #f8d7da;
+    color: #721c24;
+  }

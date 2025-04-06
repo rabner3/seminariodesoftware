@@ -1,54 +1,69 @@
-import { useState, useEffect } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from '/vite.svg';
-import './App.css';
-import axios from 'axios';
+// client/src/App.jsx
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Layout from './components/Layout';
+import Home from './pages/Home';
+import Usuarios from './pages/Usuarios';
+import Equipos from './pages/Equipos';
+import Login from './pages/Login';
 
 function App() {
-  const [count, setCount] = useState(0);
-  const[array, setArray] = useState([]);
-
-  const fetchAPI = async () => {
-    const response = await axios.get("http://localhost:8080/api");
-    setArray(response.data.fruits);
-    console.log(response.data.fruits);
-  };
+  const [usuario, setUsuario] = useState(null);
 
   useEffect(() => {
-    fetchAPI();
+    // Verificar si hay un usuario logueado al cargar la app
+    const usuarioLogueado = localStorage.getItem('usuario');
+    if (usuarioLogueado) {
+      setUsuario(JSON.parse(usuarioLogueado));
+    }
   }, []);
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-        {array.map((fruit, index) => (
-    <div key={index}>
-      <p>{fruit}</p>
-    <br />
-    </div>  
-    ))
-  }
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-};
+  // Componente para rutas protegidas
+  const ProtectedRoute = ({ children }) => {
+    if (!usuario) {
+      // Redirigir al login si no hay usuario
+      return <Navigate to="/login" replace />;
+    }
+    return children;
+  };
 
-export default App
+  const handleLogout = () => {
+    // Eliminar usuario del localStorage
+    localStorage.removeItem('usuario');
+    setUsuario(null);
+    // Redirigir al login
+    window.location.href = '/login';
+  };
+
+  return (
+    <Router>
+      <Layout user={usuario} onLogout={handleLogout}>
+        <Routes>
+          {/* Rutas públicas */}
+          <Route path="/login" element={
+            usuario ? <Navigate to="/" replace /> : <Login />
+          } />
+
+          {/* Rutas protegidas */}
+          <Route path="/" element={
+            <ProtectedRoute>
+              <Home />
+            </ProtectedRoute>
+          } />
+          <Route path="/usuarios" element={
+            <ProtectedRoute>
+              <Usuarios />
+            </ProtectedRoute>
+          } />
+          <Route path="/equipos" element={
+            <ProtectedRoute>
+              <Equipos />
+            </ProtectedRoute>
+          } />
+        </Routes>
+      </Layout>
+    </Router>
+  );
+}
+
+export default App;

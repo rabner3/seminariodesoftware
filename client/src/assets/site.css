@@ -1,0 +1,708 @@
+/* client/src/assets/site.css */
+:root {
+    --verde-fondo: #1A9F4E;
+    --verde-fondo-logo: #116A34;
+    --fondo-main: #ECF0F3;
+    --azul-suave: #00DFE2;
+}
+
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 60px;
+    /* Ancho deseado de la barra lateral */
+    height: 100vh;
+    /* Alto de la pantalla */
+    background-color: var(--verde-fondo);
+    /* Color de fondo deseado */
+    color: #fff;
+    /* Color de texto deseado */
+    overflow-y: auto;
+    z-index: 1001;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* Zon del numero con la cantidad de asignaciones */
+
+.icon-container {
+    position: relative;
+}
+
+.badge {
+    position: absolute;
+    top: +10px; /* Ajusta según el tamaño */
+    right: +10px; /* Ajusta según el tamaño */
+    background-color: #F44C45; /* El color de fondo del badge */
+    color: white; /* El color del texto */
+    padding: 2px 6px; /* Ajusta el tamaño del badge */
+    border-radius: 50%; /* Para que sea redondo */
+    font-size: 12px; /* Tamaño de fuente */
+    line-height: 1;
+}
+
+
+.logo-container {
+    background-color: var(--verde-fondo);
+    width: 100%;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .logo-container:hover {
+        opacity: 0.5;
+        background-color: var(--verde-fondo-logo);
+    }
+
+    .logo-container img {
+        cursor: pointer;
+        width: 30px;
+        height: auto;
+    }
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+    nav ul li a {
+        cursor: pointer;
+        width: 100%;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+* {
+    font-family: "Montserrat", Sans-serif;
+    margin: 0;
+    padding: 0;
+    font-size: 15px;
+}
+
+h2 {
+    font-size: 18px;
+}
+
+nav ul li:hover {
+    opacity: 0.5;
+    background-color: var(--verde-fondo-logo);
+}
+
+svg, path {
+    fill: white;
+    width: 32px;
+    height: auto;
+}
+
+label {
+    font-weight: bolder;
+}
+
+
+/* Barra superior */
+.top-bar {
+    margin-left: 60px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: calc(100% - 90px);
+    height: 60px; /* Ajusta la altura según tus necesidades */
+    background-color: white; /* Cambia el color de fondo según tus preferencias */
+    color: gray; /* Cambia el color del texto según tus preferencias */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 15px;
+    padding-right: 15px;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* Asegura que esté por encima de cualquier otro contenido */
+}
+
+main {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    /* Ajusta el margen superior para evitar solapamiento */
+}
+
+.main-container {
+    margin-top: 60px;
+    margin-left: 60px;
+    background-color: var(--fondo-main);
+    color: gray;
+    height: calc(100vh - 60px); /* Calcula la altura restante de la pantalla */
+    overflow-y: auto;
+}
+
+/*Perfil del usuairo logueado*/
+.user-login-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+    .user-login-container span {
+        color: white;
+        width: 35px;
+        height: 35px;
+        margin-left: 10px;
+        background-color: var(--verde-fondo-logo);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+    }
+
+    .user-login-container span:hover {
+        transform: scale(1.05);
+    }
+
+.container-inicio {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    font-size: 20px;
+}
+
+    .container-inicio img {
+        opacity: 0.2
+    }
+
+/*log out*/
+.log-out {
+    cursor: pointer;
+    width: 100%;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .log-out:hover {
+        opacity: 0.5;
+        background-color: var(--verde-fondo-logo);
+    }
+
+
+.inicio-sesion {
+    text-decoration: none;
+    cursor: pointer;
+    color: white;
+    display: flex;
+    width: fit-content;
+    height: 35px;
+    width: 200px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    background-color: var(--verde-fondo-logo);
+}
+
+    .inicio-sesion:hover {
+        opacity: 0.9;
+    }
+
+    .inicio-sesion svg {
+        width: 15px;
+        margin-right: 10px;
+    }
+
+.active {
+    background-color: var(--verde-fondo-logo);
+}
+
+/* Modificacion de la barra para permitir dezplazamiento y ser delgada */
+
+header {
+    direction: rtl; /* Barra de desplazamiento a la izquierda */
+}
+
+    header::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    header::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+    }
+
+    header::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+    }
+
+header {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1);
+}
+
+    /* Revertir la dirección del contenido dentro del header */
+    header > * {
+        direction: ltr;
+    }
+
+/* Clases generales para los contenedores padres */
+.contenedor-padre {
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.container-widgets {
+    border-radius: 5px;
+    background-color: white;
+    padding: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border-right: 4px solid #55B7B8;
+    border-left: 4px solid #55B7B8;
+}
+
+.contenedor-columnas {
+    display: flex;
+    flex-direction: row;
+}
+
+.container-botones {
+    display: flex;
+    flex-direction: row-reverse;
+    gap: 10px;
+}
+
+.container-detalles {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.button {
+    border-radius: 5px;
+    outline: none;
+    border: none;
+    padding: 7px 10px;
+    text-decoration: none;
+}
+
+    .button:hover {
+        cursor: pointer;
+        opacity: .9;
+    }
+
+.button2 {
+    border-radius: 5px;
+    outline: none;
+    border: none;
+    padding: 7px 10px;
+    text-decoration: none;
+}
+
+    .button2:hover {
+        cursor: pointer;
+        opacity: .9;
+    }
+
+.form-items {
+    display: flex;
+    gap: 5px;
+    flex-direction: column;
+    flex: 1;
+    min-width: 250px;
+    min-height: 45px;
+    justify-content: space-between;
+}
+
+input, select {
+    outline: none;
+    border: none;
+    border-bottom: solid 1px gray;
+    color: gray;
+}
+
+    input:focus, select:focus {
+        border-bottom: solid 2px #009496;
+        color: #009496;
+    }
+
+option:focus {
+    background-color: #009496;
+}
+
+.azul-claro {
+    background-color: #009496;
+    border-right: 3px solid #006264;
+    color: white;
+}
+
+.rojo-suave {
+    background-color: #FF635C;
+    color: white;
+    border-right: 3px solid #AA423D;
+}
+
+.errors {
+    background-color: #FFE5D1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    color: #FF7026;
+    border: solid 1px #FF7026;
+    border-right: 4px solid #FFA379;
+    border-left: 4px solid #FFA379;
+}
+
+.exito {
+    background-color: #CBE9E9;
+    color: #199E9F;
+    border: solid 1px #199E9F;
+    border-right: 4px solid #55B7B8;
+    border-left: 4px solid #55B7B8;
+}
+
+/*Filtros de las vista de lista*/
+.container-filtros {
+    height: fit-content;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: space-between;
+}
+
+.container-filtros-masinfo {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+    .container-filtros-masinfo input {
+        opacity: .7;
+    }
+
+.container-filtros-paginacion {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.container-date-filter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.pag {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    background-color: #199E9F;
+    border-radius: 5px;
+    border-right: 3px solid #006264;
+}
+
+    .pag svg {
+        fill: white;
+        border: none;
+        height: 20px;
+        width: 20px;
+    }
+
+.container-dates {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+    .container-dates input {
+        flex: 1;
+        min-width: 0; /* Asegura que el flex item pueda reducirse más allá de su contenido */
+        max-width: 100%; /* Evita que se desborde */
+    }
+
+/* Tablas */
+table {
+    border-collapse: collapse;
+    padding: 10px;
+    width: 100%;
+}
+
+th {
+    text-align: left;
+    padding: 10px;
+}
+
+td {
+    border-top: solid gray 1px;
+    padding: 10px;
+    white-space: nowrap; /* Evita que el texto se divida en varias líneas */
+    overflow: hidden; /* Oculta el texto que sobrepasa el ancho de la celda */
+    text-overflow: ellipsis; /* Muestra "..." cuando el texto se corta */
+    min-width: 100px;
+}
+
+tbody tr:hover td {
+    background-color: #CBE9E9;
+    color: #199E9F;
+    border-top: solid 1px #199E9F;
+    border-bottom: solid 1px #199E9F;
+}
+
+.fila-resaltada {
+    background-color: #CBE9E9;
+    color: #199E9F;
+    border-top: solid 1px #199E9F;
+    border-bottom: solid 1px #199E9F;
+}
+
+    .fila-resaltada td {
+        background-color: #CBE9E9;
+        color: #199E9F;
+        border-top: solid 1px #199E9F;
+        border-bottom: solid 1px #199E9F;
+    }
+
+.container-flow-table {
+    width: 100%; /* Ancho m�ximo del contenedor */
+    overflow-x: auto; /* Barras de desplazamiento horizontal */
+}
+
+    /* Cambiar el color de la barra de desplazamiento */
+    .container-flow-table::-webkit-scrollbar {
+        height: 15px; /* Ancho de la barra de desplazamiento */
+    }
+
+    /* Cambiar el color del riel de la barra de desplazamiento */
+    .container-flow-table::-webkit-scrollbar-track {
+        background: #CBE9E9;
+        border-radius: 3px; /* Color del riel */
+    }
+
+    /* Cambiar el color del pulgar de la barra de desplazamiento */
+    .container-flow-table::-webkit-scrollbar-thumb {
+        background: #199E9F; /* Color del pulgar */
+        border-radius: 3px; /* Borde redondeado */
+    }
+
+/* Menu contextual */
+.context-menu {
+    display: none; /* Oculto por defecto */
+    position: absolute;
+    background-color: #FFF; /* Fondo blanco */
+    border: 1px solid #199E9F; /* Borde con el color naranja */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+    z-index: 5000;
+    border-radius: 5px;
+    min-width: 150px;
+}
+
+    .context-menu ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+        .context-menu ul li {
+            padding: 10px;
+            cursor: pointer;
+            color: gray;
+            border-bottom: 1px solid #199E9F;
+        }
+
+            .context-menu ul li:last-child {
+                border-bottom: none;
+            }
+
+            .context-menu ul li:hover {
+                background-color: #199E9F; /* Cambia el color de fondo al pasar el mouse */
+                color: white;
+            }
+
+/* Graficos */
+
+#graficoDocumentosPorEstado, #graficoRecuperacionesPorAgencia, #graficoMontosPorAgencia, #graficoEvolucionDesembolsos {
+    max-width: 100%; /* Limitar el ancho del canvas al 100% del contenedor */
+    max-height: 550px; /* Limitar la altura máxima a 400px */
+    height: auto; /* Permitir que la altura se ajuste automáticamente */
+    width: auto;
+    min-width: 600px;
+    min-height: 95%;
+}
+
+#graficoTipoDeuda, #graficoDestino {
+    max-width: 100%; /* Limitar el ancho del canvas al 100% del contenedor */
+    height: auto; /* Permitir que la altura se ajuste automáticamente */
+    width: auto;
+    min-width: 600px;
+    min-height: fit-content !important;
+}
+
+.contenedor-dashboard {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+#graficoDocumentosEstado14, #graficoMetodosPago {
+    max-width: 100%; /* Limitar el ancho del canvas al 100% del contenedor */
+    max-height: 550px; /* Limitar la altura máxima a 400px */
+    height: auto; /* Permitir que la altura se ajuste automáticamente */
+    width: auto; /* Permitir que el ancho se ajuste automáticamente */
+    min-width: 300px; /* Mínimo ancho de 300px */
+}
+
+@media only screen and (max-width: 1000px) {
+
+    /* Por ejemplo, para ajustar el tamaño de los gráficos */
+    .contenedor-dashboard {
+        flex-direction: column;
+    }
+
+    #graficoMontosPorAgencia, #graficoDestino, #graficoEvolucionDesembolsos
+    #graficoDocumentosPorEstado,
+    #graficoDocumentosEstado14,
+    #graficoRecuperacionesPorAgencia,
+    #graficoTipoDeuda,
+    #graficoMetodosPago {
+        min-width: 100%;
+        min-height: auto;
+    }
+
+    .form-items {
+        max-width: 100%;
+    }
+}
+
+/* Menú desplegable del usuario */
+.user-menu {
+    position: absolute;
+    top: 45px;
+    right: 0;
+    width: 280px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    z-index: 1050;
+    overflow: hidden;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.user-menu-header {
+    background-color: var(--verde-fondo);
+    color: white;
+    padding: 15px;
+    text-align: center;
+}
+
+.user-menu-header h4 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.user-email {
+    margin: 5px 0;
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.rol-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    background-color: rgba(255, 255, 255, 0.2);
+    margin-top: 5px;
+}
+
+.rol-admin {
+    background-color: #ff7043;
+}
+
+.rol-tecnico {
+    background-color: #29b6f6;
+}
+
+.rol-usuario {
+    background-color: #66bb6a;
+}
+
+.user-menu-content {
+    padding: 10px 0;
+}
+
+.user-menu-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    color: #333;
+    text-decoration: none;
+    transition: background-color 0.2s;
+    cursor: pointer;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    font-size: 14px;
+}
+
+.user-menu-item:hover {
+    background-color: #f0f0f0;
+}
+
+.user-menu-item svg {
+    margin-right: 10px;
+    fill: #666;
+}
+
+.user-menu-divider {
+    margin: 5px 0;
+    border: none;
+    border-top: 1px solid #eee;
+}
+
+.logout-btn {
+    color: #e53935;
+}
+
+.logout-btn svg {
+    fill: #e53935;
+}
+
+.user-menu-footer {
+    padding: 10px 15px;
+    background-color: #f5f5f5;
+    border-top: 1px solid #eee;
+    font-size: 12px;
+    color: #666;
+}
+
+.user-menu-footer p {
+    margin: 0;
+    font-size: 12px;
+}

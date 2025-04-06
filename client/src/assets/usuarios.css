@@ -1,0 +1,87 @@
+/* Estilos específicos para la página de login */
+.login-container {
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    background-color: white;
+}
+
+.login-container h2 {
+    margin-bottom: 30px;
+    color: #333;
+    text-align: center;
+    font-size: 24px;
+}
+
+/* Mejoras para el formulario de login */
+.login-container .form-group {
+    margin-bottom: 25px;
+}
+
+.login-container .form-label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.login-container .form-input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+    box-sizing: border-box;
+    /* Esto asegura que el padding no aumente el ancho */
+}
+
+.login-container .form-input:focus {
+    border-color: #009496;
+    outline: none;
+}
+
+/* Botón de login más atractivo */
+.login-container .button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.login-container .container-botones {
+    margin-top: 30px;
+}
+
+/* Mensaje de error más visible */
+.login-container .errors {
+    background-color: #ffdddd;
+    border-left: 4px solid #f44336;
+    padding: 15px;
+    margin-bottom: 20px;
+    color: #721c24;
+}
+
+/* Responsividad mejorada para móviles */
+@media (max-width: 768px) {
+    .login-container {
+        max-width: 90%;
+        margin: 30px auto;
+        padding: 20px;
+    }
+
+    .login-container .form-input {
+        font-size: 14px;
+        padding: 10px 12px;
+    }
+
+    .login-container .button {
+        padding: 10px;
+        font-size: 14px;
+    }
+}
