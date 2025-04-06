@@ -51,7 +51,7 @@ const Layout = ({ children, user, onLogout }) => {
                   <span className={`rol-badge rol-${user.rol}`}>{user.rol}</span>
                 </div>
                 <div className="user-menu-content">
-              
+
                   <hr className="user-menu-divider" />
                   <button className="user-menu-item logout-btn" onClick={onLogout}>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18">
@@ -92,7 +92,14 @@ const Layout = ({ children, user, onLogout }) => {
               <li>
                 <Link to="/equipos" title="Equipos">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
-                    <path d="M160-200q-33 0-56.5-23.5T80-280v-400q0-33 23.5-56.5T160-760h640q33 0 56.5 23.5T880-680v400q0 33-23.5 56.5T800-200H160Zm0-80h640v-400H160v400Zm20-40h600v-320H180v320Zm100-60q-17 0-28.5-11.5T240-420q0-17 11.5-28.5T280-460q17 0 28.5 11.5T320-420q0 17-11.5 28.5T280-380Zm200 0q-17 0-28.5-11.5T440-420q0-17 11.5-28.5T480-460q17 0 28.5 11.5T520-420q0 17-11.5 28.5T480-380Zm200 0q-17 0-28.5-11.5T640-420q0-17 11.5-28.5T680-460q17 0 28.5 11.5T720-420q0 17-11.5 28.5T680-380ZM160-280v-400 400Z"/>
+                    <path d="M160-200q-33 0-56.5-23.5T80-280v-400q0-33 23.5-56.5T160-760h640q33 0 56.5 23.5T880-680v400q0 33-23.5 56.5T800-200H160Zm0-80h640v-400H160v400Zm20-40h600v-320H180v320Zm100-60q-17 0-28.5-11.5T240-420q0-17 11.5-28.5T280-460q17 0 28.5 11.5T320-420q0 17-11.5 28.5T280-380Zm200 0q-17 0-28.5-11.5T440-420q0-17 11.5-28.5T480-460q17 0 28.5 11.5T520-420q0 17-11.5 28.5T480-380Zm200 0q-17 0-28.5-11.5T640-420q0-17 11.5-28.5T680-460q17 0 28.5 11.5T720-420q0 17-11.5 28.5T680-380ZM160-280v-400 400Z" />
+                  </svg>
+                </Link>
+              </li>
+              <li>
+                <Link to="/departamentos" title="Departamentos">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M10 2H4C2.9 2 2 2.9 2 4v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-6h-2v6H4V4h6V2zm10 2h-3V0h-2v4h-3l4 4 4-4zM7 7h2v2H7V7zm0 4h2v2H7v-2zm0 4h2v2H7v-2zm4-8h2v2h-2V7zm0 4h2v2h-2v-2zm0 4h2v2h-2v-2z" />
                   </svg>
                 </Link>
               </li>

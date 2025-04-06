@@ -1,0 +1,40 @@
+
+/* Estilos específicos para los departamentos */
+
+.departamento-detalle-container .seccion-relacionados {
+    margin-top: 25px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+}
+
+.departamento-detalle-container .seccion-relacionados h3 {
+    margin-bottom: 15px;
+    color: #333;
+    font-size: 18px;
+}
+
+/* Estilos para la tabla de listado de departamentos */
+.departamentos-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.departamentos-table th {
+    background-color: #f0f0f0;
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: bold;
+    color: #333;
+    border-bottom: 2px solid #ddd;
+}
+
+.departamentos-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+}
+
+.departamentos-table tr:hover td {
+    background-color: #f9f9f9;
+}

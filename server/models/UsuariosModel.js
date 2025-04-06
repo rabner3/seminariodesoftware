@@ -10,6 +10,9 @@ class UsuariosModel {
     static async getUsuarioById(id) {
         return db.query('SELECT * FROM usuarios WHERE id_usuarios = ?', [id]);
     }
+    static async getUsuariosByDepartamento(id_departamento) {
+        return db.query('SELECT * FROM usuarios WHERE id_departamento = ?', [id_departamento]);
+    }
 
     static async getUsuarioByEmail(email) {
         return db.query('SELECT * FROM usuarios WHERE email = ?', [email]);

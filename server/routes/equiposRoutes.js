@@ -9,5 +9,6 @@ router.get('/:id', equiposController.getEquipoById);
 router.post('/', equiposController.createEquipo);
 router.put('/:id', equiposController.updateEquipo);
 router.delete('/:id', equiposController.deleteEquipo);
+router.get('/departamento/:id_departamento', equiposController.getEquiposByDepartamento);
 
 module.exports = router;

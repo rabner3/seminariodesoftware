@@ -21,8 +21,16 @@ exports.getEquipoById = async (req, res, next) => {
         next(error);
     }
 };
+exports.getEquiposByDepartamento = async (req, res, next) => {
+    try {
+        const [equipos] = await EquiposModel.getEquiposByDepartamento(req.params.id_departamento);
+        res.json(equipos);
+    } catch (error) {
+        next(error);
+    }
+};
 
-// Nuevo método para obtener el último ID
+
 exports.getUltimoId = async (req, res, next) => {
     try {
         const [resultado] = await EquiposModel.getUltimoId();

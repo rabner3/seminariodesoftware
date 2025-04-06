@@ -21,6 +21,16 @@ class EquiposModel {
         return db.query(query, [id]);
     }
 
+    static async getEquiposByDepartamento(id_departamento) {
+        const query = `
+            SELECT e.*, d.nombre as departamento_nombre 
+            FROM equipos e
+            LEFT JOIN departamentos d ON e.id_departamento = d.id_departamento
+            WHERE e.id_departamento = ?
+        `;
+        return db.query(query, [id_departamento]);
+    }
+
     // Nuevo método para obtener el último ID
     static async getUltimoId() {
         return db.query('SELECT MAX(id_equipo) as max_id FROM equipos');

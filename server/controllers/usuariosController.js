@@ -21,9 +21,22 @@ exports.getUsuarioById = async (req, res, next) => {
         if (usuario.length === 0) {
             return res.status(404).json({ message: 'Usuario not found' });
         }
-        // Evitamos enviar el password_hash en la respuesta
+
         const { password_hash, token_reset, ...usuarioData } = usuario[0];
         res.json(usuarioData);
+    } catch (error) {
+        next(error);
+    }
+};
+exports.getUsuariosByDepartamento = async (req, res, next) => {
+    try {
+        const [usuarios] = await UsuariosModel.getUsuariosByDepartamento(req.params.id_departamento);
+
+        const usuariosSinPassword = usuarios.map(usuario => {
+            const { password_hash, token_reset, ...usuarioData } = usuario;
+            return usuarioData;
+        });
+        res.json(usuariosSinPassword);
     } catch (error) {
         next(error);
     }
