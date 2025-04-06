@@ -1,11 +1,32 @@
 // client/src/components/Layout.jsx
-import React, { useContext } from 'react';
+import React, { useContext, useState, useRef, useEffect } from 'react';
 import { TitleContext } from '../context/TitleContext';
 import { Link } from 'react-router-dom';
 import '../assets/site.css';
 
 const Layout = ({ children, user, onLogout }) => {
   const { title } = useContext(TitleContext);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const userMenuRef = useRef(null);
+
+  // Cerrar el menú al hacer clic fuera de él
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+        setShowUserMenu(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  // Manejar clic en el avatar de usuario
+  const toggleUserMenu = () => {
+    setShowUserMenu(!showUserMenu);
+  };
 
   return (
     <div>
@@ -15,9 +36,35 @@ const Layout = ({ children, user, onLogout }) => {
         <h2>{title}</h2>
 
         {user ? (
-          <div className="user-login-container" title={`${user.nombre} - ${user.rol}`}>
+          <div className="user-login-container" ref={userMenuRef}>
             <p>{user.nombre}</p>
-            <span>{user.nombre.charAt(0)}</span>
+            <span onClick={toggleUserMenu} className="user-avatar" title={`${user.nombre} - ${user.rol}`}>
+              {user.nombre.charAt(0)}
+            </span>
+
+            {/* Menú desplegable del usuario */}
+            {showUserMenu && (
+              <div className="user-menu">
+                <div className="user-menu-header">
+                  <h4>{user.nombre} {user.apellido}</h4>
+                  <p className="user-email">{user.email}</p>
+                  <span className={`rol-badge rol-${user.rol}`}>{user.rol}</span>
+                </div>
+                <div className="user-menu-content">
+              
+                  <hr className="user-menu-divider" />
+                  <button className="user-menu-item logout-btn" onClick={onLogout}>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18">
+                      <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z" />
+                    </svg>
+                    Cerrar Sesión
+                  </button>
+                </div>
+                <div className="user-menu-footer">
+                  <p>Último acceso: {user.ultimo_login ? new Date(user.ultimo_login).toLocaleString() : 'No disponible'}</p>
+                </div>
+              </div>
+            )}
           </div>
         ) : (
           <Link className="inicio-sesion" to="/login">INICIAR SESIÓN</Link>

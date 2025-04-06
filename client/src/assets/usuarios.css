@@ -2,88 +2,86 @@
 .login-container {
     max-width: 500px;
     margin: 50px auto;
-    padding: 20px;
+    padding: 30px;
     border-radius: 8px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    background-color: white;
 }
 
 .login-container h2 {
     margin-bottom: 30px;
     color: #333;
     text-align: center;
+    font-size: 24px;
 }
 
-/* Estilos para el manejo de roles */
-.rol-admin {
-    background-color: #ff8a65;
-    color: white;
+/* Mejoras para el formulario de login */
+.login-container .form-group {
+    margin-bottom: 25px;
 }
 
-.rol-tecnico {
-    background-color: #4fc3f7;
-    color: white;
+.login-container .form-label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 600;
+    font-size: 16px;
 }
 
-.rol-usuario {
-    background-color: #81c784;
-    color: white;
-}
-
-/* Estilos para la tabla de usuarios */
-.usuarios-table {
+.login-container .form-input {
     width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-}
-
-.usuarios-table th {
-    background-color: #f0f0f0;
     padding: 12px 15px;
-    text-align: left;
-    font-weight: bold;
-    color: #333;
-    border-bottom: 2px solid #ddd;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+    box-sizing: border-box;
+    /* Esto asegura que el padding no aumente el ancho */
 }
 
-.usuarios-table td {
-    padding: 12px 15px;
-    border-bottom: 1px solid #eee;
-    vertical-align: middle;
+.login-container .form-input:focus {
+    border-color: #009496;
+    outline: none;
 }
 
-.usuarios-table tr:hover td {
-    background-color: #f9f9f9;
+/* Botón de login más atractivo */
+.login-container .button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-/* Estilos para la sección de cambio de contraseña */
-.password-section {
-    margin-top: 20px;
-    padding-top: 15px;
-    border-top: 1px dashed #ccc;
+.login-container .container-botones {
+    margin-top: 30px;
 }
 
-.password-section h3 {
-    margin-bottom: 15px;
-    color: #009496;
+/* Mensaje de error más visible */
+.login-container .errors {
+    background-color: #ffdddd;
+    border-left: 4px solid #f44336;
+    padding: 15px;
+    margin-bottom: 20px;
+    color: #721c24;
 }
 
-/* Responsividad para móviles */
+/* Responsividad mejorada para móviles */
 @media (max-width: 768px) {
     .login-container {
         max-width: 90%;
         margin: 30px auto;
+        padding: 20px;
     }
 
-    .form-group {
-        margin-bottom: 15px;
-    }
-
-    .usuarios-table {
+    .login-container .form-input {
         font-size: 14px;
+        padding: 10px 12px;
     }
 
-    .usuarios-table td,
-    .usuarios-table th {
-        padding: 8px 10px;
+    .login-container .button {
+        padding: 10px;
+        font-size: 14px;
     }
 }

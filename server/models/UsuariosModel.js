@@ -23,6 +23,10 @@ class UsuariosModel {
             delete userData.password; // No guardar la contraseña en texto plano
         }
         
+        // Asegurar que se establezcan las fechas
+        userData.fecha_registro = userData.fecha_registro || new Date();
+        userData.fecha_actualizacion = new Date();
+        
         return db.query('INSERT INTO usuarios SET ?', [userData]);
     }
 
@@ -34,6 +38,7 @@ class UsuariosModel {
             delete userData.password; // No guardar la contraseña en texto plano
         }
         
+        // Asegurar que fecha_actualizacion siempre se establezca
         userData.fecha_actualizacion = new Date();
         
         return db.query('UPDATE usuarios SET ? WHERE id_usuarios = ?', [userData, id]);
@@ -64,10 +69,11 @@ class UsuariosModel {
             return { success: false, message: 'Credenciales inválidas' };
         }
         
-        // Actualizar el último login
+        // Actualizar el último login y fecha de actualización
+        const ahora = new Date();
         await db.query(
-            'UPDATE usuarios SET ultimo_login = ? WHERE id_usuarios = ?', 
-            [new Date(), usuario.id_usuarios]
+            'UPDATE usuarios SET ultimo_login = ?, fecha_actualizacion = ? WHERE id_usuarios = ?', 
+            [ahora, ahora, usuario.id_usuarios]
         );
         
         // Devolver los datos del usuario (excluyendo la contraseña)
@@ -77,6 +83,35 @@ class UsuariosModel {
             success: true, 
             usuario: usuarioData
         };
+    }
+
+    static async cambiarPassword(id, oldPassword, newPassword) {
+        // Primero verificamos que el usuario exista
+        const [usuarios] = await this.getUsuarioById(id);
+        
+        if (usuarios.length === 0) {
+            return { success: false, message: 'Usuario no encontrado' };
+        }
+        
+        const usuario = usuarios[0];
+        
+        // Verificamos la contraseña actual
+        const isMatch = await bcrypt.compare(oldPassword, usuario.password_hash);
+        
+        if (!isMatch) {
+            return { success: false, message: 'Contraseña actual incorrecta' };
+        }
+        
+        // Hasheamos la nueva contraseña
+        const salt = await bcrypt.genSalt(10);
+        const nuevaPasswordHash = await bcrypt.hash(newPassword, salt);
+        
+        await db.query(
+            'UPDATE usuarios SET password_hash = ?, fecha_actualizacion = ? WHERE id_usuarios = ?', 
+            [nuevaPasswordHash, new Date(), id]
+        );
+        
+        return { success: true, message: 'Contraseña actualizada correctamente' };
     }
 }
 
