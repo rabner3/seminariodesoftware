@@ -1,4 +1,4 @@
-// client/src/App.jsx
+// client/src/App.jsx (actualizado)
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
@@ -6,8 +6,12 @@ import Home from './pages/Home';
 import Usuarios from './pages/Usuarios';
 import Equipos from './pages/Equipos';
 import Login from './pages/Login';
+// Nuevas importaciones para vistas de técnicos
+import TecnicoDashboard from './pages/TecnicoDashboard';
+import TecnicoReparaciones from './pages/TecnicoReparaciones';
+import TecnicoReparacionDetalle from './pages/TecnicoReparacionDetalle';
+import TecnicoAgregarParte from './pages/TecnicoAgregarParte';
 import Departamentos from './pages/Departamentos';
-
 
 function App() {
   const [usuario, setUsuario] = useState(null);
@@ -21,11 +25,17 @@ function App() {
   }, []);
 
   // Componente para rutas protegidas
-  const ProtectedRoute = ({ children }) => {
+  const ProtectedRoute = ({ children, requiredRoles = [] }) => {
     if (!usuario) {
       // Redirigir al login si no hay usuario
       return <Navigate to="/login" replace />;
     }
+
+    // Si se especifican roles requeridos, verificar que el usuario tenga uno de ellos
+    if (requiredRoles.length > 0 && !requiredRoles.includes(usuario.rol)) {
+      return <Navigate to="/" replace />;
+    }
+
     return children;
   };
 
@@ -49,22 +59,50 @@ function App() {
           {/* Rutas protegidas */}
           <Route path="/" element={
             <ProtectedRoute>
-              <Home />
+              {usuario?.rol === 'tecnico' ? <TecnicoDashboard /> : <Home />}
             </ProtectedRoute>
           } />
+
+          {/* Rutas para administradores */}
           <Route path="/usuarios" element={
-            <ProtectedRoute>
+            <ProtectedRoute requiredRoles={['admin']}>
               <Usuarios />
             </ProtectedRoute>
           } />
+
           <Route path="/equipos" element={
-            <ProtectedRoute>
+            <ProtectedRoute requiredRoles={['admin', 'tecnico']}>
               <Equipos />
             </ProtectedRoute>
           } />
+
           <Route path="/departamentos" element={
-            <ProtectedRoute>
+            <ProtectedRoute requiredRoles={['admin']}>
               <Departamentos />
+            </ProtectedRoute>
+          } />
+          {/* Rutas para técnicos */}
+          <Route path="/tecnico/dashboard" element={
+            <ProtectedRoute requiredRoles={['tecnico']}>
+              <TecnicoDashboard />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/tecnico/reparaciones" element={
+            <ProtectedRoute requiredRoles={['tecnico']}>
+              <TecnicoReparaciones />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/tecnico/reparaciones/:id" element={
+            <ProtectedRoute requiredRoles={['tecnico']}>
+              <TecnicoReparacionDetalle />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/tecnico/reparaciones/:id/partes/nueva" element={
+            <ProtectedRoute requiredRoles={['tecnico']}>
+              <TecnicoAgregarParte />
             </ProtectedRoute>
           } />
         </Routes>

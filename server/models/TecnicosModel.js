@@ -1,4 +1,4 @@
-
+// server/models/TecnicosModel.js
 const db = require('../config/db');
 
 class TecnicosModel {
@@ -8,6 +8,14 @@ class TecnicosModel {
 
     static async getTecnicoById(id) {
         return db.query('SELECT * FROM tecnicos WHERE id_tecnico = ?', [id]);
+    }
+
+    static async getTecnicoByUsuario(userId) {
+        return db.query('SELECT * FROM tecnicos WHERE id_usuario = ?', [userId]);
+    }
+
+    static async getUltimoId() {
+        return db.query('SELECT MAX(id_tecnico) as max_id FROM tecnicos');
     }
 
     static async createTecnico(tecnicoData) {

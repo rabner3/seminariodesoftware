@@ -54,3 +54,12 @@ exports.deleteReparacion = async (req, res, next) => {
         next(error);
     }
 };
+
+exports.getReparacionesByTecnico = async (req, res, next) => {
+    try {
+        const [reparaciones] = await ReparacionesModel.getReparacionesByTecnico(req.params.id);
+        res.json(reparaciones);
+    } catch (error) {
+        next(error);
+    }
+};

@@ -10,6 +10,20 @@ class ReparacionesModel {
         return db.query('SELECT * FROM reparaciones WHERE id_reparacion = ?', [id]);
     }
 
+    static async getReparacionesByTecnico(tecnicoId) {
+        const query = `
+            SELECT r.*, 
+                   e.tipo as tipo_equipo, e.marca as marca_equipo, e.modelo as modelo_equipo, e.numero_serie as serie_equipo,
+                   s.urgencia
+            FROM reparaciones r
+            LEFT JOIN equipos e ON r.id_equipo = e.id_equipo
+            LEFT JOIN solicitudes s ON r.id_solicitud = s.id_solicitud
+            WHERE r.id_tecnico = ?
+            ORDER BY r.fecha_recepcion DESC
+        `;
+        return db.query(query, [tecnicoId]);
+    }
+
     static async createReparacion(reparacionData) {
         return db.query('INSERT INTO reparaciones SET ?', [reparacionData]);
     }

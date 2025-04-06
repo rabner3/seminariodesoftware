@@ -1,5 +1,6 @@
 // server/controllers/usuariosController.js
 const UsuariosModel = require('../models/UsuariosModel');
+const TecnicosModel = require('../models/TecnicosModel');
 
 exports.getAllUsuarios = async (req, res, next) => {
     try {
@@ -21,22 +22,9 @@ exports.getUsuarioById = async (req, res, next) => {
         if (usuario.length === 0) {
             return res.status(404).json({ message: 'Usuario not found' });
         }
-
+        // Evitamos enviar el password_hash en la respuesta
         const { password_hash, token_reset, ...usuarioData } = usuario[0];
         res.json(usuarioData);
-    } catch (error) {
-        next(error);
-    }
-};
-exports.getUsuariosByDepartamento = async (req, res, next) => {
-    try {
-        const [usuarios] = await UsuariosModel.getUsuariosByDepartamento(req.params.id_departamento);
-
-        const usuariosSinPassword = usuarios.map(usuario => {
-            const { password_hash, token_reset, ...usuarioData } = usuario;
-            return usuarioData;
-        });
-        res.json(usuariosSinPassword);
     } catch (error) {
         next(error);
     }
@@ -56,12 +44,43 @@ exports.createUsuario = async (req, res, next) => {
         }
 
         const [result] = await UsuariosModel.createUsuario(req.body);
+        const nuevoUsuarioId = result.insertId;
+        
+        // Si el rol es 'tecnico', crear entrada en la tabla tecnicos
+        if (req.body.rol === 'tecnico') {
+            try {
+                // Primero, obtener el último ID de técnico para generar uno nuevo
+                const [lastTecnico] = await TecnicosModel.getUltimoId();
+                const nuevoTecnicoId = (lastTecnico[0]?.max_id || 0) + 1;
+                
+                // Datos para el nuevo técnico
+                const tecnicoData = {
+                    id_tecnico: nuevoTecnicoId, // Proporcionar explícitamente el ID
+                    nombre: req.body.nombre,
+                    apellido: req.body.apellido,
+                    email: req.body.email,
+                    especialidad: req.body.especialidad || 'General',
+                    estado: 'activo',
+                    fecha_registro: new Date(),
+                    id_usuario: nuevoUsuarioId,
+                    creado_por: req.body.creado_por || null
+                };
+                
+                // Crear el registro del técnico
+                await TecnicosModel.createTecnico(tecnicoData);
+            } catch (tecnicoError) {
+                console.error('Error al crear técnico:', tecnicoError);
+                // Opcional: Eliminar el usuario si falla la creación del técnico
+                // await UsuariosModel.deleteUsuario(nuevoUsuarioId);
+                // return res.status(500).json({ message: 'Error al crear el técnico asociado' });
+            }
+        }
         
         // Eliminar la contraseña de la respuesta
         const { password, ...userData } = req.body;
         
         res.status(201).json({ 
-            id_usuario: result.insertId, 
+            id_usuario: nuevoUsuarioId, 
             ...userData,
             message: 'Usuario creado exitosamente'
         });

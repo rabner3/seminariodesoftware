@@ -54,3 +54,17 @@ exports.deleteTecnico = async (req, res, next) => {
         next(error);
     }
 };
+exports.getTecnicoByUsuario = async (req, res, next) => {
+    try {
+        // Consulta para obtener el técnico asociado a un usuario específico
+        const [tecnicos] = await TecnicosModel.getTecnicoByUsuario(req.params.userId);
+        
+        if (tecnicos.length === 0) {
+            return res.status(404).json({ message: 'No se encontró técnico asociado a este usuario' });
+        }
+        
+        res.json(tecnicos[0]);
+    } catch (error) {
+        next(error);
+    }
+};
