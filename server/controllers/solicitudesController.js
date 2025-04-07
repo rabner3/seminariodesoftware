@@ -22,6 +22,15 @@ exports.getSolicitudById = async (req, res, next) => {
     }
 };
 
+exports.getSolicitudesByUsuario = async (req, res, next) => {
+    try {
+        const [solicitudes] = await SolicitudesModel.getSolicitudesByUsuario(req.params.userId);
+        res.json(solicitudes);
+    } catch (error) {
+        next(error);
+    }
+};
+
 exports.createSolicitud = async (req, res, next) => {
     try {
         const [result] = await SolicitudesModel.createSolicitud(req.body);

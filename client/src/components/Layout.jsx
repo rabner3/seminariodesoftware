@@ -103,6 +103,14 @@ const Layout = ({ children, user, onLogout }) => {
                   </svg>
                 </Link>
               </li>
+              <li>
+                <Link to="/solicitudes" title="Solicitudes">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M19 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h4l3 3 3-3h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 16h-4.83l-.59.59L12 20.17l-1.59-1.59-.58-.58H5V4h14v14z" />
+                    <path d="M12 11c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 5c2.7 0 5.8 1.29 6 2H6c.23-.72 3.31-2 6-2z" />
+                  </svg>
+                </Link>
+              </li>
             </ul>
           </nav>
         </div>

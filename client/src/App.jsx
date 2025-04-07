@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import Usuarios from './pages/Usuarios';
 import Equipos from './pages/Equipos';
 import Login from './pages/Login';
+import Solicitudes from './pages/Solicitudes';
 // Importaciones para vistas de técnicos
 import TecnicoDashboard from './pages/TecnicoDashboard';
 import TecnicoReparaciones from './pages/TecnicoReparaciones';
@@ -84,7 +85,7 @@ function App() {
               <Departamentos />
             </ProtectedRoute>
           } />
-          
+
           {/* Rutas para técnicos */}
           <Route path="/tecnico/dashboard" element={
             <ProtectedRoute requiredRoles={['tecnico']}>
@@ -126,6 +127,11 @@ function App() {
           <Route path="/tecnico/partes" element={
             <ProtectedRoute requiredRoles={['tecnico']}>
               <TecnicoPartes />
+            </ProtectedRoute>
+          } />
+          <Route path="/solicitudes" element={
+            <ProtectedRoute>
+              <Solicitudes />
             </ProtectedRoute>
           } />
         </Routes>
