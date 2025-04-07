@@ -3,6 +3,7 @@ import { useEffect, useContext, useState } from 'react';
 import { TitleContext } from '../context/TitleContext';
 import axios from 'axios';
 import '../assets/tecnicos.css';
+import { Link } from 'react-router-dom';
 
 function TecnicoDashboard() {
   const { setTitle } = useContext(TitleContext);
@@ -214,25 +215,25 @@ function TecnicoDashboard() {
         )}
       </div>
 
-      {/* Botones de acción rápida */}
-      <div className="quick-actions">
-        <a href="/tecnico/reparaciones" className="action-button">
-          <i className="fas fa-tools"></i>
-          <span>Todas las Reparaciones</span>
-        </a>
-        <a href="/tecnico/bitacoras" className="action-button">
-          <i className="fas fa-clipboard-list"></i>
-          <span>Mis Bitácoras</span>
-        </a>
-        <a href="/tecnico/diagnosticos" className="action-button">
-          <i className="fas fa-search"></i>
-          <span>Diagnósticos</span>
-        </a>
-        <a href="/tecnico/partes" className="action-button">
-          <i className="fas fa-microchip"></i>
-          <span>Inventario de Partes</span>
-        </a>
-      </div>
+{/* Botones de acción rápida */}
+<div className="quick-actions">
+  <Link to="/tecnico/reparaciones" className="action-button">
+    <i className="fas fa-tools"></i>
+    <span>Todas las Reparaciones</span>
+  </Link>
+  <Link to="/tecnico/bitacoras" className="action-button">
+    <i className="fas fa-clipboard-list"></i>
+    <span>Mis Bitácoras</span>
+  </Link>
+  <Link to="/tecnico/diagnosticos" className="action-button">
+    <i className="fas fa-search"></i>
+    <span>Diagnósticos</span>
+  </Link>
+  <Link to="/tecnico/partes" className="action-button">
+    <i className="fas fa-microchip"></i>
+    <span>Inventario de Partes</span>
+  </Link>
+</div>
     </div>
   );
 }

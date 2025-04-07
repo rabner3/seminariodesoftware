@@ -1,4 +1,4 @@
-
+// server/models/DiagnosticosModel.js (con métodos adicionales)
 const db = require('../config/db');
 
 class DiagnosticosModel {
@@ -8,6 +8,14 @@ class DiagnosticosModel {
 
     static async getDiagnosticoById(id) {
         return db.query('SELECT * FROM diagnosticos WHERE id_diagnostico = ?', [id]);
+    }
+
+    static async getDiagnosticosByReparacion(idReparacion) {
+        return db.query('SELECT * FROM diagnosticos WHERE id_reparacion = ?', [idReparacion]);
+    }
+
+    static async getDiagnosticosByTecnico(idTecnico) {
+        return db.query('SELECT * FROM diagnosticos WHERE id_tecnico = ?', [idTecnico]);
     }
 
     static async createDiagnostico(diagnosticoData) {

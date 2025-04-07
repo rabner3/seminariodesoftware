@@ -1,4 +1,4 @@
-// client/src/App.jsx (actualizado)
+// client/src/App.jsx (actualizado con nuevas rutas)
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
@@ -6,11 +6,14 @@ import Home from './pages/Home';
 import Usuarios from './pages/Usuarios';
 import Equipos from './pages/Equipos';
 import Login from './pages/Login';
-// Nuevas importaciones para vistas de técnicos
+// Importaciones para vistas de técnicos
 import TecnicoDashboard from './pages/TecnicoDashboard';
 import TecnicoReparaciones from './pages/TecnicoReparaciones';
 import TecnicoReparacionDetalle from './pages/TecnicoReparacionDetalle';
 import TecnicoAgregarParte from './pages/TecnicoAgregarParte';
+import TecnicoBitacoras from './pages/TecnicoBitacoras';
+import TecnicoDiagnosticos from './pages/TecnicoDiagnosticos';
+import TecnicoPartes from './pages/TecnicoPartes';
 import Departamentos from './pages/Departamentos';
 
 function App() {
@@ -81,6 +84,7 @@ function App() {
               <Departamentos />
             </ProtectedRoute>
           } />
+          
           {/* Rutas para técnicos */}
           <Route path="/tecnico/dashboard" element={
             <ProtectedRoute requiredRoles={['tecnico']}>
@@ -103,6 +107,25 @@ function App() {
           <Route path="/tecnico/reparaciones/:id/partes/nueva" element={
             <ProtectedRoute requiredRoles={['tecnico']}>
               <TecnicoAgregarParte />
+            </ProtectedRoute>
+          } />
+
+          {/* Nuevas rutas agregadas */}
+          <Route path="/tecnico/bitacoras" element={
+            <ProtectedRoute requiredRoles={['tecnico']}>
+              <TecnicoBitacoras />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/tecnico/diagnosticos" element={
+            <ProtectedRoute requiredRoles={['tecnico']}>
+              <TecnicoDiagnosticos />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/tecnico/partes" element={
+            <ProtectedRoute requiredRoles={['tecnico']}>
+              <TecnicoPartes />
             </ProtectedRoute>
           } />
         </Routes>

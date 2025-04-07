@@ -1,4 +1,4 @@
-
+// server/controllers/diagnosticosController.js (con métodos añadidos)
 const DiagnosticosModel = require('../models/DiagnosticosModel');
 
 exports.getAllDiagnosticos = async (req, res, next) => {
@@ -17,6 +17,24 @@ exports.getDiagnosticoById = async (req, res, next) => {
             return res.status(404).json({ message: 'Diagnóstico not found' });
         }
         res.json(diagnostico[0]);
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.getDiagnosticosByReparacion = async (req, res, next) => {
+    try {
+        const [diagnosticos] = await DiagnosticosModel.getDiagnosticosByReparacion(req.params.id);
+        res.json(diagnosticos);
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.getDiagnosticosByTecnico = async (req, res, next) => {
+    try {
+        const [diagnosticos] = await DiagnosticosModel.getDiagnosticosByTecnico(req.params.id);
+        res.json(diagnosticos);
     } catch (error) {
         next(error);
     }
