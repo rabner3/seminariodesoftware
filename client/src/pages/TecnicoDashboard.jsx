@@ -1,16 +1,15 @@
 // client/src/pages/TecnicoDashboard.jsx
-import { useEffect, useContext, useState } from 'react';
+import { useEffect, useContext, useState, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { TitleContext } from '../context/TitleContext';
 import axios from 'axios';
 import '../assets/tecnicos.css';
-import { Link } from 'react-router-dom';
 
 function TecnicoDashboard() {
   const { setTitle } = useContext(TitleContext);
   const [tecnico, setTecnico] = useState(null);
   const [reparacionesPendientes, setReparacionesPendientes] = useState([]);
   const [reparacionesEnProceso, setReparacionesEnProceso] = useState([]);
-  const [reparacionesCompletadas, setReparacionesCompletadas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [stats, setStats] = useState({
@@ -21,16 +20,32 @@ function TecnicoDashboard() {
     tiempoPromedio: 0
   });
 
-  useEffect(() => {
-    setTitle("DASHBOARD TÉCNICO");
-    cargarDatosTecnico();
-  }, [setTitle]);
+  const calcularTiempoPromedio = useCallback((reparaciones) => {
+    if (!reparaciones || reparaciones.length === 0) return 0;
+    
+    const tiemposTotales = reparaciones
+      .filter(rep => rep && rep.tiempo_total)
+      .map(rep => rep.tiempo_total);
+    
+    if (tiemposTotales.length === 0) return 0;
+    
+    const tiempoTotal = tiemposTotales.reduce((acc, tiempo) => acc + tiempo, 0);
+    return Math.round(tiempoTotal / tiemposTotales.length);
+  }, []);
 
-  const cargarDatosTecnico = async () => {
+  // Definimos la función usando useCallback para evitar el warning de dependencias
+  const cargarDatosTecnico = useCallback(async () => {
     try {
       setLoading(true);
       // Obtener información del usuario logueado del localStorage
-      const usuario = JSON.parse(localStorage.getItem('usuario'));
+      const usuarioJSON = localStorage.getItem('usuario');
+      if (!usuarioJSON) {
+        setError('No se encontró información de usuario');
+        setLoading(false);
+        return;
+      }
+
+      const usuario = JSON.parse(usuarioJSON);
       
       if (!usuario || usuario.rol !== 'tecnico') {
         setError('No tiene permisos para acceder a esta página');
@@ -39,51 +54,53 @@ function TecnicoDashboard() {
       }
 
       // Cargar datos del técnico
-      const responseTecnico = await axios.get(`http://localhost:8080/api/tecnicos/usuario/${usuario.id_usuarios}`);
-      setTecnico(responseTecnico.data);
+      try {
+        const responseTecnico = await axios.get(`http://localhost:8080/api/tecnicos/usuario/${usuario.id_usuarios}`);
+        setTecnico(responseTecnico.data);
 
-      if (responseTecnico.data) {
-        // Cargar reparaciones asignadas al técnico
-        const responseReparaciones = await axios.get(`http://localhost:8080/api/reparaciones/tecnico/${responseTecnico.data.id_tecnico}`);
-        
-        // Filtrar por estado
-        const pendientes = responseReparaciones.data.filter(rep => rep.estado === 'pendiente' || rep.estado === 'diagnostico');
-        const enProceso = responseReparaciones.data.filter(rep => rep.estado === 'en_reparacion' || rep.estado === 'espera_repuestos');
-        const completadas = responseReparaciones.data.filter(rep => rep.estado === 'completada');
-        
-        setReparacionesPendientes(pendientes);
-        setReparacionesEnProceso(enProceso);
-        setReparacionesCompletadas(completadas);
-        
-        // Calcular estadísticas
-        setStats({
-          totalAsignadas: responseReparaciones.data.length,
-          totalPendientes: pendientes.length,
-          totalEnProceso: enProceso.length,
-          totalCompletadas: completadas.length,
-          tiempoPromedio: calcularTiempoPromedio(completadas)
-        });
+        if (responseTecnico.data) {
+          // Cargar reparaciones asignadas al técnico
+          const responseReparaciones = await axios.get(`http://localhost:8080/api/reparaciones/tecnico/${responseTecnico.data.id_tecnico}`);
+          
+          if (responseReparaciones.data) {
+            // Filtrar por estado con comprobaciones de seguridad
+            const pendientes = responseReparaciones.data.filter(rep => 
+              rep && (rep.estado === 'pendiente' || rep.estado === 'diagnostico'));
+            const enProceso = responseReparaciones.data.filter(rep => 
+              rep && (rep.estado === 'en_reparacion' || rep.estado === 'espera_repuestos'));
+            const completadas = responseReparaciones.data.filter(rep => 
+              rep && rep.estado === 'completada');
+            
+            setReparacionesPendientes(pendientes || []);
+            setReparacionesEnProceso(enProceso || []);
+            
+            // Calcular estadísticas
+            setStats({
+              totalAsignadas: responseReparaciones.data.length,
+              totalPendientes: pendientes ? pendientes.length : 0,
+              totalEnProceso: enProceso ? enProceso.length : 0,
+              totalCompletadas: completadas ? completadas.length : 0,
+              tiempoPromedio: calcularTiempoPromedio(completadas)
+            });
+          }
+        }
+      } catch (err) {
+        console.error("Error al cargar datos del técnico:", err);
+        setError(`Error al cargar datos del técnico: ${err.message}`);
       }
       
       setLoading(false);
     } catch (err) {
+      console.error("Error general:", err);
       setError(`Error al cargar datos: ${err.message}`);
       setLoading(false);
     }
-  };
+  }, [calcularTiempoPromedio]);
 
-  const calcularTiempoPromedio = (reparaciones) => {
-    if (reparaciones.length === 0) return 0;
-    
-    const tiemposTotales = reparaciones
-      .filter(rep => rep.tiempo_total)
-      .map(rep => rep.tiempo_total);
-    
-    if (tiemposTotales.length === 0) return 0;
-    
-    const tiempoTotal = tiemposTotales.reduce((acc, tiempo) => acc + tiempo, 0);
-    return Math.round(tiempoTotal / tiemposTotales.length);
-  };
+  useEffect(() => {
+    setTitle("DASHBOARD TÉCNICO");
+    cargarDatosTecnico();
+  }, [setTitle, cargarDatosTecnico]);
 
   if (loading) return <div className="loading">Cargando datos...</div>;
   if (error) return <div className="error">{error}</div>;
@@ -118,7 +135,7 @@ function TecnicoDashboard() {
       {/* Sección de reparaciones pendientes */}
       <div className="container-widgets">
         <h2>Reparaciones Pendientes ({reparacionesPendientes.length})</h2>
-        {reparacionesPendientes.length > 0 ? (
+        {reparacionesPendientes && reparacionesPendientes.length > 0 ? (
           <div className="container-flow-table">
             <table className="equipos-table">
               <thead>
@@ -135,13 +152,13 @@ function TecnicoDashboard() {
                 {reparacionesPendientes.map(reparacion => (
                   <tr key={reparacion.id_reparacion}>
                     <td>{reparacion.id_reparacion}</td>
-                    <td>{`${reparacion.tipo_equipo} ${reparacion.marca_equipo} ${reparacion.modelo_equipo}`}</td>
+                    <td>{`${reparacion.tipo_equipo || ''} ${reparacion.marca_equipo || ''} ${reparacion.modelo_equipo || ''}`}</td>
                     <td>
-                      <span className={`estado-badge estado-${reparacion.estado}`}>
-                        {reparacion.estado}
+                      <span className={`estado-badge estado-${reparacion.estado || 'pendiente'}`}>
+                        {reparacion.estado || 'pendiente'}
                       </span>
                     </td>
-                    <td>{new Date(reparacion.fecha_recepcion).toLocaleDateString()}</td>
+                    <td>{reparacion.fecha_recepcion ? new Date(reparacion.fecha_recepcion).toLocaleDateString() : 'N/A'}</td>
                     <td>
                       <span className={`urgencia-badge urgencia-${reparacion.urgencia || 'normal'}`}>
                         {reparacion.urgencia || 'Normal'}
@@ -149,9 +166,9 @@ function TecnicoDashboard() {
                     </td>
                     <td>
                       <div className="botones-accion">
-                        <a href={`/tecnico/reparaciones/${reparacion.id_reparacion}`} className="button azul-claro">
+                        <Link to={`/tecnico/reparaciones/${reparacion.id_reparacion}`} className="button azul-claro">
                           Ver Detalles
-                        </a>
+                        </Link>
                       </div>
                     </td>
                   </tr>
@@ -167,7 +184,7 @@ function TecnicoDashboard() {
       {/* Sección de reparaciones en proceso */}
       <div className="container-widgets">
         <h2>Reparaciones En Proceso ({reparacionesEnProceso.length})</h2>
-        {reparacionesEnProceso.length > 0 ? (
+        {reparacionesEnProceso && reparacionesEnProceso.length > 0 ? (
           <div className="container-flow-table">
             <table className="equipos-table">
               <thead>
@@ -182,26 +199,29 @@ function TecnicoDashboard() {
               </thead>
               <tbody>
                 {reparacionesEnProceso.map(reparacion => {
-                  const fechaInicio = new Date(reparacion.fecha_inicio);
-                  const hoy = new Date();
-                  const diasEnReparacion = Math.floor((hoy - fechaInicio) / (1000 * 60 * 60 * 24));
+                  let diasEnReparacion = 0;
+                  if (reparacion.fecha_inicio) {
+                    const fechaInicio = new Date(reparacion.fecha_inicio);
+                    const hoy = new Date();
+                    diasEnReparacion = Math.floor((hoy - fechaInicio) / (1000 * 60 * 60 * 24));
+                  }
                   
                   return (
                     <tr key={reparacion.id_reparacion}>
                       <td>{reparacion.id_reparacion}</td>
-                      <td>{`${reparacion.tipo_equipo} ${reparacion.marca_equipo} ${reparacion.modelo_equipo}`}</td>
+                      <td>{`${reparacion.tipo_equipo || ''} ${reparacion.marca_equipo || ''} ${reparacion.modelo_equipo || ''}`}</td>
                       <td>
-                        <span className={`estado-badge estado-${reparacion.estado}`}>
-                          {reparacion.estado}
+                        <span className={`estado-badge estado-${reparacion.estado || 'en_reparacion'}`}>
+                          {reparacion.estado || 'en_reparacion'}
                         </span>
                       </td>
-                      <td>{fechaInicio.toLocaleDateString()}</td>
+                      <td>{reparacion.fecha_inicio ? new Date(reparacion.fecha_inicio).toLocaleDateString() : 'N/A'}</td>
                       <td>{diasEnReparacion}</td>
                       <td>
                         <div className="botones-accion">
-                          <a href={`/tecnico/reparaciones/${reparacion.id_reparacion}`} className="button azul-claro">
+                          <Link to={`/tecnico/reparaciones/${reparacion.id_reparacion}`} className="button azul-claro">
                             Ver Detalles
-                          </a>
+                          </Link>
                         </div>
                       </td>
                     </tr>
@@ -215,25 +235,25 @@ function TecnicoDashboard() {
         )}
       </div>
 
-{/* Botones de acción rápida */}
-<div className="quick-actions">
-  <Link to="/tecnico/reparaciones" className="action-button">
-    <i className="fas fa-tools"></i>
-    <span>Todas las Reparaciones</span>
-  </Link>
-  <Link to="/tecnico/bitacoras" className="action-button">
-    <i className="fas fa-clipboard-list"></i>
-    <span>Mis Bitácoras</span>
-  </Link>
-  <Link to="/tecnico/diagnosticos" className="action-button">
-    <i className="fas fa-search"></i>
-    <span>Diagnósticos</span>
-  </Link>
-  <Link to="/tecnico/partes" className="action-button">
-    <i className="fas fa-microchip"></i>
-    <span>Inventario de Partes</span>
-  </Link>
-</div>
+      {/* Botones de acción rápida */}
+      <div className="quick-actions">
+        <Link to="/tecnico/reparaciones" className="action-button">
+          <i className="fas fa-tools"></i>
+          <span>Todas las Reparaciones</span>
+        </Link>
+        <Link to="/tecnico/bitacoras" className="action-button">
+          <i className="fas fa-clipboard-list"></i>
+          <span>Mis Bitácoras</span>
+        </Link>
+        <Link to="/tecnico/diagnosticos" className="action-button">
+          <i className="fas fa-search"></i>
+          <span>Diagnósticos</span>
+        </Link>
+        <Link to="/tecnico/partes" className="action-button">
+          <i className="fas fa-microchip"></i>
+          <span>Inventario de Partes</span>
+        </Link>
+      </div>
     </div>
   );
 }
