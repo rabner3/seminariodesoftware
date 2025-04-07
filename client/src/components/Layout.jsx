@@ -2,6 +2,7 @@
 import React, { useContext, useState, useRef, useEffect } from 'react';
 import { TitleContext } from '../context/TitleContext';
 import { Link } from 'react-router-dom';
+import NotificacionesDropdown from './notificaciones/NotificacionesDropdown';
 import '../assets/site.css';
 
 const Layout = ({ children, user, onLogout }) => {
@@ -37,6 +38,7 @@ const Layout = ({ children, user, onLogout }) => {
 
         {user ? (
           <div className="user-login-container" ref={userMenuRef}>
+            <NotificacionesDropdown />
             <p>{user.nombre}</p>
             <span onClick={toggleUserMenu} className="user-avatar" title={`${user.nombre} - ${user.rol}`}>
               {user.nombre.charAt(0)}
@@ -108,6 +110,13 @@ const Layout = ({ children, user, onLogout }) => {
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                     <path d="M19 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h4l3 3 3-3h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 16h-4.83l-.59.59L12 20.17l-1.59-1.59-.58-.58H5V4h14v14z" />
                     <path d="M12 11c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 5c2.7 0 5.8 1.29 6 2H6c.23-.72 3.31-2 6-2z" />
+                  </svg>
+                </Link>
+              </li>
+              <li>
+                <Link to="/notificaciones" title="Notificaciones">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z" />
                   </svg>
                 </Link>
               </li>

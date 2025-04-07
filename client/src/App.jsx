@@ -20,6 +20,7 @@ import TecnicoDiagnosticos from './pages/TecnicoDiagnosticos';
 import TecnicoPartes from './pages/TecnicoPartes';
 import Departamentos from './pages/Departamentos';
 import AdminDashboard from './pages/AdminDashboard';
+import Notificaciones from './pages/Notificaciones';
 
 function App() {
   const [usuario, setUsuario] = useState(null);
@@ -67,9 +68,9 @@ function App() {
           {/* Rutas protegidas */}
           <Route path="/" element={
             <ProtectedRoute>
-              {usuario?.rol === 'tecnico' ? <TecnicoDashboard /> : 
-               (usuario?.rol === 'admin' ? <AdminDashboard /> :
-               (usuario?.rol === 'usuario' ? <UsuarioDashboard /> : <Home />))}
+              {usuario?.rol === 'tecnico' ? <TecnicoDashboard /> :
+                (usuario?.rol === 'admin' ? <AdminDashboard /> :
+                  (usuario?.rol === 'usuario' ? <UsuarioDashboard /> : <Home />))}
             </ProtectedRoute>
           } />
 
@@ -157,6 +158,11 @@ function App() {
           <Route path="/tecnico/partes" element={
             <ProtectedRoute requiredRoles={['tecnico']}>
               <TecnicoPartes />
+            </ProtectedRoute>
+          } />
+          <Route path="/notificaciones" element={
+            <ProtectedRoute>
+              <Notificaciones />
             </ProtectedRoute>
           } />
         </Routes>

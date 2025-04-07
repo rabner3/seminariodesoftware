@@ -1,0 +1,126 @@
+/* client/src/assets/notificaciones.css */
+.notificaciones-lista-completa {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.notificacion-card {
+    display: flex;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.notificacion-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.notificacion-card.no-leida {
+    background-color: #f0f7ff;
+    border-left: 3px solid #007bff;
+}
+
+.notificacion-card-icono {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #e9f5fe;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.notificacion-card-icono i {
+    font-size: 18px;
+    color: #007bff;
+}
+
+.notificacion-card-contenido {
+    flex-grow: 1;
+}
+
+.notificacion-card-titulo {
+    margin: 0 0 5px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+
+.notificacion-card-mensaje {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+    color: #666;
+    line-height: 1.5;
+}
+
+.notificacion-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+}
+
+.notificacion-card-fecha {
+    color: #888;
+}
+
+.notificacion-card-link {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.notificacion-card-link:hover {
+    text-decoration: underline;
+}
+
+.notificaciones-vacio {
+    text-align: center;
+    padding: 50px 0;
+    color: #666;
+}
+
+.notificaciones-vacio i {
+    font-size: 40px;
+    color: #ccc;
+    margin-bottom: 10px;
+}
+
+.notificaciones-vacio p {
+    font-size: 16px;
+}
+
+.filtros-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.filtro-grupo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.filtro-grupo label {
+    font-weight: 500;
+    color: #666;
+}
+
+.filtro-grupo select {
+    padding: 8px 12px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background-color: white;
+    font-size: 14px;
+}
