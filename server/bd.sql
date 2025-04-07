@@ -341,22 +341,24 @@ CREATE TABLE IF NOT EXISTS `solicitudes` (
 
 -- Volcando datos para la tabla proyecto.solicitudes: ~0 rows (aproximadamente)
 
--- Volcando estructura para tabla proyecto.tecnicos
-CREATE TABLE IF NOT EXISTS `tecnicos` (
-  `id_tecnico` int(11) NOT NULL,
-  `nombre` varchar(20) DEFAULT NULL,
-  `apellido` varchar(20) DEFAULT NULL,
-  `email` varchar(20) DEFAULT NULL,
-  `especialidad` varchar(30) DEFAULT NULL,
-  `estado` enum('activo','inactivo') DEFAULT NULL,
-  `fecha_registro` datetime DEFAULT NULL,
-  `fecha_actualizacion` datetime DEFAULT NULL,
-  `creado_por` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id_tecnico`),
-  UNIQUE KEY `email` (`email`),
-  KEY `nombre` (`nombre`),
-  KEY `fk_tecnico_creador` (`creado_por`),
-  CONSTRAINT `fk_tecnico_creador` FOREIGN KEY (`creado_por`) REFERENCES `usuarios` (`id_usuarios`) ON DELETE SET NULL ON UPDATE CASCADE
+-- Volcando estructura para tabla proyecto.tecnicos (ACTUALIZADA)
+CREATE TABLE IF NOT EXISTS tecnicos (
+  id_tecnico int(11) NOT NULL,
+  id_usuario int(11) DEFAULT NULL,  
+  nombre varchar(20) DEFAULT NULL,
+  apellido varchar(20) DEFAULT NULL,
+  email varchar(20) DEFAULT NULL,
+  especialidad varchar(30) DEFAULT NULL,
+  estado enum('activo','inactivo') DEFAULT NULL,
+  fecha_registro datetime DEFAULT NULL,
+  fecha_actualizacion datetime DEFAULT NULL,
+  creado_por int(11) DEFAULT NULL,
+  PRIMARY KEY (id_tecnico),
+  UNIQUE KEY email (email),
+  KEY nombre (nombre),
+  KEY fk_tecnico_creador (creado_por),
+  CONSTRAINT fk_tecnicos_usuario FOREIGN KEY (id_usuario) REFERENCES usuarios (id_usuarios) ON DELETE SET NULL ON UPDATE CASCADE,  -- Nueva FK
+  CONSTRAINT fk_tecnico_creador FOREIGN KEY (creado_por) REFERENCES usuarios (id_usuarios) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Volcando datos para la tabla proyecto.tecnicos: ~0 rows (aproximadamente)
