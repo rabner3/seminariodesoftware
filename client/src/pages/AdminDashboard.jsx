@@ -39,6 +39,7 @@ function AdminDashboard() {
             const equiposDisponibles = equipos.filter(e => e.estado === 'disponible').length;
             const equiposAsignados = equipos.filter(e => e.estado === 'asignado').length;
             const equiposEnReparacion = equipos.filter(e => e.estado === 'en_reparacion').length;
+            const otrosEquipos = totalEquipos - equiposDisponibles - equiposAsignados - equiposEnReparacion;
 
             // Obtener últimos 5 equipos registrados
             const equiposOrdenados = [...equipos].sort((a, b) =>
@@ -79,6 +80,7 @@ function AdminDashboard() {
                 equiposDisponibles,
                 equiposAsignados,
                 equiposEnReparacion,
+                otrosEquipos,
                 totalUsuarios,
                 solicitudesPendientes,
                 reparacionesActivas,
@@ -96,6 +98,150 @@ function AdminDashboard() {
     const formatearFecha = (fechaStr) => {
         if (!fechaStr) return 'No disponible';
         return new Date(fechaStr).toLocaleDateString();
+    };
+
+    // Función para renderizar el gráfico circular
+    const renderPieChart = () => {
+        // Verificar que tengamos datos válidos
+        if (estadisticas.totalEquipos === 0) {
+            return <div>No hay datos disponibles</div>;
+        }
+
+        // Definir los colores para cada segmento
+        const colors = {
+            disponibles: '#28a745',  // verde
+            asignados: '#0d6efd',    // azul
+            enReparacion: '#ffc107', // amarillo
+            otros: '#dc3545'         // rojo
+        };
+
+        // Calcular los porcentajes
+        const disponiblesPercent = (estadisticas.equiposDisponibles / estadisticas.totalEquipos) * 100;
+        const asignadosPercent = (estadisticas.equiposAsignados / estadisticas.totalEquipos) * 100;
+        const enReparacionPercent = (estadisticas.equiposEnReparacion / estadisticas.totalEquipos) * 100;
+        const otrosPercent = (estadisticas.otrosEquipos / estadisticas.totalEquipos) * 100;
+
+        // Crear los estilos para cada segmento del gráfico circular
+        const _pieStyles = [
+            { // Disponibles
+                backgroundColor: colors.disponibles,
+                transform: 'rotate(0deg)',
+                clipPath: `polygon(50% 0, 100% 0, 100% 100%, 50% 100%, 50% 50%)`,
+                width: `${disponiblesPercent}%`,
+                zIndex: 4
+            },
+            { // Asignados
+                backgroundColor: colors.asignados,
+                transform: `rotate(${disponiblesPercent * 3.6}deg)`,
+                clipPath: `polygon(50% 0, 100% 0, 100% 100%, 50% 100%, 50% 50%)`,
+                width: `${asignadosPercent}%`,
+                zIndex: 3
+            },
+            { // En Reparación
+                backgroundColor: colors.enReparacion,
+                transform: `rotate(${(disponiblesPercent + asignadosPercent) * 3.6}deg)`,
+                clipPath: `polygon(50% 0, 100% 0, 100% 100%, 50% 100%, 50% 50%)`,
+                width: `${enReparacionPercent}%`,
+                zIndex: 2
+            },
+            { // Otros
+                backgroundColor: colors.otros,
+                transform: `rotate(${(disponiblesPercent + asignadosPercent + enReparacionPercent) * 3.6}deg)`,
+                clipPath: `polygon(50% 0, 100% 0, 100% 100%, 50% 100%, 50% 50%)`,
+                width: `${otrosPercent}%`,
+                zIndex: 1
+            }
+        ];
+
+        return (
+            <div className="pie-chart">
+                <div className="pie-chart-wrapper" style={{ position: 'relative', width: '250px', height: '250px' }}>
+                    {/* Fondo del gráfico */}
+                    <div style={{
+                        position: 'absolute',
+                        width: '100%',
+                        height: '100%',
+                        borderRadius: '50%',
+                        background: '#f0f0f0'
+                    }}></div>
+
+                    {/* Segmento de Disponibles */}
+                    {disponiblesPercent > 0 && (
+                        <div style={{
+                            position: 'absolute',
+                            width: '100%',
+                            height: '100%',
+                            borderRadius: '50%',
+                            background: 'conic-gradient(#28a745 0% ' + disponiblesPercent + '%, transparent ' + disponiblesPercent + '% 100%)'
+                        }}></div>
+                    )}
+
+                    {/* Segmento de Asignados */}
+                    {asignadosPercent > 0 && (
+                        <div style={{
+                            position: 'absolute',
+                            width: '100%',
+                            height: '100%',
+                            borderRadius: '50%',
+                            background: 'conic-gradient(transparent 0% ' + disponiblesPercent + '%, #0d6efd ' + disponiblesPercent + '% ' + (disponiblesPercent + asignadosPercent) + '%, transparent ' + (disponiblesPercent + asignadosPercent) + '% 100%)'
+                        }}></div>
+                    )}
+
+                    {/* Segmento de En Reparación */}
+                    {enReparacionPercent > 0 && (
+                        <div style={{
+                            position: 'absolute',
+                            width: '100%',
+                            height: '100%',
+                            borderRadius: '50%',
+                            background: 'conic-gradient(transparent 0% ' + (disponiblesPercent + asignadosPercent) + '%, #ffc107 ' + (disponiblesPercent + asignadosPercent) + '% ' + (disponiblesPercent + asignadosPercent + enReparacionPercent) + '%, transparent ' + (disponiblesPercent + asignadosPercent + enReparacionPercent) + '% 100%)'
+                        }}></div>
+                    )}
+
+                    {/* Segmento de Otros */}
+                    {otrosPercent > 0 && (
+                        <div style={{
+                            position: 'absolute',
+                            width: '100%',
+                            height: '100%',
+                            borderRadius: '50%',
+                            background: 'conic-gradient(transparent 0% ' + (disponiblesPercent + asignadosPercent + enReparacionPercent) + '%, #dc3545 ' + (disponiblesPercent + asignadosPercent + enReparacionPercent) + '% 100%)'
+                        }}></div>
+                    )}
+
+                    {/* Círculo central para crear efecto de dona */}
+                    <div style={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        width: '60%',
+                        height: '60%',
+                        transform: 'translate(-50%, -50%)',
+                        borderRadius: '50%',
+                        background: 'white'
+                    }}></div>
+                </div>
+
+                <div className="chart-legend">
+                    <div className="legend-item">
+                        <div className="legend-color" style={{ backgroundColor: '#28a745' }}></div>
+                        <div className="legend-text">Disponibles: {estadisticas.equiposDisponibles}</div>
+                    </div>
+                    <div className="legend-item">
+                        <div className="legend-color" style={{ backgroundColor: '#0d6efd' }}></div>
+                        <div className="legend-text">Asignados: {estadisticas.equiposAsignados}</div>
+                    </div>
+                    <div className="legend-item">
+                        <div className="legend-color" style={{ backgroundColor: '#ffc107' }}></div>
+                        <div className="legend-text">En Reparación: {estadisticas.equiposEnReparacion}</div>
+                    </div>
+                    <div className="legend-item">
+                        <div className="legend-color" style={{ backgroundColor: '#dc3545' }}></div>
+                        <div className="legend-text">Otros: {estadisticas.otrosEquipos}</div>
+                    </div>
+                </div>
+            </div>
+        );
     };
 
     if (loading) return <div className="loading">Cargando estadísticas...</div>;
@@ -153,48 +299,7 @@ function AdminDashboard() {
             {/* Gráfico de distribución de equipos */}
             <div className="chart-container container-widgets">
                 <h3>Distribución de Equipos</h3>
-                <div className="pie-chart">
-                    <div className="pie-chart-container">
-                        <div className="pie-segment" style={{
-                            '--percentage': (estadisticas.equiposDisponibles / estadisticas.totalEquipos) * 100,
-                            '--color': '#28a745'
-                        }}></div>
-                        <div className="pie-segment" style={{
-                            '--percentage': (estadisticas.equiposAsignados / estadisticas.totalEquipos) * 100,
-                            '--color': '#0d6efd',
-                            '--offset': (estadisticas.equiposDisponibles / estadisticas.totalEquipos) * 100
-                        }}></div>
-                        <div className="pie-segment" style={{
-                            '--percentage': (estadisticas.equiposEnReparacion / estadisticas.totalEquipos) * 100,
-                            '--color': '#ffc107',
-                            '--offset': ((estadisticas.equiposDisponibles + estadisticas.equiposAsignados) / estadisticas.totalEquipos) * 100
-                        }}></div>
-                        <div className="pie-segment" style={{
-                            '--percentage': ((estadisticas.totalEquipos - estadisticas.equiposDisponibles - estadisticas.equiposAsignados - estadisticas.equiposEnReparacion) / estadisticas.totalEquipos) * 100,
-                            '--color': '#dc3545',
-                            '--offset': ((estadisticas.equiposDisponibles + estadisticas.equiposAsignados + estadisticas.equiposEnReparacion) / estadisticas.totalEquipos) * 100
-                        }}></div>
-                    </div>
-
-                    <div className="chart-legend">
-                        <div className="legend-item">
-                            <div className="legend-color" style={{ backgroundColor: '#28a745' }}></div>
-                            <div className="legend-text">Disponibles: {estadisticas.equiposDisponibles}</div>
-                        </div>
-                        <div className="legend-item">
-                            <div className="legend-color" style={{ backgroundColor: '#0d6efd' }}></div>
-                            <div className="legend-text">Asignados: {estadisticas.equiposAsignados}</div>
-                        </div>
-                        <div className="legend-item">
-                            <div className="legend-color" style={{ backgroundColor: '#ffc107' }}></div>
-                            <div className="legend-text">En Reparación: {estadisticas.equiposEnReparacion}</div>
-                        </div>
-                        <div className="legend-item">
-                            <div className="legend-color" style={{ backgroundColor: '#dc3545' }}></div>
-                            <div className="legend-text">Otros: {estadisticas.totalEquipos - estadisticas.equiposDisponibles - estadisticas.equiposAsignados - estadisticas.equiposEnReparacion}</div>
-                        </div>
-                    </div>
-                </div>
+                {renderPieChart()}
             </div>
 
             {/* Sección de Contenido Principal */}

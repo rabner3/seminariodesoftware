@@ -1,3 +1,4 @@
+// client/src/components/solicitudes/SolicitudForm.jsx
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -86,13 +87,16 @@ function SolicitudForm({ solicitud, equipoId, onSave, onCancel }) {
                 throw new Error('Debe iniciar sesión para crear una solicitud');
             }
 
+            // Fecha en formato YYYY-MM-DD
+            const fechaActual = new Date().toISOString().split('T')[0];
+
             const solicitudData = {
                 ...formData,
                 id_usuario: usuario.id_usuarios,
-                fecha_solicitud: new Date().toISOString(),
+                fecha_solicitud: fechaActual,
                 estado: 'pendiente',
                 creado_por: usuario.id_usuarios,
-                fecha_creacion: new Date().toISOString()
+                fecha_creacion: fechaActual
             };
 
             let response;

@@ -110,7 +110,7 @@ function TecnicoReparacionDetalle() {
             // Actualizar datos de finalización
             await axios.put(`http://localhost:8080/api/reparaciones/${id}`, {
                 estado: 'completada',
-                fecha_fin: new Date(),
+                fecha_fin: new Date().toISOString().split('T')[0],
                 costo_final: formData.costo_final,
                 tiempo_total: formData.tiempo_total,
                 observaciones: formData.observaciones
@@ -126,11 +126,6 @@ function TecnicoReparacionDetalle() {
                 fecha_accion: new Date(),
                 creado_por: JSON.parse(localStorage.getItem('usuario')).id_usuarios,
                 fecha_creacion: new Date()
-            });
-
-            // Actualizar estado del equipo a disponible
-            await axios.put(`http://localhost:8080/api/equipos/${reparacion.id_equipo}`, {
-                estado: 'disponible'
             });
 
             // Recargar datos

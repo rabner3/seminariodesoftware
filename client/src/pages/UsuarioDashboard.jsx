@@ -1,11 +1,12 @@
 // client/src/pages/UsuarioDashboard.jsx
 import { useEffect, useContext, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { TitleContext } from '../context/TitleContext';
 import axios from 'axios';
 
 function UsuarioDashboard() {
     const { setTitle } = useContext(TitleContext);
+    const navigate = useNavigate();
     const [equiposAsignados, setEquiposAsignados] = useState([]);
     const [solicitudesActivas, setSolicitudesActivas] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -29,7 +30,7 @@ function UsuarioDashboard() {
         try {
             setLoading(true);
 
-            // Cargar equipos asignados al usuario
+            // Cargar equipos asignados al usuario - solo asignaciones activas
             try {
                 const responseAsignaciones = await axios.get(`http://localhost:8080/api/asignaciones?id_usuario=${userId}&estado=activa`);
 
@@ -38,27 +39,42 @@ function UsuarioDashboard() {
                     if (asignacion.id_equipo) {
                         try {
                             const equipoResponse = await axios.get(`http://localhost:8080/api/equipos/${asignacion.id_equipo}`);
-                            return {
-                                ...equipoResponse.data,
-                                fecha_asignacion: asignacion.fecha_asignacion,
-                                id_asignacion: asignacion.id_asignacion
-                            };
+                            // Solo agregar si el equipo está en estado activo (asignado o disponible)
+                            if (['disponible', 'asignado'].includes(equipoResponse.data.estado)) {
+                                return {
+                                    ...equipoResponse.data,
+                                    fecha_asignacion: asignacion.fecha_asignacion,
+                                    id_asignacion: asignacion.id_asignacion
+                                };
+                            }
                         } catch (err) {
                             console.error(`Error al cargar equipo ${asignacion.id_equipo}:`, err);
-                            return null;
                         }
                     }
                     return null;
                 });
 
                 const equipos = await Promise.all(equiposPromises);
-                setEquiposAsignados(equipos.filter(equipo => equipo !== null));
+                
+                // Filtrar nulos y eliminar duplicados por id_equipo
+                const equiposFiltrados = equipos.filter(equipo => equipo !== null);
+                const equiposUnicos = [];
+                const idsEquipos = new Set();
+                
+                for (const equipo of equiposFiltrados) {
+                    if (!idsEquipos.has(equipo.id_equipo)) {
+                        idsEquipos.add(equipo.id_equipo);
+                        equiposUnicos.push(equipo);
+                    }
+                }
+                
+                setEquiposAsignados(equiposUnicos);
             } catch (err) {
                 console.error("Error al cargar asignaciones:", err);
                 setEquiposAsignados([]);
             }
 
-            // Cargar solicitudes del usuario
+            // Cargar solicitudes del usuario - solo las activas
             try {
                 const responseSolicitudes = await axios.get(`http://localhost:8080/api/solicitudes/usuario/${userId}`);
                 // Filtrar solo las solicitudes activas (pendientes, asignadas, en_proceso)
@@ -76,6 +92,14 @@ function UsuarioDashboard() {
             setError(`Error general al cargar datos: ${err.message}`);
             setLoading(false);
         }
+    };
+
+    // Función para ver detalle de solicitud
+    const verDetalleSolicitud = (id) => {
+        // Guardar ID de solicitud en localStorage
+        localStorage.setItem('solicitudSeleccionada', id);
+        // Navegar a la página de solicitudes
+        navigate('/solicitudes');
     };
 
     // Función para formatear fechas
@@ -190,9 +214,12 @@ function UsuarioDashboard() {
                                         </td>
                                         <td>
                                             <div className="botones-accion">
-                                                <Link to={`/solicitudes/${solicitud.id_solicitud}`} className="button azul-claro">
+                                                <button
+                                                    onClick={() => verDetalleSolicitud(solicitud.id_solicitud)}
+                                                    className="button azul-claro"
+                                                >
                                                     Ver Detalles
-                                                </Link>
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>

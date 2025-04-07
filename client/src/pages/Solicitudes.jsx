@@ -15,16 +15,55 @@ function Solicitudes() {
     const [error, setError] = useState(null);
     const [filtro, setFiltro] = useState('todas');
     const [busqueda, setBusqueda] = useState('');
+    const [usuario, setUsuario] = useState(null);
 
     useEffect(() => {
         setTitle("SOLICITUDES DE REPARACIÓN");
-        cargarSolicitudes();
+        // Obtener el usuario actual del localStorage
+        const usuarioActual = JSON.parse(localStorage.getItem('usuario'));
+        setUsuario(usuarioActual);
+        
+        // Verificar si hay una solicitud seleccionada en localStorage
+        const solicitudId = localStorage.getItem('solicitudSeleccionada');
+        
+        if (solicitudId) {
+            // Si hay una solicitud seleccionada, mostrar su detalle
+            setSolicitudSeleccionada(parseInt(solicitudId));
+            setVista('detalle');
+            // Limpiar del localStorage para futuras visitas
+            localStorage.removeItem('solicitudSeleccionada');
+        }
+        
+        if (usuarioActual) {
+            // Si es administrador o técnico, cargar todas las solicitudes
+            if (usuarioActual.rol === 'admin' || usuarioActual.rol === 'tecnico') {
+                cargarTodasSolicitudes();
+            } else {
+                // Si es usuario normal, cargar solo sus solicitudes
+                cargarSolicitudesUsuario(usuarioActual.id_usuarios);
+            }
+        } else {
+            setError('Usuario no identificado');
+            setLoading(false);
+        }
     }, [setTitle]);
 
-    const cargarSolicitudes = async () => {
+    const cargarTodasSolicitudes = async () => {
         try {
             setLoading(true);
             const response = await axios.get('http://localhost:8080/api/solicitudes');
+            setSolicitudes(response.data);
+            setLoading(false);
+        } catch (err) {
+            setError(`Error al cargar solicitudes: ${err.message}`);
+            setLoading(false);
+        }
+    };
+
+    const cargarSolicitudesUsuario = async (userId) => {
+        try {
+            setLoading(true);
+            const response = await axios.get(`http://localhost:8080/api/solicitudes/usuario/${userId}`);
             setSolicitudes(response.data);
             setLoading(false);
         } catch (err) {
@@ -44,7 +83,12 @@ function Solicitudes() {
     };
 
     const handleGuardarSolicitud = () => {
-        cargarSolicitudes();
+        // Después de guardar, recargar las solicitudes según el rol del usuario
+        if (usuario.rol === 'admin' || usuario.rol === 'tecnico') {
+            cargarTodasSolicitudes();
+        } else {
+            cargarSolicitudesUsuario(usuario.id_usuarios);
+        }
         setVista('lista');
     };
 
@@ -93,7 +137,14 @@ function Solicitudes() {
                 <SolicitudDetalle
                     id={solicitudSeleccionada}
                     onClose={handleVolverLista}
-                    onRefresh={cargarSolicitudes}
+                    onRefresh={() => {
+                        // Recargar solicitudes basado en el rol cuando se actualiza una solicitud
+                        if (usuario.rol === 'admin' || usuario.rol === 'tecnico') {
+                            cargarTodasSolicitudes();
+                        } else {
+                            cargarSolicitudesUsuario(usuario.id_usuarios);
+                        }
+                    }}
                 />
             </div>
         );

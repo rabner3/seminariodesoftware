@@ -1,4 +1,5 @@
 // client/src/components/solicitudes/SolicitudDetalle.jsx
+
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -8,7 +9,12 @@ function SolicitudDetalle({ id, onClose, onRefresh }) {
     const [error, setError] = useState(null);
     const [comentarioCierre, setComentarioCierre] = useState('');
     const [mostrarFormCierre, setMostrarFormCierre] = useState(false);
+    const [mostrarFormReparacion, setMostrarFormReparacion] = useState(false);
     const [usuarioActual, setUsuarioActual] = useState(null);
+    const [cargandoAccion, setCargandoAccion] = useState(false);
+    const [tecnicos, setTecnicos] = useState([]);
+    const [tecnicoSeleccionado, setTecnicoSeleccionado] = useState('');
+    const [observacionesReparacion, setObservacionesReparacion] = useState('');
 
     useEffect(() => {
         // Obtener usuario actual del localStorage
@@ -18,6 +24,7 @@ function SolicitudDetalle({ id, onClose, onRefresh }) {
         }
 
         cargarDatos();
+        cargarTecnicos();
     }, [id]);
 
     const cargarDatos = async () => {
@@ -32,6 +39,20 @@ function SolicitudDetalle({ id, onClose, onRefresh }) {
         } catch (err) {
             setError(`Error al cargar datos: ${err.message}`);
             setLoading(false);
+        }
+    };
+
+    const cargarTecnicos = async () => {
+        try {
+            const response = await axios.get('http://localhost:8080/api/tecnicos');
+            // Filtrar solo técnicos activos si hay un campo de estado
+            const tecnicosActivos = response.data.filter(tecnico => 
+                tecnico.estado === 'activo' || tecnico.estado === undefined
+            );
+            setTecnicos(tecnicosActivos);
+        } catch (err) {
+            console.error('Error al cargar técnicos:', err);
+            setError(`Error al cargar técnicos: ${err.message}`);
         }
     };
 
@@ -56,7 +77,7 @@ function SolicitudDetalle({ id, onClose, onRefresh }) {
 
             await axios.put(`http://localhost:8080/api/solicitudes/${id}`, {
                 estado: 'cancelada',
-                fecha_cierre: new Date().toISOString(),
+                fecha_cierre: new Date().toISOString().split('T')[0],
                 comentario_cierre: comentarioCierre
             });
 
@@ -71,11 +92,25 @@ function SolicitudDetalle({ id, onClose, onRefresh }) {
         }
     };
 
-    const handleAsignarReparacion = async () => {
+    const handleIniciarReparacion = () => {
+        if (tecnicos.length === 0) {
+            alert('No hay técnicos disponibles para asignar');
+            return;
+        }
+        setMostrarFormReparacion(true);
+    };
+
+    const handleCrearReparacion = async () => {
         try {
-            if (!window.confirm('¿Desea crear una reparación para esta solicitud?')) {
+            if (!tecnicoSeleccionado) {
+                alert('Debe seleccionar un técnico para la reparación');
                 return;
             }
+
+            setCargandoAccion(true);
+
+            // Formatear la fecha actual para MySQL
+            const fechaActual = new Date().toISOString().split('T')[0];
 
             // Primero actualizar estado de solicitud
             await axios.put(`http://localhost:8080/api/solicitudes/${id}`, {
@@ -86,34 +121,78 @@ function SolicitudDetalle({ id, onClose, onRefresh }) {
             const reparacionData = {
                 id_solicitud: id,
                 id_equipo: solicitud.id_equipo,
-                fecha_recepcion: new Date().toISOString(),
+                id_tecnico: parseInt(tecnicoSeleccionado),
+                fecha_recepcion: fechaActual,
                 estado: 'pendiente',
+                observaciones: observacionesReparacion || solicitud.descripcion,
                 creado_por: usuarioActual.id_usuarios,
-                fecha_creacion: new Date().toISOString()
+                fecha_creacion: fechaActual
             };
 
             const responseReparacion = await axios.post('http://localhost:8080/api/reparaciones', reparacionData);
 
-            alert(`Reparación creada con ID: ${responseReparacion.data.id_reparacion}`);
+            // También, actualizar el estado del equipo a 'en_reparacion'
+            await axios.put(`http://localhost:8080/api/equipos/${solicitud.id_equipo}`, {
+                estado: 'en_reparacion'
+            });
 
+            // Registrar el evento en la tabla de auditoría si existe
+            try {
+                await axios.post('http://localhost:8080/api/auditoria', {
+                    tabla_afectada: 'reparaciones',
+                    id_registro: responseReparacion.data.id_reparacion,
+                    accion: 'insert',
+                    id_usuario: usuarioActual.id_usuarios,
+                    fecha_accion: fechaActual,
+                    valores_nuevos: JSON.stringify(reparacionData)
+                });
+            } catch (auditError) {
+                console.error("Error al registrar auditoría:", auditError);
+                // No interrumpimos el flujo si falla la auditoría
+            }
+
+            // Registrar una bitácora inicial para la reparación
+            try {
+                await axios.post('http://localhost:8080/api/bitacoras-reparacion', {
+                    id_reparacion: responseReparacion.data.id_reparacion,
+                    id_tecnico: parseInt(tecnicoSeleccionado),
+                    tipo_accion: 'recepcion',
+                    accion: 'Recepción inicial',
+                    descripcion: `Reparación creada a partir de la solicitud #${id}. ${observacionesReparacion}`,
+                    fecha_accion: fechaActual,
+                    creado_por: usuarioActual.id_usuarios,
+                    fecha_creacion: fechaActual
+                });
+            } catch (bitacoraError) {
+                console.error("Error al crear bitácora inicial:", bitacoraError);
+                // No interrumpimos el flujo si falla la creación de la bitácora
+            }
+
+            alert(`Reparación creada con ID: ${responseReparacion.data.id_reparacion} y asignada al técnico seleccionado.`);
+
+            setMostrarFormReparacion(false);
             cargarDatos();
             if (onRefresh) {
                 onRefresh();
             }
+            setCargandoAccion(false);
         } catch (err) {
             setError(`Error al crear reparación: ${err.message}`);
+            setCargandoAccion(false);
         }
     };
 
     const handleMarcarResuelta = async () => {
         try {
+            setCargandoAccion(true);
             if (!window.confirm('¿Desea marcar esta solicitud como resuelta?')) {
+                setCargandoAccion(false);
                 return;
             }
 
             await axios.put(`http://localhost:8080/api/solicitudes/${id}`, {
                 estado: 'resuelta',
-                fecha_cierre: new Date().toISOString(),
+                fecha_cierre: new Date().toISOString().split('T')[0],
                 comentario_cierre: 'Solicitud atendida y resuelta'
             });
 
@@ -121,8 +200,10 @@ function SolicitudDetalle({ id, onClose, onRefresh }) {
             if (onRefresh) {
                 onRefresh();
             }
+            setCargandoAccion(false);
         } catch (err) {
             setError(`Error al actualizar solicitud: ${err.message}`);
+            setCargandoAccion(false);
         }
     };
 
@@ -162,21 +243,21 @@ function SolicitudDetalle({ id, onClose, onRefresh }) {
 
                     {/* Mostrar botón de cancelar solo si la solicitud está pendiente y es del usuario actual */}
                     {solicitud.estado === 'pendiente' && esSolicitudDelUsuario() && (
-                        <button onClick={handleCancelarSolicitud} className="button rojo-suave">
+                        <button onClick={handleCancelarSolicitud} className="button rojo-suave" disabled={cargandoAccion}>
                             Cancelar Solicitud
                         </button>
                     )}
 
                     {/* Botones para administrador/técnico */}
                     {esAdminOTecnico() && solicitud.estado === 'pendiente' && (
-                        <button onClick={handleAsignarReparacion} className="button azul-claro">
-                            Crear Reparación
+                        <button onClick={handleIniciarReparacion} className="button azul-claro" disabled={cargandoAccion}>
+                            {cargandoAccion ? 'Procesando...' : 'Crear Reparación'}
                         </button>
                     )}
 
                     {esAdminOTecnico() && solicitud.estado === 'asignada' && (
-                        <button onClick={handleMarcarResuelta} className="button azul-claro">
-                            Marcar como Resuelta
+                        <button onClick={handleMarcarResuelta} className="button azul-claro" disabled={cargandoAccion}>
+                            {cargandoAccion ? 'Procesando...' : 'Marcar como Resuelta'}
                         </button>
                     )}
                 </div>
@@ -254,6 +335,58 @@ function SolicitudDetalle({ id, onClose, onRefresh }) {
                         </button>
                         <button onClick={() => setMostrarFormCierre(false)} className="button">
                             Volver
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Formulario para crear reparación */}
+            {mostrarFormReparacion && (
+                <div className="form-reparacion">
+                    <h3>Crear Nueva Reparación</h3>
+                    
+                    <div className="form-group">
+                        <label className="form-label">Técnico Asignado:</label>
+                        <select
+                            className="form-select"
+                            value={tecnicoSeleccionado}
+                            onChange={(e) => setTecnicoSeleccionado(e.target.value)}
+                            required
+                        >
+                            <option value="">Seleccione un técnico</option>
+                            {tecnicos.map(tecnico => (
+                                <option key={tecnico.id_tecnico} value={tecnico.id_tecnico}>
+                                    {tecnico.nombre} {tecnico.apellido} {tecnico.especialidad ? `(${tecnico.especialidad})` : ''}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    
+                    <div className="form-group">
+                        <label className="form-label">Observaciones adicionales:</label>
+                        <textarea
+                            value={observacionesReparacion}
+                            onChange={(e) => setObservacionesReparacion(e.target.value)}
+                            rows="3"
+                            placeholder="Agregue cualquier observación adicional para la reparación"
+                            className="form-textarea"
+                        ></textarea>
+                    </div>
+                    
+                    <div className="container-botones">
+                        <button 
+                            onClick={handleCrearReparacion} 
+                            className="button azul-claro"
+                            disabled={cargandoAccion}
+                        >
+                            {cargandoAccion ? 'Procesando...' : 'Crear Reparación'}
+                        </button>
+                        <button 
+                            onClick={() => setMostrarFormReparacion(false)} 
+                            className="button"
+                            disabled={cargandoAccion}
+                        >
+                            Cancelar
                         </button>
                     </div>
                 </div>
