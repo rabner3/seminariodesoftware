@@ -65,7 +65,7 @@ app.get('/api', (req, res) => {
 
 // Middleware básico de manejo de errores
 app.use((err, req, res, next) => {
-    console.error(err.stack);s
+    console.error(err.stack);
     const statusCode = err.statusCode || 500;
     const message = process.env.NODE_ENV === 'production' ? 'Internal Server Error' : err.message;
     res.status(statusCode).json({ error: message });

@@ -1,8 +1,7 @@
-// client/src/components/solicitudes/SolicitudForm.jsx
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-function SolicitudForm({ solicitud, onSave, onCancel }) {
+function SolicitudForm({ solicitud, equipoId, onSave, onCancel }) {
     const [formData, setFormData] = useState({
         tipo: 'soporte',
         descripcion: '',
@@ -23,9 +22,17 @@ function SolicitudForm({ solicitud, onSave, onCancel }) {
                 id_equipo: solicitud.id_equipo || ''
             });
         }
+        // Si se proporciona un ID de equipo como parámetro
+        else if (equipoId) {
+            setFormData(prev => ({
+                ...prev,
+                id_equipo: equipoId
+            }));
+        }
 
         cargarEquiposDelUsuario();
-    }, [solicitud]);
+    }, [solicitud, equipoId]);
+
 
     const cargarEquiposDelUsuario = async () => {
         try {

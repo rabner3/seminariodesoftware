@@ -31,9 +31,10 @@ function EquipoForm({ equipo, onSave, onCancel }) {
     const [usuarios, setUsuarios] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [asignacionExistente, setAsignacionExistente] = useState(null);
 
     useEffect(() => {
-        // Si tenemos un equipo para editar, actualizamos el formData
+        // Si tenemos un equipo para editar, actualizamos el formData y verificamos si ya está asignado
         if (equipo) {
             // Formateamos las fechas para el input type="date"
             const formatearFecha = (fechaStr) => {
@@ -59,11 +60,30 @@ function EquipoForm({ equipo, onSave, onCancel }) {
                 estado: equipo.estado || 'disponible',
                 observaciones: equipo.observaciones || ''
             });
+
+            // Verificar si el equipo ya está asignado
+            if (equipo.id_equipo) {
+                verificarAsignacionExistente(equipo.id_equipo);
+            }
         }
 
         fetchDepartamentos();
         fetchUsuarios();
     }, [equipo]);
+
+    // Nueva función para verificar si el equipo ya está asignado
+    const verificarAsignacionExistente = async (equipoId) => {
+        try {
+            const response = await axios.get(`http://localhost:8080/api/asignaciones?id_equipo=${equipoId}&estado=activa`);
+            if (response.data && response.data.length > 0) {
+                setAsignacionExistente(response.data[0]);
+            } else {
+                setAsignacionExistente(null);
+            }
+        } catch (err) {
+            console.error("Error al verificar asignación existente:", err);
+        }
+    };
 
     const fetchDepartamentos = async () => {
         try {
@@ -74,7 +94,7 @@ function EquipoForm({ equipo, onSave, onCancel }) {
         }
     };
 
-    // Nuevo método para cargar usuarios
+    // Método para cargar usuarios
     const fetchUsuarios = async () => {
         try {
             const response = await axios.get('http://localhost:8080/api/usuarios');
@@ -92,7 +112,7 @@ function EquipoForm({ equipo, onSave, onCancel }) {
         }));
     };
 
-    // Nuevo manejador para los campos de asignación
+    // Manejador para los campos de asignación
     const handleAsignacionChange = (e) => {
         const { name, value } = e.target;
         setAsignacionData(prev => ({
@@ -112,8 +132,8 @@ function EquipoForm({ equipo, onSave, onCancel }) {
                 estado: 'asignado'
             }));
         } else {
-            // Si se desmarca, volvemos al estado 'disponible' si no está en edición
-            if (!equipo) {
+            // Si se desmarca, volvemos al estado 'disponible' si no está en edición o si no está asignado actualmente
+            if (!equipo || equipo.estado !== 'asignado') {
                 setFormData(prev => ({
                     ...prev,
                     estado: 'disponible'
@@ -148,19 +168,62 @@ function EquipoForm({ equipo, onSave, onCancel }) {
                 // Crear nuevo equipo
                 const response = await axios.post('http://localhost:8080/api/equipos', datosParaEnviar);
                 equipoGuardado = response.data;
+            }
+            
+            // Si se marcó la opción de asignar inmediatamente, creamos la asignación
+            if (asignarInmediatamente && asignacionData.id_usuario) {
+                const equipoId = equipo ? equipo.id_equipo : datosParaEnviar.id_equipo;
                 
-                // Si se marcó la opción de asignar inmediatamente, creamos la asignación
-                if (asignarInmediatamente && asignacionData.id_usuario) {
-                    const fechaActual = new Date().toISOString().split('T')[0];
+                // Verificar si el equipo ya está asignado
+                const checkResponse = await axios.get(`http://localhost:8080/api/asignaciones?id_equipo=${equipoId}&estado=activa`);
+                const asignacionesActivas = checkResponse.data;
+                
+                let procederConAsignacion = true;
+                
+                // Si hay asignaciones activas, mostrar advertencia
+                if (asignacionesActivas && asignacionesActivas.length > 0) {
+                    const usuarioActual = asignacionesActivas[0];
+                    let nombreUsuario = "otro usuario";
+                    
+                    // Intentar obtener el nombre del usuario actual
+                    try {
+                        const usuarioResponse = await axios.get(`http://localhost:8080/api/usuarios/${usuarioActual.id_usuario}`);
+                        if (usuarioResponse.data) {
+                            nombreUsuario = `${usuarioResponse.data.nombre} ${usuarioResponse.data.apellido}`;
+                        }
+                    } catch (err) {
+                        console.error("Error al obtener información del usuario:", err);
+                    }
+                    
+                    // Confirmar con el usuario si desea reasignar
+                    procederConAsignacion = window.confirm(
+                        `Este equipo ya está asignado a ${nombreUsuario}. ¿Desea reasignarlo al nuevo usuario? La asignación anterior se marcará como inactiva.`
+                    );
+                    
+                    // Si el usuario acepta, inactivar la asignación anterior
+                    if (procederConAsignacion) {
+                        for (const asignacion of asignacionesActivas) {
+                            await axios.put(`http://localhost:8080/api/asignaciones/${asignacion.id_asignacion}`, {
+                                estado: 'finalizada',
+                                fecha_finalizacion: new Date().toISOString().slice(0, 19).replace('T', ' '),
+                                motivo_finalizacion: 'Equipo reasignado a otro usuario'
+                            });
+                        }
+                    }
+                }
+                
+                // Si el usuario confirma o no había asignación previa, crear la nueva asignación
+                if (procederConAsignacion) {
+                    const fechaActual = new Date().toISOString().slice(0, 10);
                     
                     const asignacionNueva = {
-                        id_equipo: nuevoId,
+                        id_equipo: equipoId,
                         id_usuario: asignacionData.id_usuario,
                         fecha_asignacion: fechaActual,
-                        motivo_asignacion: asignacionData.motivo_asignacion || 'Asignación inicial',
+                        motivo_asignacion: asignacionData.motivo_asignacion || 'Asignación de equipo',
                         estado: 'activa',
-                        creado_por: 1, // Aquí deberías usar el ID del usuario actual (logueado)
-                        fecha_creacion: new Date().toISOString()
+                        creado_por: JSON.parse(localStorage.getItem('usuario'))?.id_usuarios || 1,
+                        fecha_creacion: new Date().toISOString().slice(0, 19).replace('T', ' ')
                     };
                     
                     // Crear la asignación
@@ -184,6 +247,17 @@ function EquipoForm({ equipo, onSave, onCancel }) {
             {error && (
                 <div className="errors">
                     <p>{error}</p>
+                </div>
+            )}
+
+            {asignacionExistente && (
+                <div className="info-message">
+                    <p>
+                        <strong>Nota:</strong> Este equipo está actualmente asignado a un usuario. 
+                        {asignacionExistente.nombre_usuario ? 
+                            ` (${asignacionExistente.nombre_usuario} ${asignacionExistente.apellido_usuario})` : 
+                            ''}
+                    </p>
                 </div>
             )}
 
@@ -363,58 +437,56 @@ function EquipoForm({ equipo, onSave, onCancel }) {
                     ></textarea>
                 </div>
 
-                {/* Nueva sección para asignación inmediata (solo en modo creación) */}
-                {!equipo && (
-                    <div className="asignacion-section">
-                        <div className="form-group">
-                            <label className="asignacion-checkbox">
-                                <input
-                                    type="checkbox"
-                                    checked={asignarInmediatamente}
-                                    onChange={handleAsignarCheckbox}
-                                />
-                                Asignar este equipo inmediatamente a un usuario
-                            </label>
-                        </div>
+                {/* Sección para asignación */}
+                <div className="asignacion-section">
+                    <div className="form-group">
+                        <label className="asignacion-checkbox">
+                            <input
+                                type="checkbox"
+                                checked={asignarInmediatamente}
+                                onChange={handleAsignarCheckbox}
+                            />
+                            {equipo ? 'Asignar este equipo a un usuario' : 'Asignar este equipo inmediatamente a un usuario'}
+                        </label>
+                    </div>
 
-                        {asignarInmediatamente && (
-                            <div>
-                                <div className="contenedor-columnas">
-                                    <div className="form-group form-items">
-                                        <label className="form-label">Usuario:</label>
-                                        <select
-                                            className="form-select"
-                                            name="id_usuario"
-                                            value={asignacionData.id_usuario}
-                                            onChange={handleAsignacionChange}
-                                            required={asignarInmediatamente}
-                                        >
-                                            <option value="">Seleccione un usuario</option>
-                                            {usuarios.map(usuario => (
-                                                <option key={usuario.id_usuarios} value={usuario.id_usuarios}>
-                                                    {usuario.nombre} {usuario.apellido} ({usuario.email})
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div className="form-group">
-                                    <label className="form-label">Motivo de la asignación:</label>
-                                    <textarea
-                                        className="form-textarea"
-                                        name="motivo_asignacion"
-                                        value={asignacionData.motivo_asignacion}
+                    {asignarInmediatamente && (
+                        <div>
+                            <div className="contenedor-columnas">
+                                <div className="form-group form-items">
+                                    <label className="form-label">Usuario:</label>
+                                    <select
+                                        className="form-select"
+                                        name="id_usuario"
+                                        value={asignacionData.id_usuario}
                                         onChange={handleAsignacionChange}
-                                        rows="2"
-                                        placeholder="Ejemplo: Equipo nuevo para el área de..., Reemplazo de equipo anterior, etc."
                                         required={asignarInmediatamente}
-                                    ></textarea>
+                                    >
+                                        <option value="">Seleccione un usuario</option>
+                                        {usuarios.map(usuario => (
+                                            <option key={usuario.id_usuarios} value={usuario.id_usuarios}>
+                                                {usuario.nombre} {usuario.apellido} ({usuario.email})
+                                            </option>
+                                        ))}
+                                    </select>
                                 </div>
                             </div>
-                        )}
-                    </div>
-                )}
+
+                            <div className="form-group">
+                                <label className="form-label">Motivo de la asignación:</label>
+                                <textarea
+                                    className="form-textarea"
+                                    name="motivo_asignacion"
+                                    value={asignacionData.motivo_asignacion}
+                                    onChange={handleAsignacionChange}
+                                    rows="2"
+                                    placeholder="Ejemplo: Equipo nuevo para el área de..., Reemplazo de equipo anterior, etc."
+                                    required={asignarInmediatamente}
+                                ></textarea>
+                            </div>
+                        </div>
+                    )}
+                </div>
 
                 <div className="container-botones">
                     <button

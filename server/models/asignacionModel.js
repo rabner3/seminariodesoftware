@@ -8,6 +8,8 @@ class AsignacionModel {
         const sql = `
             SELECT
                 a.id_asignacion,
+                a.id_equipo,
+                a.id_usuario,
                 a.fecha_asignacion,
                 a.motivo_asignacion,
                 a.estado AS estado_asignacion,

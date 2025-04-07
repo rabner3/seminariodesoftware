@@ -1,0 +1,233 @@
+/* client/src/assets/admin.css */
+.stats-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    flex: 1;
+    min-width: 220px;
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+.stat-card h3 {
+    margin: 0 0 15px 0;
+    font-size: 16px;
+    color: #666;
+}
+
+.stat-value {
+    font-size: 32px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.stat-icon {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.2;
+}
+
+.equipo-icon {
+    background-color: #0d6efd;
+}
+
+.disponible-icon {
+    background-color: #28a745;
+}
+
+.asignado-icon {
+    background-color: #0d6efd;
+}
+
+.reparacion-icon {
+    background-color: #ffc107;
+}
+
+.usuario-icon {
+    background-color: #6610f2;
+}
+
+.solicitud-icon {
+    background-color: #fd7e14;
+}
+
+.departamento-icon {
+    background-color: #20c997;
+}
+
+/* Gráfico circular */
+.chart-container {
+    margin-bottom: 20px;
+}
+
+.chart-container h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 18px;
+    color: #333;
+}
+
+.pie-chart {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+}
+
+.pie-chart-container {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background-color: #f0f0f0;
+    overflow: hidden;
+}
+
+.pie-segment {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    transform-origin: 50% 50%;
+    background-color: var(--color);
+    clip-path: polygon(50% 50%, 50% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%, 50% 0%);
+    transform: rotate(calc(3.6deg * var(--offset, 0))) rotateY(180deg);
+}
+
+.chart-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.legend-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+}
+
+.legend-text {
+    font-size: 14px;
+    color: #333;
+}
+
+/* Dashboard main content */
+.dashboard-main-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.dashboard-main-content .container-widgets {
+    flex: 1;
+    min-width: 400px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.section-header h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+}
+
+.view-all {
+    font-size: 14px;
+    color: #0d6efd;
+    text-decoration: none;
+}
+
+.view-all:hover {
+    text-decoration: underline;
+}
+
+/* Acciones rápidas */
+.quick-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.action-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    min-width: 180px;
+    height: 120px;
+    background-color: white;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    text-decoration: none;
+    color: #333;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.action-button:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+.action-button i {
+    font-size: 32px;
+    margin-bottom: 10px;
+    color: #0d6efd;
+}
+
+.action-button span {
+    font-weight: 600;
+    text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .pie-chart {
+        flex-direction: column;
+    }
+
+    .dashboard-main-content .container-widgets {
+        min-width: 100%;
+    }
+
+    .action-button {
+        min-width: 100%;
+    }
+}

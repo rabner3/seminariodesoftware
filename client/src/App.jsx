@@ -1,4 +1,4 @@
-// client/src/App.jsx (actualizado con nuevas rutas)
+// client/src/App.jsx (corregido)
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
@@ -7,6 +7,9 @@ import Usuarios from './pages/Usuarios';
 import Equipos from './pages/Equipos';
 import Login from './pages/Login';
 import Solicitudes from './pages/Solicitudes';
+import UsuarioDashboard from './pages/UsuarioDashboard';
+import EquipoDetalle from './pages/EquipoDetalle';
+import SolicitudFormPage from './pages/SolicitudFormPage';
 // Importaciones para vistas de técnicos
 import TecnicoDashboard from './pages/TecnicoDashboard';
 import TecnicoReparaciones from './pages/TecnicoReparaciones';
@@ -16,6 +19,7 @@ import TecnicoBitacoras from './pages/TecnicoBitacoras';
 import TecnicoDiagnosticos from './pages/TecnicoDiagnosticos';
 import TecnicoPartes from './pages/TecnicoPartes';
 import Departamentos from './pages/Departamentos';
+import AdminDashboard from './pages/AdminDashboard';
 
 function App() {
   const [usuario, setUsuario] = useState(null);
@@ -63,7 +67,9 @@ function App() {
           {/* Rutas protegidas */}
           <Route path="/" element={
             <ProtectedRoute>
-              {usuario?.rol === 'tecnico' ? <TecnicoDashboard /> : <Home />}
+              {usuario?.rol === 'tecnico' ? <TecnicoDashboard /> : 
+               (usuario?.rol === 'admin' ? <AdminDashboard /> :
+               (usuario?.rol === 'usuario' ? <UsuarioDashboard /> : <Home />))}
             </ProtectedRoute>
           } />
 
@@ -83,6 +89,31 @@ function App() {
           <Route path="/departamentos" element={
             <ProtectedRoute requiredRoles={['admin']}>
               <Departamentos />
+            </ProtectedRoute>
+          } />
+
+          {/* Rutas para equipos y solicitudes */}
+          <Route path="/equipos/detalle/:id" element={
+            <ProtectedRoute>
+              <EquipoDetalle />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/solicitudes" element={
+            <ProtectedRoute>
+              <Solicitudes />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/solicitudes/nueva" element={
+            <ProtectedRoute>
+              <SolicitudFormPage />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/solicitudes/nueva/:id" element={
+            <ProtectedRoute>
+              <SolicitudFormPage />
             </ProtectedRoute>
           } />
 
@@ -111,7 +142,6 @@ function App() {
             </ProtectedRoute>
           } />
 
-          {/* Nuevas rutas agregadas */}
           <Route path="/tecnico/bitacoras" element={
             <ProtectedRoute requiredRoles={['tecnico']}>
               <TecnicoBitacoras />
@@ -127,11 +157,6 @@ function App() {
           <Route path="/tecnico/partes" element={
             <ProtectedRoute requiredRoles={['tecnico']}>
               <TecnicoPartes />
-            </ProtectedRoute>
-          } />
-          <Route path="/solicitudes" element={
-            <ProtectedRoute>
-              <Solicitudes />
             </ProtectedRoute>
           } />
         </Routes>
