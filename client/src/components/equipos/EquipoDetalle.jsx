@@ -1,4 +1,4 @@
-// client/src/components/equipos/EquipoDetalle.jsx
+
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import './EquipoStyles.css';
@@ -20,13 +20,13 @@ function EquipoDetalle({ id, onClose, onEdit, onDelete }) {
             const response = await axios.get(`http://localhost:8080/api/equipos/${id}`);
             setEquipo(response.data);
 
-            // Si el equipo tiene departamento, lo cargamos
+            
             if (response.data.id_departamento) {
                 const deptResponse = await axios.get(`http://localhost:8080/api/departamentos/${response.data.id_departamento}`);
                 setDepartamento(deptResponse.data);
             }
 
-            // Cargar las asignaciones de este equipo (historial)
+            
             try {
                 const asignResponse = await axios.get(`http://localhost:8080/api/asignaciones?id_equipo=${id}`);
                 setAsignaciones(asignResponse.data);
@@ -41,7 +41,7 @@ function EquipoDetalle({ id, onClose, onEdit, onDelete }) {
         }
     };
 
-    // Función para formatear fechas
+    
     const formatearFecha = (fechaStr) => {
         if (!fechaStr) return 'No especificado';
         const fecha = new Date(fechaStr);
@@ -56,7 +56,7 @@ function EquipoDetalle({ id, onClose, onEdit, onDelete }) {
         if (window.confirm('¿Está seguro de eliminar este equipo?')) {
             try {
                 await axios.delete(`http://localhost:8080/api/equipos/${id}`);
-                onDelete(); // Callback para informar al componente padre
+                onDelete(); 
             } catch (err) {
                 setError('Error al eliminar el equipo: ' + err.message);
             }
@@ -67,7 +67,7 @@ function EquipoDetalle({ id, onClose, onEdit, onDelete }) {
     if (error) return <div className="errors"><p>{error}</p></div>;
     if (!equipo) return <div className="container-widgets"><p>No se encontró información del equipo.</p></div>;
 
-    // Función para obtener la clase CSS según el estado
+    
     const getEstadoClass = (estado) => {
         switch (estado) {
             case 'disponible': return 'estado-badge estado-disponible';
@@ -164,7 +164,7 @@ function EquipoDetalle({ id, onClose, onEdit, onDelete }) {
                 )}
             </div>
 
-            {/* Historial de asignaciones */}
+            {}
             <div className="historial-section">
                 <h3>Historial de Asignaciones</h3>
                 {asignaciones.length > 0 ? (
