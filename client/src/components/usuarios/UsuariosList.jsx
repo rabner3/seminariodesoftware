@@ -1,4 +1,4 @@
-// client/src/components/usuarios/UsuariosList.jsx
+
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -14,7 +14,7 @@ function UsuariosList({ onEdit, onView, onDelete }) {
     }, []);
 
     useEffect(() => {
-        // Filtrar usuarios cuando cambia la búsqueda
+        
         if (busqueda.trim() === '') {
             setUsuariosFiltrados(usuarios);
         } else {
