@@ -1,4 +1,4 @@
-// client/src/components/reportes/ReporteAsignaciones.jsx
+
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { jsPDF } from 'jspdf';
@@ -16,7 +16,7 @@ import {
     Legend
 } from 'chart.js';
 
-// Registrar los componentes necesarios para Chart.js
+
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -47,10 +47,10 @@ function ReporteAsignaciones() {
     });
 
     useEffect(() => {
-        // Cargar datos iniciales
+        
         cargarDatos();
 
-        // Establecer fechas por defecto (último mes)
+        
         const hoy = new Date();
         const unMesAtras = new Date(hoy);
         unMesAtras.setMonth(hoy.getMonth() - 1);
@@ -60,7 +60,7 @@ function ReporteAsignaciones() {
     }, []);
 
     useEffect(() => {
-        // Generar datos para gráficos cuando cambien las asignaciones
+        
         if (asignaciones.length > 0) {
             generarDatosGraficos();
         }
@@ -70,19 +70,19 @@ function ReporteAsignaciones() {
         try {
             setLoading(true);
 
-            // Cargar asignaciones
+            
             const responseAsignaciones = await axios.get('http://localhost:8080/api/asignaciones');
             setAsignaciones(responseAsignaciones.data);
 
-            // Cargar usuarios
+            
             const responseUsuarios = await axios.get('http://localhost:8080/api/usuarios');
             setUsuarios(responseUsuarios.data);
 
-            // Cargar departamentos
+            
             const responseDepartamentos = await axios.get('http://localhost:8080/api/departamentos');
             setDepartamentos(responseDepartamentos.data);
 
-            // Cargar equipos
+            
             const responseEquipos = await axios.get('http://localhost:8080/api/equipos');
             setEquipos(responseEquipos.data);
 
@@ -94,7 +94,7 @@ function ReporteAsignaciones() {
     };
 
     const generarDatosGraficos = () => {
-        // Filtrar asignaciones por fecha
+        
         const asignacionesFiltradas = asignaciones.filter(asignacion => {
             if (!asignacion.fecha_asignacion) return false;
 
@@ -111,7 +111,7 @@ function ReporteAsignaciones() {
             return true;
         });
 
-        // Agrupar por mes/año
+        
         const asignacionesPorMes = {};
 
         asignacionesFiltradas.forEach(asignacion => {
@@ -123,7 +123,7 @@ function ReporteAsignaciones() {
             }
         });
 
-        // Ordenar por fecha
+       
         const mesesOrdenados = Object.keys(asignacionesPorMes).sort((a, b) => {
             const [mesA, añoA] = a.split('/').map(Number);
             const [mesB, añoB] = b.split('/').map(Number);
@@ -172,7 +172,7 @@ function ReporteAsignaciones() {
             );
         }
 
-        // Filtrar por fechas
+        
         if (fechaDesde || fechaHasta) {
             asignacionesFiltradas = asignacionesFiltradas.filter(asignacion => {
                 if (!asignacion.fecha_asignacion) return false;
@@ -198,15 +198,15 @@ function ReporteAsignaciones() {
         const asignacionesFiltradas = filtrarAsignaciones();
         const doc = new jsPDF();
 
-        // Título
+        
         doc.setFontSize(16);
         doc.text('Reporte de Asignaciones de Equipos', 105, 15, { align: 'center' });
 
-        // Fecha de generación
+        
         doc.setFontSize(10);
         doc.text(`Fecha: ${new Date().toLocaleDateString()}`, 105, 22, { align: 'center' });
 
-        // Filtros aplicados
+        
         doc.setFontSize(12);
         doc.text('Filtros aplicados:', 14, 30);
         doc.setFontSize(10);
@@ -224,7 +224,7 @@ function ReporteAsignaciones() {
         doc.text(`Estado: ${filtroEstado === 'todos' ? 'Todos' : filtroEstado}`, 14, 48);
         doc.text(`Periodo: ${fechaDesde ? fechaDesde : 'Inicio'} - ${fechaHasta ? fechaHasta : 'Actualidad'}`, 14, 54);
 
-        // Tabla de asignaciones
+        
         const tableColumn = ['ID', 'Equipo', 'Usuario', 'Departamento', 'Fecha Asignación', 'Estado', 'Fecha Fin'];
         const tableRows = [];
 
@@ -269,7 +269,7 @@ function ReporteAsignaciones() {
             }
         });
 
-        // Resumen estadístico
+        
         const finalY = doc.autoTable.previous.finalY + 10;
         doc.setFontSize(12);
         doc.text('Resumen Estadístico', 14, finalY);
@@ -277,7 +277,7 @@ function ReporteAsignaciones() {
         doc.setFontSize(10);
         doc.text(`Total de Asignaciones: ${asignacionesFiltradas.length}`, 14, finalY + 6);
 
-        // Conteo por estado
+        
         const conteoEstados = {
             activa: 0,
             finalizada: 0
@@ -292,7 +292,7 @@ function ReporteAsignaciones() {
         doc.text(`Asignaciones Activas: ${conteoEstados.activa || 0}`, 14, finalY + 12);
         doc.text(`Asignaciones Finalizadas: ${conteoEstados.finalizada || 0}`, 14, finalY + 18);
 
-        // Guardar el PDF
+        
         doc.save('reporte_asignaciones.pdf');
     };
 
