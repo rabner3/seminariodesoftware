@@ -1,4 +1,4 @@
-// client/src/components/tecnicos/DiagnosticoForm.jsx
+
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -67,19 +67,19 @@ function DiagnosticoForm({ reparacionId, tecnicoId, diagnosticoId, onDiagnostico
             };
     
             if (isEditing) {
-                // Actualizar diagnóstico existente
+                
                 await axios.put(`http://localhost:8080/api/diagnosticos/${diagnosticoId}`, diagnosticoData);
             } else {
-                // Crear nuevo diagnóstico
+                
                 await axios.post('http://localhost:8080/api/diagnosticos', diagnosticoData);
     
-                // Si se crea un diagnóstico, actualizar el estado de la reparación
+                
                 await axios.put(`http://localhost:8080/api/reparaciones/${reparacionId}`, {
                     estado: 'en_reparacion'
                 });
             }
     
-            // Registrar bitácora de la acción
+            
             await axios.post('http://localhost:8080/api/bitacoras-reparacion', {
                 id_reparacion: reparacionId,
                 id_tecnico: tecnicoId,
