@@ -1,4 +1,4 @@
-// client/src/components/usuarios/LoginForm.jsx
+
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -28,13 +28,13 @@ function LoginForm() {
         try {
             const response = await axios.post('http://localhost:8080/api/auth/login', formData);
 
-            // Guardar usuario en localStorage
+            
             localStorage.setItem('usuario', JSON.stringify(response.data.usuario));
 
-            // Redireccionar al dashboard
+            
             navigate('/');
 
-            // Opcional: recargar la página para actualizar componentes
+            
             window.location.reload();
         } catch (err) {
             setError(err.response?.data?.message || 'Error al iniciar sesión');
