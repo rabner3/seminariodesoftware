@@ -1,4 +1,4 @@
-// client/src/components/equipos/EquipoItem.jsx
+
 import React from 'react';
 
 function EquipoItem({ equipo, onView, onEdit }) {
