@@ -23,6 +23,9 @@ import TecnicoPartes from './pages/TecnicoPartes';
 import Departamentos from './pages/Departamentos';
 import AdminDashboard from './pages/AdminDashboard';
 import Notificaciones from './pages/Notificaciones';
+import Reportes from './pages/Reportes';
+import ReporteAsignaciones from './components/reportes/ReporteAsignaciones';
+import ReporteInventario from './components/reportes/ReporteInventario';
 
 function App() {
   const [usuario, setUsuario] = useState(null);
@@ -168,6 +171,23 @@ function App() {
               <Notificaciones />
             </ProtectedRoute>
           } />
+          <Route path="/reportes" element={
+            <ProtectedRoute requiredRoles={['admin']}>
+              <Reportes />
+            </ProtectedRoute>
+          } />
+          <Route path="/reportes/inventario" element={
+            <ProtectedRoute requiredRoles={['admin']}>
+              <ReporteInventario />
+            </ProtectedRoute>
+          } />
+          <Route path="/reportes/asignaciones" element={
+            <ProtectedRoute requiredRoles={['admin']}>
+              <ReporteAsignaciones />
+            </ProtectedRoute>
+          } />
+
+          {/* Redirigir a la página de inicio si la ruta no existe */}
         </Routes>
       </Layout>
     </Router>
