@@ -47,34 +47,38 @@ function DiagnosticoForm({ reparacionId, tecnicoId, diagnosticoId, onDiagnostico
         e.preventDefault();
         setLoading(true);
         setError(null);
-
+    
         try {
             const usuario = JSON.parse(localStorage.getItem('usuario'));
-
+    
+            // Formatear fecha para MySQL
+            const fechaActual = new Date();
+            const fechaFormateada = fechaActual.toISOString().slice(0, 19).replace('T', ' ');
+    
             const diagnosticoData = {
                 id_reparacion: reparacionId,
                 id_tecnico: tecnicoId,
                 descripcion: formData.descripcion,
                 causa_raiz: formData.causa_raiz,
                 solucion_propuesta: formData.solucion_propuesta,
-                fecha_diagnostico: new Date(),
+                fecha_diagnostico: fechaFormateada, // Formato correcto para MySQL
                 creado_por: usuario?.id_usuarios || null,
-                fecha_creacion: new Date()
+                fecha_creacion: fechaFormateada // Formato correcto para MySQL
             };
-
+    
             if (isEditing) {
                 // Actualizar diagnóstico existente
                 await axios.put(`http://localhost:8080/api/diagnosticos/${diagnosticoId}`, diagnosticoData);
             } else {
                 // Crear nuevo diagnóstico
                 await axios.post('http://localhost:8080/api/diagnosticos', diagnosticoData);
-
+    
                 // Si se crea un diagnóstico, actualizar el estado de la reparación
                 await axios.put(`http://localhost:8080/api/reparaciones/${reparacionId}`, {
                     estado: 'en_reparacion'
                 });
             }
-
+    
             // Registrar bitácora de la acción
             await axios.post('http://localhost:8080/api/bitacoras-reparacion', {
                 id_reparacion: reparacionId,
@@ -82,11 +86,11 @@ function DiagnosticoForm({ reparacionId, tecnicoId, diagnosticoId, onDiagnostico
                 tipo_accion: 'diagnostico',
                 accion: isEditing ? 'Actualización de diagnóstico' : 'Creación de diagnóstico',
                 descripcion: `${isEditing ? 'Actualización' : 'Registro'} de diagnóstico: ${formData.descripcion.substring(0, 50)}...`,
-                fecha_accion: new Date(),
+                fecha_accion: fechaFormateada,
                 creado_por: usuario?.id_usuarios || null,
-                fecha_creacion: new Date()
+                fecha_creacion: fechaFormateada
             });
-
+    
             onDiagnosticoCreado();
             setLoading(false);
         } catch (err) {

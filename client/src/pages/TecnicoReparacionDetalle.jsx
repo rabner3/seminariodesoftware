@@ -1,4 +1,5 @@
 // client/src/pages/TecnicoReparacionDetalle.jsx
+
 import { useEffect, useContext, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { TitleContext } from '../context/TitleContext';
@@ -22,6 +23,19 @@ function TecnicoReparacionDetalle() {
     const [activeTab, setActiveTab] = useState('info');
     const [mostrarFormBitacora, setMostrarFormBitacora] = useState(false);
     const [mostrarFormDiagnostico, setMostrarFormDiagnostico] = useState(false);
+    // Estado para modal de confirmación
+    const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
+    // Estado para modal de finalización
+    const [mostrarFormFinalizacion, setMostrarFormFinalizacion] = useState(false);
+    // Datos para finalización
+    const [datosFinalizacion, setDatosFinalizacion] = useState({
+        costo_final: 0,
+        tiempo_total: 0,
+        observaciones: ''
+    });
+    // Estado para modal de descarte
+    const [mostrarFormDescarte, setMostrarFormDescarte] = useState(false);
+    const [motivoDescarte, setMotivoDescarte] = useState('');
 
     useEffect(() => {
         setTitle("DETALLE DE REPARACIÓN");
@@ -77,26 +91,22 @@ function TecnicoReparacionDetalle() {
                 estado: nuevoEstado
             };
             
-            // Si estamos completando la reparación, añadimos la fecha_fin
-            if (nuevoEstado === 'completada') {
-                dataToUpdate.fecha_fin = new Date().toISOString().split('T')[0];
-            }
-            
             // Si estamos iniciando la reparación, añadimos la fecha_inicio
             if (nuevoEstado === 'en_reparacion' && !reparacion.fecha_inicio) {
-                dataToUpdate.fecha_inicio = new Date().toISOString().split('T')[0];
+                dataToUpdate.fecha_inicio = new Date().toISOString().slice(0, 19).replace('T', ' ');
             }
     
             await axios.put(`http://localhost:8080/api/reparaciones/${id}`, dataToUpdate);
     
-            // Registrar bitácora del cambio de estado - asegurando que tipo_accion sea válido
-            let tipoAccion = 'otro'; // Valor por defecto
+            // Registrar bitácora del cambio de estado
+            let tipoAccion = 'otro'; 
             
             // Mapear estados a tipos de acción válidos
             if (nuevoEstado === 'diagnostico') tipoAccion = 'diagnostico';
             else if (nuevoEstado === 'en_reparacion') tipoAccion = 'reparacion';
             else if (nuevoEstado === 'completada') tipoAccion = 'entrega';
             else if (nuevoEstado === 'espera_repuestos') tipoAccion = 'espera';
+            else if (nuevoEstado === 'descarte') tipoAccion = 'otro';
             
             // Formatear la fecha correctamente para MySQL
             const fechaActual = new Date();
@@ -120,33 +130,132 @@ function TecnicoReparacionDetalle() {
         }
     };
 
-    const _finalizarReparacion = async (formData) => {
+    // Función para verificar si se puede completar la reparación
+    const verificarCompletarReparacion = () => {
+        // Verificar si hay diagnóstico
+        if (!diagnostico) {
+            alert('Se requiere un diagnóstico antes de completar la reparación. Por favor, cree un diagnóstico primero.');
+            setActiveTab('diagnostico');
+            return;
+        }
+
+        // Calcular costos y tiempo
+        let costoTotal = 0;
+        if (partes && partes.length > 0) {
+            costoTotal = partes.reduce((total, parte) => {
+                return total + (parte.cantidad * parte.costo_unitario);
+            }, 0);
+        }
+
+        let tiempoTotal = 0;
+        if (bitacoras && bitacoras.length > 0) {
+            tiempoTotal = bitacoras.reduce((total, bitacora) => {
+                return total + (bitacora.duracion_minutos || 0);
+            }, 0);
+        }
+
+        // Verificar si hay actividades registradas
+        if (bitacoras.length === 0) {
+            if (!confirm('No hay actividades registradas. ¿Está seguro de completar la reparación sin registrar actividades?')) {
+                return;
+            }
+        }
+
+        // Establecer datos de finalización iniciales
+        setDatosFinalizacion({
+            costo_final: costoTotal,
+            tiempo_total: tiempoTotal,
+            observaciones: reparacion.observaciones || ''
+        });
+
+        // Mostrar formulario de finalización
+        setMostrarFormFinalizacion(true);
+    };
+    
+    // Función para marcar como descartado
+    const handleDescarteEquipo = () => {
+        setMostrarFormDescarte(true);
+    };
+
+    // Función para finalizar reparación
+    const handleFinalizarReparacion = async () => {
         try {
-            // Actualizar datos de finalización
+            const fechaActual = new Date().toISOString().slice(0, 19).replace('T', ' ');
+            
+            // Actualizar datos de la reparación
             await axios.put(`http://localhost:8080/api/reparaciones/${id}`, {
                 estado: 'completada',
-                fecha_fin: new Date().toISOString().split('T')[0],
-                costo_final: formData.costo_final,
-                tiempo_total: formData.tiempo_total,
-                observaciones: formData.observaciones
+                fecha_fin: fechaActual,
+                costo_final: datosFinalizacion.costo_final,
+                tiempo_total: datosFinalizacion.tiempo_total,
+                observaciones: datosFinalizacion.observaciones
+            });
+
+            // Actualizar estado del equipo
+            await axios.put(`http://localhost:8080/api/equipos/${reparacion.id_equipo}`, {
+                estado: 'disponible'
             });
 
             // Registrar bitácora
             await axios.post('http://localhost:8080/api/bitacoras-reparacion', {
                 id_reparacion: id,
                 id_tecnico: reparacion.id_tecnico,
-                tipo_accion: 'finalizacion',
+                tipo_accion: 'entrega',
                 accion: 'Reparación completada',
-                descripcion: formData.observaciones,
-                fecha_accion: new Date(),
+                descripcion: `Reparación finalizada. Costo: $${datosFinalizacion.costo_final}, Tiempo: ${datosFinalizacion.tiempo_total} minutos. ${datosFinalizacion.observaciones}`,
+                fecha_accion: fechaActual,
                 creado_por: JSON.parse(localStorage.getItem('usuario')).id_usuarios,
-                fecha_creacion: new Date()
+                fecha_creacion: fechaActual
             });
 
-            // Recargar datos
+            // Cerrar modal y recargar datos
+            setMostrarFormFinalizacion(false);
             cargarDatos();
         } catch (err) {
             setError(`Error al finalizar reparación: ${err.message}`);
+        }
+    };
+
+    // Función para confirmar descarte
+    const handleConfirmarDescarte = async () => {
+        try {
+            if (!motivoDescarte.trim()) {
+                alert('Debe ingresar un motivo para el descarte');
+                return;
+            }
+
+            const fechaActual = new Date().toISOString().slice(0, 19).replace('T', ' ');
+            
+            // Actualizar datos de la reparación
+            await axios.put(`http://localhost:8080/api/reparaciones/${id}`, {
+                estado: 'descarte',
+                fecha_fin: fechaActual,
+                observaciones: `DESCARTADO: ${motivoDescarte}`
+            });
+
+            // Actualizar estado del equipo
+            await axios.put(`http://localhost:8080/api/equipos/${reparacion.id_equipo}`, {
+                estado: 'descarte',
+                observaciones: `Equipo descartado en reparación #${id}: ${motivoDescarte}`
+            });
+
+            // Registrar bitácora
+            await axios.post('http://localhost:8080/api/bitacoras-reparacion', {
+                id_reparacion: id,
+                id_tecnico: reparacion.id_tecnico,
+                tipo_accion: 'otro',
+                accion: 'Equipo descartado',
+                descripcion: motivoDescarte,
+                fecha_accion: fechaActual,
+                creado_por: JSON.parse(localStorage.getItem('usuario')).id_usuarios,
+                fecha_creacion: fechaActual
+            });
+
+            // Cerrar modal y recargar datos
+            setMostrarFormDescarte(false);
+            cargarDatos();
+        } catch (err) {
+            setError(`Error al descartar equipo: ${err.message}`);
         }
     };
 
@@ -197,7 +306,7 @@ function TecnicoReparacionDetalle() {
                                 Iniciar Diagnóstico
                             </button>
                         )}
-                        {reparacion.estado === 'diagnostico' && (
+                        {reparacion.estado === 'diagnostico' && diagnostico && (
                             <button
                                 onClick={() => actualizarEstadoReparacion('en_reparacion')}
                                 className="button azul-claro"
@@ -205,12 +314,20 @@ function TecnicoReparacionDetalle() {
                                 Iniciar Reparación
                             </button>
                         )}
-                        {reparacion.estado === 'en_reparacion' && (
+                        {['diagnostico', 'en_reparacion', 'espera_repuestos'].includes(reparacion.estado) && (
                             <button
-                                onClick={() => actualizarEstadoReparacion('completada')}
+                                onClick={handleDescarteEquipo}
+                                className="button rojo-suave"
+                            >
+                                Marcar como Descarte
+                            </button>
+                        )}
+                        {['en_reparacion', 'espera_repuestos'].includes(reparacion.estado) && (
+                            <button
+                                onClick={verificarCompletarReparacion}
                                 className="button azul-claro"
                             >
-                                Marcar como Completada
+                                Completar Reparación
                             </button>
                         )}
                     </div>
@@ -275,7 +392,7 @@ function TecnicoReparacionDetalle() {
                         <h3>Detalles de la Solicitud</h3>
                         {solicitud ? (
                             <div className="solicitud-info">
-                                <p><strong>Solicitante:</strong> {solicitud.nombre_solicitante} {solicitud.apellido_solicitante}</p>
+                                <p><strong>Solicitante:</strong> {solicitud.nombre_usuario} {solicitud.apellido_usuario}</p>
                                 <p><strong>Fecha:</strong> {formatearFecha(solicitud.fecha_solicitud)}</p>
                                 <p><strong>Urgencia:</strong> <span className={`urgencia-badge urgencia-${solicitud.urgencia}`}>{solicitud.urgencia}</span></p>
                                 <div className="descripcion-box">
@@ -415,7 +532,6 @@ function TecnicoReparacionDetalle() {
                                             <th>Cantidad</th>
                                             <th>Costo Unitario</th>
                                             <th>Costo Total</th>
-                                            <th>Acciones</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -425,11 +541,6 @@ function TecnicoReparacionDetalle() {
                                                 <td>{parte.cantidad}</td>
                                                 <td>${parte.costo_unitario}</td>
                                                 <td>${(parte.cantidad * parte.costo_unitario).toFixed(2)}</td>
-                                                <td>
-                                                    <div className="botones-accion">
-                                                        <button className="button rojo-suave">Eliminar</button>
-                                                    </div>
-                                                </td>
                                             </tr>
                                         ))}
                                     </tbody>
@@ -443,7 +554,6 @@ function TecnicoReparacionDetalle() {
                                                     }, 0).toFixed(2)}
                                                 </strong>
                                             </td>
-                                            <td></td>
                                         </tr>
                                     </tfoot>
                                 </table>
@@ -454,6 +564,108 @@ function TecnicoReparacionDetalle() {
                     </div>
                 )}
             </div>
+
+            {/* Modal de finalización de reparación */}
+            {mostrarFormFinalizacion && (
+                <div className="modal-overlay">
+                    <div className="modal-container">
+                        <h3>Completar Reparación</h3>
+                        
+                        <div className="form-group">
+                            <label>Costo Final ($):</label>
+                            <input
+                                type="number"
+                                value={datosFinalizacion.costo_final}
+                                onChange={(e) => setDatosFinalizacion({
+                                    ...datosFinalizacion, 
+                                    costo_final: parseFloat(e.target.value)
+                                })}
+                                min="0"
+                                step="0.01"
+                            />
+                        </div>
+                        
+                        <div className="form-group">
+                            <label>Tiempo Total (minutos):</label>
+                            <input
+                                type="number"
+                                value={datosFinalizacion.tiempo_total}
+                                onChange={(e) => setDatosFinalizacion({
+                                    ...datosFinalizacion, 
+                                    tiempo_total: parseInt(e.target.value)
+                                })}
+                                min="0"
+                            />
+                        </div>
+                        
+                        <div className="form-group">
+                            <label>Observaciones:</label>
+                            <textarea
+                                value={datosFinalizacion.observaciones}
+                                onChange={(e) => setDatosFinalizacion({
+                                    ...datosFinalizacion, 
+                                    observaciones: e.target.value
+                                })}
+                                rows="3"
+                            />
+                        </div>
+                        
+                        <div className="modal-buttons">
+                            <button 
+                                className="button azul-claro" 
+                                onClick={handleFinalizarReparacion}
+                            >
+                                Confirmar y Completar
+                            </button>
+                            <button 
+                                className="button" 
+                                onClick={() => setMostrarFormFinalizacion(false)}
+                            >
+                                Cancelar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Modal de descarte de equipo */}
+            {mostrarFormDescarte && (
+                <div className="modal-overlay">
+                    <div className="modal-container">
+                        <h3>Descartar Equipo</h3>
+                        <p className="modal-warning">
+                            ADVERTENCIA: Esta acción marcará el equipo como "descarte". 
+                            Este estado indica que el equipo no puede ser reparado.
+                        </p>
+                        
+                        <div className="form-group">
+                            <label>Motivo del descarte:</label>
+                            <textarea
+                                value={motivoDescarte}
+                                onChange={(e) => setMotivoDescarte(e.target.value)}
+                                rows="4"
+                                placeholder="Explique detalladamente por qué el equipo debe ser descartado..."
+                                required
+                            />
+                        </div>
+                        
+                        <div className="modal-buttons">
+                            <button 
+                                className="button rojo-suave" 
+                                onClick={handleConfirmarDescarte}
+                            >
+                                Confirmar Descarte
+                            </button>
+                            <button 
+                                className="button" 
+                                onClick={() => setMostrarFormDescarte(false)}
+                            >
+                                Cancelar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
