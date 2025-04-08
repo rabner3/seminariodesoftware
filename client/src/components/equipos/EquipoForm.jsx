@@ -1,4 +1,4 @@
-// client/src/components/equipos/EquipoForm.jsx
+
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import './EquipoStyles.css';
@@ -20,7 +20,7 @@ function EquipoForm({ equipo, onSave, onCancel }) {
         observaciones: ''
     });
     
-    // Estado para manejar la asignación inmediata
+    
     const [asignarInmediatamente, setAsignarInmediatamente] = useState(false);
     const [asignacionData, setAsignacionData] = useState({
         id_usuario: '',
@@ -34,14 +34,14 @@ function EquipoForm({ equipo, onSave, onCancel }) {
     const [asignacionExistente, setAsignacionExistente] = useState(null);
 
     useEffect(() => {
-        // Si tenemos un equipo para editar, actualizamos el formData y verificamos si ya está asignado
+        
         if (equipo) {
-            // Formateamos las fechas para el input type="date"
+            
             const formatearFecha = (fechaStr) => {
                 if (!fechaStr) return '';
-                // Convertir a objeto Date
+                
                 const fecha = new Date(fechaStr);
-                // Formatear a YYYY-MM-DD que es el formato que acepta input type="date"
+                
                 return fecha.toISOString().split('T')[0];
             };
 
@@ -61,7 +61,7 @@ function EquipoForm({ equipo, onSave, onCancel }) {
                 observaciones: equipo.observaciones || ''
             });
 
-            // Verificar si el equipo ya está asignado
+            
             if (equipo.id_equipo) {
                 verificarAsignacionExistente(equipo.id_equipo);
             }
@@ -71,7 +71,7 @@ function EquipoForm({ equipo, onSave, onCancel }) {
         fetchUsuarios();
     }, [equipo]);
 
-    // Nueva función para verificar si el equipo ya está asignado
+    
     const verificarAsignacionExistente = async (equipoId) => {
         try {
             const response = await axios.get(`http://localhost:8080/api/asignaciones?id_equipo=${equipoId}&estado=activa`);
@@ -94,7 +94,7 @@ function EquipoForm({ equipo, onSave, onCancel }) {
         }
     };
 
-    // Método para cargar usuarios
+   
     const fetchUsuarios = async () => {
         try {
             const response = await axios.get('http://localhost:8080/api/usuarios');
@@ -121,18 +121,18 @@ function EquipoForm({ equipo, onSave, onCancel }) {
         }));
     };
 
-    // Manejador para el checkbox de asignar inmediatamente
+   
     const handleAsignarCheckbox = (e) => {
         const checked = e.target.checked;
         setAsignarInmediatamente(checked);
-        // Si se marca la casilla, cambiamos el estado del equipo a 'asignado'
+        
         if (checked) {
             setFormData(prev => ({
                 ...prev,
                 estado: 'asignado'
             }));
         } else {
-            // Si se desmarca, volvemos al estado 'disponible' si no está en edición o si no está asignado actualmente
+            
             if (!equipo || equipo.estado !== 'asignado') {
                 setFormData(prev => ({
                     ...prev,
@@ -148,44 +148,43 @@ function EquipoForm({ equipo, onSave, onCancel }) {
         setError(null);
 
         try {
-            // Copia los datos del formulario para no modificar el estado directamente
+            
             const datosParaEnviar = { ...formData };
             
             let equipoGuardado;
             if (equipo) {
-                // Actualizar equipo existente
+                
                 const response = await axios.put(`http://localhost:8080/api/equipos/${equipo.id_equipo}`, datosParaEnviar);
                 equipoGuardado = response.data;
             } else {
-                // Para crear un nuevo equipo, necesitamos obtener un ID
-                // Primero obtenemos el último ID de equipo
+                
                 const ultimoIdResponse = await axios.get('http://localhost:8080/api/equipos/ultimoId');
                 const nuevoId = ultimoIdResponse.data.ultimoId + 1;
                 
-                // Agregar el ID al objeto de datos
+                
                 datosParaEnviar.id_equipo = nuevoId;
                 
-                // Crear nuevo equipo
+                
                 const response = await axios.post('http://localhost:8080/api/equipos', datosParaEnviar);
                 equipoGuardado = response.data;
             }
             
-            // Si se marcó la opción de asignar inmediatamente, creamos la asignación
+            
             if (asignarInmediatamente && asignacionData.id_usuario) {
                 const equipoId = equipo ? equipo.id_equipo : datosParaEnviar.id_equipo;
                 
-                // Verificar si el equipo ya está asignado
+                
                 const checkResponse = await axios.get(`http://localhost:8080/api/asignaciones?id_equipo=${equipoId}&estado=activa`);
                 const asignacionesActivas = checkResponse.data;
                 
                 let procederConAsignacion = true;
                 
-                // Si hay asignaciones activas, mostrar advertencia
+                
                 if (asignacionesActivas && asignacionesActivas.length > 0) {
                     const usuarioActual = asignacionesActivas[0];
                     let nombreUsuario = "otro usuario";
                     
-                    // Intentar obtener el nombre del usuario actual
+                    
                     try {
                         const usuarioResponse = await axios.get(`http://localhost:8080/api/usuarios/${usuarioActual.id_usuario}`);
                         if (usuarioResponse.data) {
@@ -195,12 +194,12 @@ function EquipoForm({ equipo, onSave, onCancel }) {
                         console.error("Error al obtener información del usuario:", err);
                     }
                     
-                    // Confirmar con el usuario si desea reasignar
+            
                     procederConAsignacion = window.confirm(
                         `Este equipo ya está asignado a ${nombreUsuario}. ¿Desea reasignarlo al nuevo usuario? La asignación anterior se marcará como inactiva.`
                     );
                     
-                    // Si el usuario acepta, inactivar la asignación anterior
+                    
                     if (procederConAsignacion) {
                         for (const asignacion of asignacionesActivas) {
                             await axios.put(`http://localhost:8080/api/asignaciones/${asignacion.id_asignacion}`, {
@@ -212,7 +211,7 @@ function EquipoForm({ equipo, onSave, onCancel }) {
                     }
                 }
                 
-                // Si el usuario confirma o no había asignación previa, crear la nueva asignación
+                
                 if (procederConAsignacion) {
                     const fechaActual = new Date().toISOString().slice(0, 10);
                     
@@ -226,13 +225,13 @@ function EquipoForm({ equipo, onSave, onCancel }) {
                         fecha_creacion: new Date().toISOString().slice(0, 19).replace('T', ' ')
                     };
                     
-                    // Crear la asignación
+                   
                     await axios.post('http://localhost:8080/api/asignaciones', asignacionNueva);
                 }
             }
 
             setLoading(false);
-            // Llamar a la función de callback con los datos guardados
+            
             onSave(equipoGuardado);
         } catch (err) {
             setError('Error al guardar el equipo: ' + err.message);
