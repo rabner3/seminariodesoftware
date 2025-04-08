@@ -1,4 +1,4 @@
-// client/src/pages/AdminDashboard.jsx
+
 import { useEffect, useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { TitleContext } from '../context/TitleContext';
@@ -31,7 +31,7 @@ function AdminDashboard() {
         try {
             setLoading(true);
 
-            // Obtener conteo de equipos por estado
+            
             const responseEquipos = await axios.get('http://localhost:8080/api/equipos');
             const equipos = responseEquipos.data;
 
@@ -41,14 +41,14 @@ function AdminDashboard() {
             const equiposEnReparacion = equipos.filter(e => e.estado === 'en_reparacion').length;
             const otrosEquipos = totalEquipos - equiposDisponibles - equiposAsignados - equiposEnReparacion;
 
-            // Obtener últimos 5 equipos registrados
+            
             const equiposOrdenados = [...equipos].sort((a, b) =>
                 new Date(b.fecha_registro || 0) - new Date(a.fecha_registro || 0)
             ).slice(0, 5);
 
             setEquiposRecientes(equiposOrdenados);
 
-            // Contar usuarios
+            
             const responseUsuarios = await axios.get('http://localhost:8080/api/usuarios');
             const totalUsuarios = responseUsuarios.data.length;
 
@@ -57,24 +57,24 @@ function AdminDashboard() {
             const solicitudes = responseSolicitudes.data;
             const solicitudesPendientes = solicitudes.filter(s => s.estado === 'pendiente').length;
 
-            // Obtener últimas 5 solicitudes
+            
             const solicitudesOrdenadas = [...solicitudes]
                 .sort((a, b) => new Date(b.fecha_solicitud || 0) - new Date(a.fecha_solicitud || 0))
                 .slice(0, 5);
 
             setSolicitudesRecientes(solicitudesOrdenadas);
 
-            // Contar reparaciones activas
+            
             const responseReparaciones = await axios.get('http://localhost:8080/api/reparaciones');
             const reparacionesActivas = responseReparaciones.data.filter(
                 r => !['completada', 'descarte'].includes(r.estado)
             ).length;
 
-            // Contar departamentos
+            
             const responseDepartamentos = await axios.get('http://localhost:8080/api/departamentos');
             const departamentos = responseDepartamentos.data.length;
 
-            // Actualizar estadísticas
+            
             setEstadisticas({
                 totalEquipos,
                 equiposDisponibles,
@@ -94,20 +94,20 @@ function AdminDashboard() {
         }
     };
 
-    // Función para formatear fechas
+    
     const formatearFecha = (fechaStr) => {
         if (!fechaStr) return 'No disponible';
         return new Date(fechaStr).toLocaleDateString();
     };
 
-    // Función para renderizar el gráfico circular
+    
     const renderPieChart = () => {
         // Verificar que tengamos datos válidos
         if (estadisticas.totalEquipos === 0) {
             return <div>No hay datos disponibles</div>;
         }
 
-        // Definir los colores para cada segmento
+        
         const colors = {
             disponibles: '#28a745',  // verde
             asignados: '#0d6efd',    // azul
@@ -115,36 +115,36 @@ function AdminDashboard() {
             otros: '#dc3545'         // rojo
         };
 
-        // Calcular los porcentajes
+        
         const disponiblesPercent = (estadisticas.equiposDisponibles / estadisticas.totalEquipos) * 100;
         const asignadosPercent = (estadisticas.equiposAsignados / estadisticas.totalEquipos) * 100;
         const enReparacionPercent = (estadisticas.equiposEnReparacion / estadisticas.totalEquipos) * 100;
         const otrosPercent = (estadisticas.otrosEquipos / estadisticas.totalEquipos) * 100;
 
-        // Crear los estilos para cada segmento del gráfico circular
+        
         const _pieStyles = [
-            { // Disponibles
+            { 
                 backgroundColor: colors.disponibles,
                 transform: 'rotate(0deg)',
                 clipPath: `polygon(50% 0, 100% 0, 100% 100%, 50% 100%, 50% 50%)`,
                 width: `${disponiblesPercent}%`,
                 zIndex: 4
             },
-            { // Asignados
+            { 
                 backgroundColor: colors.asignados,
                 transform: `rotate(${disponiblesPercent * 3.6}deg)`,
                 clipPath: `polygon(50% 0, 100% 0, 100% 100%, 50% 100%, 50% 50%)`,
                 width: `${asignadosPercent}%`,
                 zIndex: 3
             },
-            { // En Reparación
+            { 
                 backgroundColor: colors.enReparacion,
                 transform: `rotate(${(disponiblesPercent + asignadosPercent) * 3.6}deg)`,
                 clipPath: `polygon(50% 0, 100% 0, 100% 100%, 50% 100%, 50% 50%)`,
                 width: `${enReparacionPercent}%`,
                 zIndex: 2
             },
-            { // Otros
+            { 
                 backgroundColor: colors.otros,
                 transform: `rotate(${(disponiblesPercent + asignadosPercent + enReparacionPercent) * 3.6}deg)`,
                 clipPath: `polygon(50% 0, 100% 0, 100% 100%, 50% 100%, 50% 50%)`,
