@@ -1,4 +1,4 @@
-// client/src/components/solicitudes/SolicitudForm.jsx
+
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -14,7 +14,7 @@ function SolicitudForm({ solicitud, equipoId, onSave, onCancel }) {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        // Si estamos editando una solicitud existente
+        
         if (solicitud) {
             setFormData({
                 tipo: solicitud.tipo || 'soporte',
@@ -23,7 +23,7 @@ function SolicitudForm({ solicitud, equipoId, onSave, onCancel }) {
                 id_equipo: solicitud.id_equipo || ''
             });
         }
-        // Si se proporciona un ID de equipo como parámetro
+        
         else if (equipoId) {
             setFormData(prev => ({
                 ...prev,
@@ -44,10 +44,10 @@ function SolicitudForm({ solicitud, equipoId, onSave, onCancel }) {
                 return;
             }
 
-            // Obtener equipos asignados al usuario
+           
             const response = await axios.get(`http://localhost:8080/api/asignaciones?id_usuario=${usuario.id_usuarios}&estado=activa`);
 
-            // Extraer los IDs de equipos y cargar sus detalles
+            
             const idsEquipos = response.data.map(asignacion => asignacion.id_equipo);
 
             if (idsEquipos.length === 0) {
@@ -55,7 +55,7 @@ function SolicitudForm({ solicitud, equipoId, onSave, onCancel }) {
                 return;
             }
 
-            // Obtener detalles de los equipos
+            
             const equiposResponse = await axios.get('http://localhost:8080/api/equipos');
             const equiposAsignados = equiposResponse.data.filter(equipo =>
                 idsEquipos.includes(equipo.id_equipo)
@@ -87,7 +87,7 @@ function SolicitudForm({ solicitud, equipoId, onSave, onCancel }) {
                 throw new Error('Debe iniciar sesión para crear una solicitud');
             }
 
-            // Fecha en formato YYYY-MM-DD
+            
             const fechaActual = new Date().toISOString().split('T')[0];
 
             const solicitudData = {
@@ -102,10 +102,10 @@ function SolicitudForm({ solicitud, equipoId, onSave, onCancel }) {
             let response;
 
             if (solicitud) {
-                // Actualizar solicitud existente
+               
                 response = await axios.put(`http://localhost:8080/api/solicitudes/${solicitud.id_solicitud}`, solicitudData);
             } else {
-                // Crear nueva solicitud
+                
                 response = await axios.post('http://localhost:8080/api/solicitudes', solicitudData);
             }
 
