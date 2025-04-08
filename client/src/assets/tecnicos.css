@@ -613,4 +613,61 @@
         resize: vertical;
         min-height: 80px;
     }
+
+    .bitacoras-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    
+    .bitacoras-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .tiempo-total-badge {
+        background-color: #f0f0f0;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-weight: 600;
+        color: #333;
+        font-size: 14px;
+    }
+}
+.estado-opciones {
+    position: absolute;
+    right: 20px;
+    top: 80px;
+    background-color: white;
+    border-radius: 6px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+    width: 200px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.estado-btn {
+    text-align: left;
+    padding: 8px 12px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.estado-btn:hover {
+    background-color: #f0f0f0;
+}
+
+.estado-completada {
+    color: #28a745;
+    font-weight: 600;
+}
+
+.estado-descarte {
+    color: #dc3545;
+    font-weight: 600;
 }

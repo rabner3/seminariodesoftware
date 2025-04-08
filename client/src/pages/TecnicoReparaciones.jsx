@@ -116,11 +116,26 @@ function TecnicoReparaciones() {
     const calcularDiasEnReparacion = (fechaInicio) => {
         if (!fechaInicio) return 'N/A';
 
+        // Convertir a fecha si viene como string
         const inicio = new Date(fechaInicio);
-        const hoy = new Date();
-        const diferencia = Math.floor((hoy - inicio) / (1000 * 60 * 60 * 24));
 
-        return diferencia;
+        // Asegurarnos que la fecha sea válida
+        if (isNaN(inicio.getTime())) return 'N/A';
+
+        // Obtener la fecha actual sin hora
+        const hoy = new Date();
+
+        // Establecer ambas fechas a medianoche para calcular días completos
+        inicio.setHours(0, 0, 0, 0);
+        hoy.setHours(0, 0, 0, 0);
+
+        // Calcular diferencia en milisegundos
+        const diferenciaMilisegundos = hoy - inicio;
+
+        // Convertir a días (1 día = 24 horas * 60 minutos * 60 segundos * 1000 milisegundos)
+        const diferenciaDias = Math.round(diferenciaMilisegundos / (1000 * 60 * 60 * 24));
+
+        return diferenciaDias >= 0 ? diferenciaDias : 0;
     };
 
     if (loading) return <div className="loading">Cargando reparaciones...</div>;

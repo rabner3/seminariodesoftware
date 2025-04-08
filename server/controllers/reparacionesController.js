@@ -98,6 +98,34 @@ exports.updateReparacion = async (req, res, next) => {
         // Si estamos cambiando el estado a "completada", asegurémonos de establecer la fecha_fin
         if (reparacionData.estado === 'completada' && !reparacionData.fecha_fin) {
             reparacionData.fecha_fin = new Date().toISOString().split('T')[0];
+
+            if (reparacionData.estado === 'descarte' && !reparacionData.observaciones) {
+                // Complementar observaciones existentes o agregar nuevas
+                const observacionActual = reparacionesAnteriores[0].observaciones || '';
+                reparacionData.observaciones = observacionActual 
+                    ? `${observacionActual}\n[${new Date().toLocaleDateString()}] EQUIPO DESCARTADO.`
+                    : `[${new Date().toLocaleDateString()}] EQUIPO DESCARTADO.`;
+            }
+            
+            // Si no se proporciona tiempo_total pero cambiamos a completada, calcularlo a partir de las bitácoras
+            if (!reparacionData.tiempo_total) {
+                try {
+                    const [bitacoras] = await db.query(
+                        'SELECT duracion_minutos FROM bitacoras_repar WHERE id_reparacion = ?',
+                        [req.params.id]
+                    );
+                    
+                    if (bitacoras && bitacoras.length > 0) {
+                        const tiempoTotal = bitacoras.reduce((total, bitacora) => {
+                            return total + (parseInt(bitacora.duracion_minutos) || 0);
+                        }, 0);
+                        
+                        reparacionData.tiempo_total = tiempoTotal;
+                    }
+                } catch (error) {
+                    console.error('Error al calcular tiempo total:', error);
+                }
+            }
         }
         
         // Procesar campos de fecha si existen
@@ -109,6 +137,22 @@ exports.updateReparacion = async (req, res, next) => {
                 reparacionData[campo] = fecha.toISOString().split('T')[0];
             }
         });
+
+        if (reparacionData.estado === 'descarte') {
+            try {
+                // Obtener el ID del equipo
+                const equipoId = reparacionesAnteriores[0].id_equipo;
+                
+                // Actualizar el estado del equipo a "descarte"
+                await db.query(
+                    'UPDATE equipos SET estado = "descarte" WHERE id_equipo = ?',
+                    [equipoId]
+                );
+            } catch (equipoError) {
+                console.error('Error al actualizar estado del equipo:', equipoError);
+                // No interrumpimos el flujo principal si esto falla
+            }
+        }
         
         // Eliminar fecha_actualizacion si está presente ya que no existe en la tabla
         if (reparacionData.fecha_actualizacion) {

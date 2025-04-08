@@ -33,8 +33,21 @@ exports.getReparacionesByReparacion = async (req, res, next) => {
 
 exports.createReparacionParte = async (req, res, next) => {
     try {
-        const [result] = await ReparacionesPartesModel.createReparacionParte(req.body);
-        res.status(201).json({ id_reparacion_partes: result.insertId, ...req.body });
+        // Preparar datos con formato correcto para fechas
+        const datosParaEnviar = { ...req.body };
+        
+        // Asegurarnos de que la fecha tenga el formato correcto para MySQL
+        if (datosParaEnviar.fecha_creacion) {
+            const fecha = new Date(datosParaEnviar.fecha_creacion);
+            datosParaEnviar.fecha_creacion = fecha.toISOString().slice(0, 19).replace('T', ' ');
+        } else {
+            // Si no se proporciona una fecha, usar la fecha actual en formato correcto
+            const fechaActual = new Date();
+            datosParaEnviar.fecha_creacion = fechaActual.toISOString().slice(0, 19).replace('T', ' ');
+        }
+        
+        const [result] = await ReparacionesPartesModel.createReparacionParte(datosParaEnviar);
+        res.status(201).json({ id_reparacion_partes: result.insertId, ...datosParaEnviar });
     } catch (error) {
         next(error);
     }
@@ -42,7 +55,16 @@ exports.createReparacionParte = async (req, res, next) => {
 
 exports.updateReparacionParte = async (req, res, next) => {
     try {
-        const [result] = await ReparacionesPartesModel.updateReparacionParte(req.params.id, req.body);
+        // Preparar datos con formato correcto para fechas
+        const datosParaEnviar = { ...req.body };
+        
+        // Si hay fecha de creación, formatearla correctamente
+        if (datosParaEnviar.fecha_creacion) {
+            const fecha = new Date(datosParaEnviar.fecha_creacion);
+            datosParaEnviar.fecha_creacion = fecha.toISOString().slice(0, 19).replace('T', ' ');
+        }
+        
+        const [result] = await ReparacionesPartesModel.updateReparacionParte(req.params.id, datosParaEnviar);
         if (result.affectedRows === 0) {
             return res.status(404).json({ message: 'Parte de reparación no encontrada o sin cambios' });
         }

@@ -32,10 +32,30 @@ class ReparacionesPartesModel {
     }
 
     static async createReparacionParte(data) {
+        // Formatear fechas correctamente para MySQL
+        if (data.fecha_creacion) {
+            if (data.fecha_creacion instanceof Date) {
+                data.fecha_creacion = data.fecha_creacion.toISOString().slice(0, 19).replace('T', ' ');
+            } else if (typeof data.fecha_creacion === 'string') {
+                const fecha = new Date(data.fecha_creacion);
+                data.fecha_creacion = fecha.toISOString().slice(0, 19).replace('T', ' ');
+            }
+        }
+        
         return db.query('INSERT INTO reparaciones_partes SET ?', [data]);
     }
 
     static async updateReparacionParte(id, data) {
+        // Formatear fechas correctamente para MySQL
+        if (data.fecha_creacion) {
+            if (data.fecha_creacion instanceof Date) {
+                data.fecha_creacion = data.fecha_creacion.toISOString().slice(0, 19).replace('T', ' ');
+            } else if (typeof data.fecha_creacion === 'string') {
+                const fecha = new Date(data.fecha_creacion);
+                data.fecha_creacion = fecha.toISOString().slice(0, 19).replace('T', ' ');
+            }
+        }
+        
         return db.query('UPDATE reparaciones_partes SET ? WHERE id_reparacion_partes = ?', [data, id]);
     }
 
