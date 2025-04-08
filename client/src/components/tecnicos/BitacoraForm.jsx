@@ -20,7 +20,6 @@ function BitacoraForm({ reparacionId, tecnicoId, onBitacoraCreada, onCancel }) {
         }));
     };
 
-    // client/src/components/tecnicos/BitacoraForm.jsx (continuación)
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -30,17 +29,29 @@ function BitacoraForm({ reparacionId, tecnicoId, onBitacoraCreada, onCancel }) {
             // Obtener el usuario actual del localStorage
             const usuario = JSON.parse(localStorage.getItem('usuario'));
 
+            // Validar que el tipo_accion sea uno de los valores permitidos
+            const tiposValidos = ['recepcion', 'diagnostico', 'reparacion', 'espera', 'prueba', 'entrega', 'otro'];
+            if (!tiposValidos.includes(formData.tipo_accion)) {
+                setError(`Tipo de acción no válido. Debe ser uno de: ${tiposValidos.join(', ')}`);
+                setLoading(false);
+                return;
+            }
+
             // Crear objeto con los datos de la bitácora
+            // Formatear la fecha correctamente para MySQL
+            const fechaActual = new Date();
+            const fechaFormateada = fechaActual.toISOString().slice(0, 19).replace('T', ' ');
+
             const bitacoraData = {
                 id_reparacion: reparacionId,
                 id_tecnico: tecnicoId,
                 tipo_accion: formData.tipo_accion,
                 accion: formData.accion,
                 descripcion: formData.descripcion,
-                fecha_accion: new Date(),
+                fecha_accion: fechaFormateada,
                 duracion_minutos: parseInt(formData.duracion_minutos) || 0,
                 creado_por: usuario?.id_usuarios || null,
-                fecha_creacion: new Date()
+                fecha_creacion: fechaFormateada
             };
 
             // Enviar a la API

@@ -65,10 +65,62 @@ class BitacorasReparModel {
     }
 
     static async createBitacora(bitacoraData) {
+        // Asegurar que el tipo_accion está en los valores permitidos
+        const tiposValidos = ['recepcion', 'diagnostico', 'reparacion', 'espera', 'prueba', 'entrega', 'otro'];
+        
+        if (bitacoraData.tipo_accion && !tiposValidos.includes(bitacoraData.tipo_accion)) {
+            bitacoraData.tipo_accion = 'otro'; // Valor por defecto si no es válido
+        }
+        
+        // Formatear las fechas correctamente para MySQL
+        if (bitacoraData.fecha_accion) {
+            if (bitacoraData.fecha_accion instanceof Date) {
+                bitacoraData.fecha_accion = bitacoraData.fecha_accion.toISOString().slice(0, 19).replace('T', ' ');
+            } else if (typeof bitacoraData.fecha_accion === 'string') {
+                const date = new Date(bitacoraData.fecha_accion);
+                bitacoraData.fecha_accion = date.toISOString().slice(0, 19).replace('T', ' ');
+            }
+        }
+        
+        if (bitacoraData.fecha_creacion) {
+            if (bitacoraData.fecha_creacion instanceof Date) {
+                bitacoraData.fecha_creacion = bitacoraData.fecha_creacion.toISOString().slice(0, 19).replace('T', ' ');
+            } else if (typeof bitacoraData.fecha_creacion === 'string') {
+                const date = new Date(bitacoraData.fecha_creacion);
+                bitacoraData.fecha_creacion = date.toISOString().slice(0, 19).replace('T', ' ');
+            }
+        }
+        
         return db.query('INSERT INTO bitacoras_repar SET ?', [bitacoraData]);
     }
 
     static async updateBitacora(id, bitacoraData) {
+        // Asegurar que el tipo_accion está en los valores permitidos
+        const tiposValidos = ['recepcion', 'diagnostico', 'reparacion', 'espera', 'prueba', 'entrega', 'otro'];
+        
+        if (bitacoraData.tipo_accion && !tiposValidos.includes(bitacoraData.tipo_accion)) {
+            bitacoraData.tipo_accion = 'otro'; // Valor por defecto si no es válido
+        }
+        
+        // Formatear las fechas correctamente para MySQL
+        if (bitacoraData.fecha_accion) {
+            if (bitacoraData.fecha_accion instanceof Date) {
+                bitacoraData.fecha_accion = bitacoraData.fecha_accion.toISOString().slice(0, 19).replace('T', ' ');
+            } else if (typeof bitacoraData.fecha_accion === 'string') {
+                const date = new Date(bitacoraData.fecha_accion);
+                bitacoraData.fecha_accion = date.toISOString().slice(0, 19).replace('T', ' ');
+            }
+        }
+        
+        if (bitacoraData.fecha_creacion) {
+            if (bitacoraData.fecha_creacion instanceof Date) {
+                bitacoraData.fecha_creacion = bitacoraData.fecha_creacion.toISOString().slice(0, 19).replace('T', ' ');
+            } else if (typeof bitacoraData.fecha_creacion === 'string') {
+                const date = new Date(bitacoraData.fecha_creacion);
+                bitacoraData.fecha_creacion = date.toISOString().slice(0, 19).replace('T', ' ');
+            }
+        }
+        
         return db.query('UPDATE bitacoras_repar SET ? WHERE id_bitacora = ?', [bitacoraData, id]);
     }
 

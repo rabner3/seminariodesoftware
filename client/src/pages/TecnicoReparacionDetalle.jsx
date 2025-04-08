@@ -73,31 +73,46 @@ function TecnicoReparacionDetalle() {
 
     const actualizarEstadoReparacion = async (nuevoEstado) => {
         try {
-            await axios.put(`http://localhost:8080/api/reparaciones/${id}`, {
-                estado: nuevoEstado,
-                fecha_actualizacion: new Date()
-            });
-
-            // Registrar bitácora del cambio de estado
+            const dataToUpdate = {
+                estado: nuevoEstado
+            };
+            
+            // Si estamos completando la reparación, añadimos la fecha_fin
+            if (nuevoEstado === 'completada') {
+                dataToUpdate.fecha_fin = new Date().toISOString().split('T')[0];
+            }
+            
+            // Si estamos iniciando la reparación, añadimos la fecha_inicio
+            if (nuevoEstado === 'en_reparacion' && !reparacion.fecha_inicio) {
+                dataToUpdate.fecha_inicio = new Date().toISOString().split('T')[0];
+            }
+    
+            await axios.put(`http://localhost:8080/api/reparaciones/${id}`, dataToUpdate);
+    
+            // Registrar bitácora del cambio de estado - asegurando que tipo_accion sea válido
+            let tipoAccion = 'otro'; // Valor por defecto
+            
+            // Mapear estados a tipos de acción válidos
+            if (nuevoEstado === 'diagnostico') tipoAccion = 'diagnostico';
+            else if (nuevoEstado === 'en_reparacion') tipoAccion = 'reparacion';
+            else if (nuevoEstado === 'completada') tipoAccion = 'entrega';
+            else if (nuevoEstado === 'espera_repuestos') tipoAccion = 'espera';
+            
+            // Formatear la fecha correctamente para MySQL
+            const fechaActual = new Date();
+            const fechaFormateada = fechaActual.toISOString().slice(0, 19).replace('T', ' ');
+            
             await axios.post('http://localhost:8080/api/bitacoras-reparacion', {
                 id_reparacion: id,
                 id_tecnico: reparacion.id_tecnico,
-                tipo_accion: 'actualizacion',
+                tipo_accion: tipoAccion,
                 accion: 'Cambio de estado',
                 descripcion: `Estado actualizado a: ${nuevoEstado}`,
-                fecha_accion: new Date(),
+                fecha_accion: fechaFormateada,
                 creado_por: JSON.parse(localStorage.getItem('usuario')).id_usuarios,
-                fecha_creacion: new Date()
+                fecha_creacion: fechaFormateada
             });
-
-            // Si es completada, actualizar fecha fin
-            if (nuevoEstado === 'completada') {
-                await axios.put(`http://localhost:8080/api/reparaciones/${id}`, {
-                    estado: nuevoEstado,
-                    fecha_fin: new Date()
-                });
-            }
-
+    
             // Recargar datos
             cargarDatos();
         } catch (err) {
@@ -105,7 +120,7 @@ function TecnicoReparacionDetalle() {
         }
     };
 
-    const finalizarReparacion = async (formData) => {
+    const _finalizarReparacion = async (formData) => {
         try {
             // Actualizar datos de finalización
             await axios.put(`http://localhost:8080/api/reparaciones/${id}`, {
@@ -295,6 +310,7 @@ function TecnicoReparacionDetalle() {
                             <DiagnosticoForm
                                 reparacionId={reparacion.id_reparacion}
                                 tecnicoId={reparacion.id_tecnico}
+                                diagnosticoId={diagnostico?.id_diagnostico}
                                 onDiagnosticoCreado={handleDiagnosticoCreado}
                                 onCancel={() => setMostrarFormDiagnostico(false)}
                             />

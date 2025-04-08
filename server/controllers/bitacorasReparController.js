@@ -48,13 +48,32 @@ exports.createBitacora = async (req, res, next) => {
             });
         }
         
-        // Establecer fecha_accion y fecha_creacion si no se proporcionan
-        if (!req.body.fecha_accion) {
-            req.body.fecha_accion = new Date();
+        // Verificar que tipo_accion sea válido
+        const tiposValidos = ['recepcion', 'diagnostico', 'reparacion', 'espera', 'prueba', 'entrega', 'otro'];
+        if (!tiposValidos.includes(req.body.tipo_accion)) {
+            return res.status(400).json({
+                message: `Valor de tipo_accion no válido. Debe ser uno de: ${tiposValidos.join(', ')}`
+            });
         }
         
+        // Establecer y formatear fecha_accion si no se proporciona
+        if (!req.body.fecha_accion) {
+            const fechaActual = new Date();
+            req.body.fecha_accion = fechaActual.toISOString().slice(0, 19).replace('T', ' ');
+        } else if (typeof req.body.fecha_accion === 'string' && req.body.fecha_accion.includes('T')) {
+            // Si es una fecha en formato ISO, convertirla al formato de MySQL
+            const fecha = new Date(req.body.fecha_accion);
+            req.body.fecha_accion = fecha.toISOString().slice(0, 19).replace('T', ' ');
+        }
+        
+        // Establecer y formatear fecha_creacion si no se proporciona
         if (!req.body.fecha_creacion) {
-            req.body.fecha_creacion = new Date();
+            const fechaActual = new Date();
+            req.body.fecha_creacion = fechaActual.toISOString().slice(0, 19).replace('T', ' ');
+        } else if (typeof req.body.fecha_creacion === 'string' && req.body.fecha_creacion.includes('T')) {
+            // Si es una fecha en formato ISO, convertirla al formato de MySQL
+            const fecha = new Date(req.body.fecha_creacion);
+            req.body.fecha_creacion = fecha.toISOString().slice(0, 19).replace('T', ' ');
         }
         
         const [result] = await BitacorasReparModel.createBitacora(req.body);
@@ -67,9 +86,18 @@ exports.createBitacora = async (req, res, next) => {
         next(error);
     }
 };
-
 exports.updateBitacora = async (req, res, next) => {
     try {
+        // Verificar que tipo_accion sea válido si está presente
+        if (req.body.tipo_accion) {
+            const tiposValidos = ['recepcion', 'diagnostico', 'reparacion', 'espera', 'prueba', 'entrega', 'otro'];
+            if (!tiposValidos.includes(req.body.tipo_accion)) {
+                return res.status(400).json({
+                    message: `Valor de tipo_accion no válido. Debe ser uno de: ${tiposValidos.join(', ')}`
+                });
+            }
+        }
+        
         const [result] = await BitacorasReparModel.updateBitacora(req.params.id, req.body);
         if (result.affectedRows === 0) {
             return res.status(404).json({ message: 'Bitácora de reparación no encontrada o sin cambios' });

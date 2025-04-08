@@ -55,7 +55,7 @@ exports.createReparacion = async (req, res, next) => {
                     estado: 'asignada'
                 };
                 
-                await SolicitudesModel.updateSolicitud(
+                await require('../models/SolicitudesModel').updateSolicitud(
                     reparacionData.id_solicitud, 
                     solicitudUpdate
                 );
@@ -69,19 +69,12 @@ exports.createReparacion = async (req, res, next) => {
             const [tecnico] = await db.query('SELECT * FROM tecnicos WHERE id_tecnico = ?', [reparacionData.id_tecnico]);
             const [solicitud] = await db.query('SELECT * FROM solicitudes WHERE id_solicitud = ?', [reparacionData.id_solicitud]);
             
-            if (tecnico.length > 0) {
-                // Notificar al técnico sobre la nueva asignación
-                await NotificacionesModel.createNotificacion({
-                    id_usuario_destino: null,
-                    id_tecnico_destino: tecnico[0].id_tecnico,
-                    tipo: 'reparacion',
-                    titulo: 'Nueva reparación asignada',
-                    mensaje: `Se te ha asignado una nueva reparación para el equipo #${reparacionData.id_equipo}`,
-                    fecha_envio: new Date(),
-                    estado: 'pendiente',
-                    id_referencia: result.insertId,
-                    creado_por: reparacionData.creado_por
-                });
+            if (tecnico.length > 0 && typeof NotificacionesService !== 'undefined') {
+                await NotificacionesService.notificarAsignacionReparacion(
+                    { id_reparacion: result.insertId, ...reparacionData },
+                    tecnico[0],
+                    solicitud[0]
+                );
             }
         } catch (notifError) {
             console.error('Error al enviar notificación:', notifError);
@@ -102,6 +95,11 @@ exports.updateReparacion = async (req, res, next) => {
         // Formatear fechas correctamente antes de actualizar
         const reparacionData = { ...req.body };
         
+        // Si estamos cambiando el estado a "completada", asegurémonos de establecer la fecha_fin
+        if (reparacionData.estado === 'completada' && !reparacionData.fecha_fin) {
+            reparacionData.fecha_fin = new Date().toISOString().split('T')[0];
+        }
+        
         // Procesar campos de fecha si existen
         const camposFecha = ['fecha_recepcion', 'fecha_inicio', 'fecha_fin', 'fecha_creacion'];
         
@@ -112,8 +110,16 @@ exports.updateReparacion = async (req, res, next) => {
             }
         });
         
+        // Eliminar fecha_actualizacion si está presente ya que no existe en la tabla
+        if (reparacionData.fecha_actualizacion) {
+            delete reparacionData.fecha_actualizacion;
+        }
+        
         // Obtener datos de la reparación antes de actualizarla
         const [reparacionesAnteriores] = await ReparacionesModel.getReparacionById(req.params.id);
+        if (reparacionesAnteriores.length === 0) {
+            return res.status(404).json({ message: 'Reparación not found' });
+        }
         const reparacionAnterior = reparacionesAnteriores[0];
         
         const [result] = await ReparacionesModel.updateReparacion(req.params.id, reparacionData);
