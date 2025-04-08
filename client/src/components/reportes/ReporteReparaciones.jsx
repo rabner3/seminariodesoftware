@@ -110,7 +110,7 @@ function ReporteReparaciones() {
                 
                 errorMessage += ` (Status: ${err.response.status}, Data: ${JSON.stringify(err.response.data)})`;
             } else if (err.request) {
-                /
+                
                 errorMessage += " (No se recibió respuesta del servidor. ¿Está corriendo? ¿Problema de CORS?)";
             }
             
