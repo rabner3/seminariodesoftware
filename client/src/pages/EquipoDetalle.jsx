@@ -31,6 +31,7 @@ function EquipoDetalle() {
 
             // Obtener el usuario actual
             const usuarioActual = JSON.parse(localStorage.getItem('usuario'));
+            
 
             // Cargar asignación actual
             try {
@@ -80,7 +81,8 @@ function EquipoDetalle() {
     if (loading) return <div className="loading">Cargando información del equipo...</div>;
     if (error) return <div className="error">{error}</div>;
     if (!equipo) return <div className="error">No se encontró información del equipo</div>;
-
+    const usuario = JSON.parse(localStorage.getItem('usuario')) || {};
+    const esTecnico = usuario.rol === 'tecnico';
     return (
         <div className="contenedor-padre" id="contenedor-padre">
             <div className="container-widgets">
@@ -88,9 +90,12 @@ function EquipoDetalle() {
                     <button onClick={() => navigate('/')} className="button">
                         Volver
                     </button>
-                    <button onClick={handleCrearSolicitud} className="button azul-claro">
-                        Solicitar Soporte
-                    </button>
+                    {/* Solo mostrar el botón de solicitar soporte si no es técnico */}
+                    {!esTecnico && (
+                        <button onClick={handleCrearSolicitud} className="button azul-claro">
+                            Solicitar Soporte
+                        </button>
+                    )}
                 </div>
 
                 <h2 className="section-title">Equipo #{equipo.id_equipo}</h2>

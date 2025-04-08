@@ -1,10 +1,12 @@
 // client/src/App.jsx
+
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
 import Home from './pages/Home';
 import Usuarios from './pages/Usuarios';
 import Equipos from './pages/Equipos';
+import EquiposReadOnly from './pages/EquiposReadOnly';
 import Login from './pages/Login';
 import Solicitudes from './pages/Solicitudes';
 import UsuarioDashboard from './pages/UsuarioDashboard';
@@ -81,9 +83,10 @@ function App() {
             </ProtectedRoute>
           } />
 
+          {/* Rutas para equipos (diferentes según el rol) */}
           <Route path="/equipos" element={
-            <ProtectedRoute requiredRoles={['admin', 'tecnico']}>
-              <Equipos />
+            <ProtectedRoute>
+              {usuario?.rol === 'admin' ? <Equipos /> : <EquiposReadOnly />}
             </ProtectedRoute>
           } />
 
