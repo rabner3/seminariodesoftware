@@ -32,7 +32,7 @@ exports.getReportesById = async (req, res, next) => {
 exports.createReportes = async (req, res, next) => {
     try {
         // Validar req.body aquí sería ideal
-        const [result] = await RportesModel.createReportes(req.body);
+        const [result] = await ReportesModel.createReportes(req.body);
         // Devolvemos el ID insertado y los datos enviados
         res.status(201).json({ id_reportes: result.insertId, ...req.body });
     } catch (error) {

@@ -4,7 +4,7 @@ exports.getAllInventario = async (req, res, next) => { // Añadir next para mane
     try {
         // db.query devuelve [rows, fields], nos quedamos con rows ([asignaciones])
         const [inventario] = await InventarioModel.getAllInventario();
-        res.json(a); // El array ahora contiene objetos con datos unidos
+        res.json(inventario); // El array ahora contiene objetos con datos unidos
     } catch (error) {
         // Pasamos el error al siguiente middleware (el de manejo de errores)
         next(error);

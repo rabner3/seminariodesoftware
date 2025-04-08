@@ -1,10 +1,9 @@
 // server/controllers/reparacionesController.js
-
+const ReparacionesModel = require('../models/ReparacionesModel');
 const SolicitudesModel = require('../models/SolicitudesModel');
-const UsuariosModel = require('../models/UsuariosModel'); // Añadir esta importación
-const db = require('../config/db'); // También necesitamos la conexión a la base de datos
+const UsuariosModel = require('../models/UsuariosModel');
+const db = require('../config/db');
 const NotificacionesModel = require('../models/NotificacionesModel');
-
 
 exports.getAllReparaciones = async (req, res, next) => {
     try {
@@ -56,7 +55,7 @@ exports.createReparacion = async (req, res, next) => {
                     estado: 'asignada'
                 };
                 
-                await require('../models/SolicitudesModel').updateSolicitud(
+                await SolicitudesModel.updateSolicitud(
                     reparacionData.id_solicitud, 
                     solicitudUpdate
                 );
@@ -71,11 +70,18 @@ exports.createReparacion = async (req, res, next) => {
             const [solicitud] = await db.query('SELECT * FROM solicitudes WHERE id_solicitud = ?', [reparacionData.id_solicitud]);
             
             if (tecnico.length > 0) {
-                await NotificacionesService.notificarAsignacionReparacion(
-                    { id_reparacion: result.insertId, ...reparacionData },
-                    tecnico[0],
-                    solicitud[0]
-                );
+                // Notificar al técnico sobre la nueva asignación
+                await NotificacionesModel.createNotificacion({
+                    id_usuario_destino: null,
+                    id_tecnico_destino: tecnico[0].id_tecnico,
+                    tipo: 'reparacion',
+                    titulo: 'Nueva reparación asignada',
+                    mensaje: `Se te ha asignado una nueva reparación para el equipo #${reparacionData.id_equipo}`,
+                    fecha_envio: new Date(),
+                    estado: 'pendiente',
+                    id_referencia: result.insertId,
+                    creado_por: reparacionData.creado_por
+                });
             }
         } catch (notifError) {
             console.error('Error al enviar notificación:', notifError);
@@ -182,6 +188,7 @@ exports.updateReparacion = async (req, res, next) => {
         next(error);
     }
 };
+
 exports.deleteReparacion = async (req, res, next) => {
     try {
         const [result] = await ReparacionesModel.deleteReparacion(req.params.id);
