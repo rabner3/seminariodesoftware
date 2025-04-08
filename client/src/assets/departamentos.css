@@ -1,5 +1,5 @@
 
-/* Estilos específicos para los departamentos */
+
 
 .departamento-detalle-container .seccion-relacionados {
     margin-top: 25px;
@@ -13,7 +13,7 @@
     font-size: 18px;
 }
 
-/* Estilos para la tabla de listado de departamentos */
+
 .departamentos-table {
     width: 100%;
     border-collapse: separate;

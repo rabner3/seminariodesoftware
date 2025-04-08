@@ -1,4 +1,4 @@
-// client/src/components/departamentos/DepartamentoDetalle.jsx
+
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -20,7 +20,7 @@ function DepartamentoDetalle({ id, onClose, onEdit, onDelete }) {
             const response = await axios.get(`http://localhost:8080/api/departamentos/${id}`);
             setDepartamento(response.data);
 
-            // Si el departamento tiene responsable, lo cargamos
+            
             if (response.data.id_responsable) {
                 try {
                     const respResponse = await axios.get(`http://localhost:8080/api/usuarios/${response.data.id_responsable}`);
@@ -30,23 +30,23 @@ function DepartamentoDetalle({ id, onClose, onEdit, onDelete }) {
                 }
             }
 
-            // Cargar usuarios y equipos asociados a este departamento
+            
             try {
-                // Usamos la ruta específica para obtener usuarios por departamento
+                
                 const usuariosResponse = await axios.get(`http://localhost:8080/api/usuarios/departamento/${id}`);
                 setUsuarios(usuariosResponse.data);
             } catch (err) {
                 console.error('Error al cargar usuarios:', err);
-                setUsuarios([]); // Aseguramos que sea un array vacío en caso de error
+                setUsuarios([]); 
             }
 
             try {
-                // Usamos la ruta específica para obtener equipos por departamento
+                
                 const equiposResponse = await axios.get(`http://localhost:8080/api/equipos/departamento/${id}`);
                 setEquipos(equiposResponse.data);
             } catch (err) {
                 console.error('Error al cargar equipos:', err);
-                setEquipos([]); // Aseguramos que sea un array vacío en caso de error
+                setEquipos([]); 
             }
 
             setLoading(false);
@@ -56,7 +56,7 @@ function DepartamentoDetalle({ id, onClose, onEdit, onDelete }) {
         }
     };
 
-    // Función para formatear fechas
+    
     const formatearFecha = (fechaStr) => {
         if (!fechaStr) return 'No especificado';
         const fecha = new Date(fechaStr);
@@ -73,7 +73,7 @@ function DepartamentoDetalle({ id, onClose, onEdit, onDelete }) {
         if (window.confirm('¿Está seguro de eliminar este departamento?')) {
             try {
                 await axios.delete(`http://localhost:8080/api/departamentos/${id}`);
-                onDelete(); // Callback para informar al componente padre
+                onDelete(); 
             } catch (err) {
                 setError('Error al eliminar el departamento: ' + err.message);
             }
@@ -139,7 +139,7 @@ function DepartamentoDetalle({ id, onClose, onEdit, onDelete }) {
                 </div>
             </div>
 
-            {/* Sección de usuarios del departamento */}
+            
             <div className="seccion-relacionados">
                 <h3>Usuarios asignados a este departamento ({usuarios.length})</h3>
                 {usuarios.length > 0 ? (
@@ -170,7 +170,7 @@ function DepartamentoDetalle({ id, onClose, onEdit, onDelete }) {
                 )}
             </div>
 
-            {/* Sección de equipos del departamento */}
+            
             <div className="seccion-relacionados">
                 <h3>Equipos asignados a este departamento ({equipos.length})</h3>
                 {equipos.length > 0 ? (
@@ -210,4 +210,4 @@ function DepartamentoDetalle({ id, onClose, onEdit, onDelete }) {
     );
 }
 
-export default DepartamentoDetalle;
+export default DepartamentoDetalle
