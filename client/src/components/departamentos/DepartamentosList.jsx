@@ -1,4 +1,4 @@
-// client/src/components/departamentos/DepartamentosList.jsx
+
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -14,7 +14,7 @@ function DepartamentosList({ onEdit, onView, onDelete }) {
     }, []);
 
     useEffect(() => {
-        // Filtrar departamentos cuando cambia la búsqueda
+        
         if (busqueda.trim() === '') {
             setDepartamentosFiltrados(departamentos);
         } else {
@@ -48,7 +48,7 @@ function DepartamentosList({ onEdit, onView, onDelete }) {
         if (window.confirm('¿Está seguro de eliminar este departamento?')) {
             try {
                 await axios.delete(`http://localhost:8080/api/departamentos/${id}`);
-                // Actualizar la lista después de eliminar
+                
                 fetchDepartamentos();
                 onDelete();
             } catch (err) {
