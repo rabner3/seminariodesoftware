@@ -12,13 +12,13 @@ function UsuarioForm({ usuario, onSave, onCancel }) {
         id_departamento: '',
         rol: 'usuario',
         estado: 'activo',
-        password: '' // Solo para nuevos usuarios
+        password: '' 
     });
 
     const [departamentos, setDepartamentos] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [showPassword, setShowPassword] = useState(!usuario); // Mostrar campo de contraseña solo para nuevos usuarios
+    const [showPassword, setShowPassword] = useState(!usuario); 
 
     useEffect(() => {
         
