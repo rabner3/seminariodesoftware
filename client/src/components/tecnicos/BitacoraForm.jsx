@@ -1,4 +1,4 @@
-// client/src/components/tecnicos/BitacoraForm.jsx
+
 import { useState } from 'react';
 import axios from 'axios';
 
@@ -26,10 +26,10 @@ function BitacoraForm({ reparacionId, tecnicoId, onBitacoraCreada, onCancel }) {
         setError(null);
 
         try {
-            // Obtener el usuario actual del localStorage
+            
             const usuario = JSON.parse(localStorage.getItem('usuario'));
 
-            // Validar que el tipo_accion sea uno de los valores permitidos
+            
             const tiposValidos = ['recepcion', 'diagnostico', 'reparacion', 'espera', 'prueba', 'entrega', 'otro'];
             if (!tiposValidos.includes(formData.tipo_accion)) {
                 setError(`Tipo de acción no válido. Debe ser uno de: ${tiposValidos.join(', ')}`);
@@ -37,8 +37,7 @@ function BitacoraForm({ reparacionId, tecnicoId, onBitacoraCreada, onCancel }) {
                 return;
             }
 
-            // Crear objeto con los datos de la bitácora
-            // Formatear la fecha correctamente para MySQL
+            
             const fechaActual = new Date();
             const fechaFormateada = fechaActual.toISOString().slice(0, 19).replace('T', ' ');
 
@@ -54,10 +53,10 @@ function BitacoraForm({ reparacionId, tecnicoId, onBitacoraCreada, onCancel }) {
                 fecha_creacion: fechaFormateada
             };
 
-            // Enviar a la API
+           
             await axios.post('http://localhost:8080/api/bitacoras-reparacion', bitacoraData);
 
-            // Notificar al componente padre
+            
             onBitacoraCreada();
             setLoading(false);
         } catch (err) {
