@@ -3,9 +3,7 @@ import { useEffect, useContext, useState } from 'react';
 import { TitleContext } from '../context/TitleContext';
 import ReporteInventario from '../components/reportes/ReporteInventario';
 import ReporteAsignaciones from '../components/reportes/ReporteAsignaciones';
-//import ReporteReparaciones from '../components/reportes/ReporteReparaciones';
-//import ReporteTecnicos from '../components/reportes/ReporteTecnicos';
-//import ReporteSolicitudes from '../components/reportes/ReporteSolicitudes';
+import ReporteReparaciones from '../components/reportes/ReporteReparaciones';
 import '../assets/reportes.css';
 
 function Reportes() {
@@ -68,18 +66,6 @@ function Reportes() {
                         onClick={() => setTipoReporte('reparaciones')}
                     >
                         Reparaciones
-                    </button>
-                    <button
-                        className={`reporte-btn ${tipoReporte === 'tecnicos' ? 'active' : ''}`}
-                        onClick={() => setTipoReporte('tecnicos')}
-                    >
-                        Rendimiento Técnicos
-                    </button>
-                    <button
-                        className={`reporte-btn ${tipoReporte === 'solicitudes' ? 'active' : ''}`}
-                        onClick={() => setTipoReporte('solicitudes')}
-                    >
-                        Solicitudes
                     </button>
                 </div>
 
