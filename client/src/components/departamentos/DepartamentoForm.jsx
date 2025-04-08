@@ -1,4 +1,4 @@
-// client/src/components/departamentos/DepartamentoForm.jsx
+
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -15,7 +15,7 @@ function DepartamentoForm({ departamento, onSave, onCancel }) {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        // Si tenemos un departamento para editar, actualizamos el formData
+        
         if (departamento) {
             setFormData({
                 nombre: departamento.nombre || '',
@@ -24,7 +24,7 @@ function DepartamentoForm({ departamento, onSave, onCancel }) {
                 estado: departamento.estado || 'activo'
             });
         } else {
-            // Si estamos creando un nuevo departamento, reseteamos el formulario
+            
             setFormData({
                 nombre: '',
                 codigo: '',
@@ -59,7 +59,7 @@ function DepartamentoForm({ departamento, onSave, onCancel }) {
         setError(null);
 
         try {
-            // Si no se proporciona código, generamos uno automáticamente basado en el nombre
+            
             if (!formData.codigo && formData.nombre) {
                 formData.codigo = formData.nombre
                     .substring(0, 3)
@@ -70,15 +70,15 @@ function DepartamentoForm({ departamento, onSave, onCancel }) {
 
             let response;
             if (departamento) {
-                // Actualizar departamento existente
+                
                 response = await axios.put(`http://localhost:8080/api/departamentos/${departamento.id_departamento}`, formData);
             } else {
-                // Crear nuevo departamento
+                
                 response = await axios.post('http://localhost:8080/api/departamentos', formData);
             }
 
             setLoading(false);
-            // Llamar a la función de callback con los datos guardados
+            
             onSave(response.data);
         } catch (err) {
             setError('Error al guardar el departamento: ' + (err.response?.data?.message || err.message));
