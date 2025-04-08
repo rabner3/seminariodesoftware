@@ -1,4 +1,4 @@
-// client/src/components/Layout.jsx
+
 import React, { useContext, useState, useRef, useEffect } from 'react';
 import { TitleContext } from '../context/TitleContext';
 import { Link } from 'react-router-dom';
@@ -24,7 +24,7 @@ const Layout = ({ children, user, onLogout }) => {
     };
   }, []);
 
-  // Manejar clic en el avatar de usuario
+  
   const toggleUserMenu = () => {
     setShowUserMenu(!showUserMenu);
   };
