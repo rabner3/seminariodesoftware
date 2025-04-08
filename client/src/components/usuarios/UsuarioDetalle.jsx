@@ -1,4 +1,4 @@
-// client/src/components/usuarios/UsuarioDetalle.jsx
+
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -18,7 +18,7 @@ function UsuarioDetalle({ id, onClose, onEdit, onDelete }) {
             const response = await axios.get(`http://localhost:8080/api/usuarios/${id}`);
             setUsuario(response.data);
 
-            // Si el usuario tiene departamento, lo cargamos
+            
             if (response.data.id_departamento) {
                 try {
                     const deptResponse = await axios.get(`http://localhost:8080/api/departamentos/${response.data.id_departamento}`);
@@ -35,7 +35,7 @@ function UsuarioDetalle({ id, onClose, onEdit, onDelete }) {
         }
     };
 
-    // Función para formatear fechas
+    
     const formatearFecha = (fechaStr) => {
         if (!fechaStr) return 'No especificado';
         const fecha = new Date(fechaStr);
