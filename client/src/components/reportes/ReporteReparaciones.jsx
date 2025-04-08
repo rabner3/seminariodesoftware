@@ -1,4 +1,4 @@
-// client/src/components/reportes/ReporteReparaciones.jsx
+
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { jsPDF } from 'jspdf';
@@ -17,7 +17,7 @@ import {
     Legend
 } from 'chart.js';
 
-// Registrar los componentes necesarios para Chart.js
+
 ChartJS.register(
     ArcElement,
     CategoryScale,
@@ -38,13 +38,13 @@ function ReporteReparaciones() {
     const [filtroEstado, setFiltroEstado] = useState('todos');
     const [fechaDesde, setFechaDesde] = useState('');
     const [fechaHasta, setFechaHasta] = useState('');
-    // --- CORRECCIÓN AQUÍ ---
+    
     const [loading, setLoading] = useState(true); // Variable de estado 'loading' y función 'setLoading'
     const [error, setError] = useState(null);     // Variable de estado 'error' y función 'setError'
-    // --- FIN CORRECCIÓN ---
+    
     const [vistaPrevia, setVistaPrevia] = useState(false);
 
-    // Datos para gráficos
+    
     const [datosGraficoEstado, setDatosGraficoEstado] = useState({
         labels: [],
         datasets: []
@@ -59,10 +59,10 @@ function ReporteReparaciones() {
     });
 
     useEffect(() => {
-        // Cargar datos iniciales
+        
         cargarDatos();
 
-        // Establecer fechas por defecto (último mes)
+        
         const hoy = new Date();
         const unMesAtras = new Date(hoy);
         unMesAtras.setMonth(hoy.getMonth() - 1);
@@ -72,11 +72,11 @@ function ReporteReparaciones() {
     }, []);
 
     useEffect(() => {
-        // Generar datos para gráficos cuando cambien las reparaciones o las fechas de costo
+        
         if (reparaciones.length > 0) {
             generarDatosGraficos();
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        
     }, [reparaciones, fechaDesde, fechaHasta]); // Dependencias para regenerar gráficos
 
     const cargarDatos = async () => {
@@ -107,20 +107,20 @@ function ReporteReparaciones() {
             console.error("Error en cargarDatos:", err); // Log del error completo
             let errorMessage = `Error al cargar datos: ${err.message}`;
             if (err.response) {
-                // El servidor respondió con un estado fuera del rango 2xx
+                
                 errorMessage += ` (Status: ${err.response.status}, Data: ${JSON.stringify(err.response.data)})`;
             } else if (err.request) {
-                // La petición se hizo pero no se recibió respuesta (ej. servidor caído, CORS)
+                /
                 errorMessage += " (No se recibió respuesta del servidor. ¿Está corriendo? ¿Problema de CORS?)";
             }
-            // Ahora setError es una función y no debería fallar
+            
             setError(errorMessage);
             setLoading(false);
         }
     };
 
     const generarDatosGraficos = () => {
-        // Datos para gráfico por estado
+        
         const conteoEstados = {
             pendiente: 0,
             diagnostico: 0,
@@ -165,7 +165,7 @@ function ReporteReparaciones() {
             ]
         });
 
-        // Datos para gráfico de tiempo promedio por técnico
+        
         const tiemposPorTecnico = {};
         const reparacionesPorTecnico = {};
 
@@ -177,7 +177,7 @@ function ReporteReparaciones() {
                     reparacionesPorTecnico[reparacion.id_tecnico] = 0;
                 }
 
-                // Asegurarse que tiempo_total es un número
+                
                 const tiempo = Number(reparacion.tiempo_total);
                 if (!isNaN(tiempo)) {
                     tiemposPorTecnico[reparacion.id_tecnico] += tiempo;
@@ -213,7 +213,7 @@ function ReporteReparaciones() {
             ]
         });
 
-        // Datos para gráfico de costos por mes
+        
         const reparacionesFechadas = reparaciones.filter(reparacion => {
             // Usaremos fecha_fin para costos, asegurándonos que exista y sea válida
             if (!reparacion.fecha_fin) return false;
@@ -238,15 +238,15 @@ function ReporteReparaciones() {
             }
         });
 
-        // Agrupar por mes/año
+        
         const costosPorMes = {};
 
         reparacionesFechadas.forEach(reparacion => {
-             // Asegurarse que costo_final es un número válido
+             
             const costo = Number(reparacion.costo_final);
             if (reparacion.fecha_fin && !isNaN(costo)) {
                 const fecha = new Date(reparacion.fecha_fin);
-                // Formato MM/YYYY para asegurar orden correcto
+                
                 const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
                 const año = fecha.getFullYear();
                 const mesAño = `${año}-${mes}`; // Usar YYYY-MM para ordenamiento natural
@@ -260,10 +260,10 @@ function ReporteReparaciones() {
             }
         });
 
-        // Ordenar por fecha (YYYY-MM ya ordena correctamente)
+        
         const mesesOrdenados = Object.keys(costosPorMes).sort();
 
-        // Mapear a formato legible MM/YYYY para las etiquetas
+        
         const etiquetasMeses = mesesOrdenados.map(mesAño => {
             const [año, mes] = mesAño.split('-');
             return `${mes}/${año}`;
@@ -299,7 +299,7 @@ function ReporteReparaciones() {
             );
         }
 
-        // Filtrar por fechas (usando fecha_recepcion)
+        
         if (fechaDesde || fechaHasta) {
             reparacionesFiltradas = reparacionesFiltradas.filter(reparacion => {
                 if (!reparacion.fecha_recepcion) return false; // Si no hay fecha, no se puede filtrar
@@ -308,7 +308,7 @@ function ReporteReparaciones() {
                     const fechaRecepcion = new Date(reparacion.fecha_recepcion);
                      if (isNaN(fechaRecepcion.getTime())) return false; // Ignorar fechas inválidas
 
-                    // Importante: Añadir T00:00:00 y T23:59:59 para incluir días completos
+                    
                     const desde = fechaDesde ? new Date(fechaDesde + 'T00:00:00') : null;
                     const hasta = fechaHasta ? new Date(fechaHasta + 'T23:59:59') : null;
 
@@ -332,7 +332,7 @@ function ReporteReparaciones() {
         const reparacionesCompletadas = reparacionesCompletadasLista.length;
         const reparacionesDescartadas = reparacionesFiltradas.filter(r => r.estado === 'descarte').length;
 
-        // Calcular tiempo promedio (solo de completadas y con tiempo válido)
+        
         const tiempoTotal = reparacionesCompletadasLista
             .map(r => Number(r.tiempo_total)) // Convertir a número
             .filter(t => !isNaN(t) && t != null) // Filtrar inválidos o nulos
@@ -344,7 +344,7 @@ function ReporteReparaciones() {
             ? tiempoTotal / numeroRepConTiempoValido
             : 0;
 
-        // Calcular costo total y promedio (solo de completadas y con costo válido)
+        
         const costoTotal = reparacionesCompletadasLista
             .map(r => Number(r.costo_final)) // Convertir a número
             .filter(c => !isNaN(c) && c != null) // Filtrar inválidos o nulos
@@ -356,7 +356,7 @@ function ReporteReparaciones() {
             ? costoTotal / numeroRepConCostoValido
             : 0;
 
-        // Costo total de *todas* las filtradas (no solo completadas) con costo válido
+        
          const costoTotalGeneral = reparacionesFiltradas
              .map(r => Number(r.costo_final))
              .filter(c => !isNaN(c) && c != null)
@@ -377,15 +377,15 @@ function ReporteReparaciones() {
         const estadisticas = calcularEstadisticas(reparacionesFiltradas);
         const doc = new jsPDF();
 
-        // Título
+       
         doc.setFontSize(16);
         doc.text('Reporte de Reparaciones', 105, 15, { align: 'center' });
 
-        // Fecha de generación
+        
         doc.setFontSize(10);
         doc.text(`Generado el: ${new Date().toLocaleString()}`, 105, 22, { align: 'center' });
 
-        // Filtros aplicados
+        
         doc.setFontSize(12);
         doc.text('Filtros Aplicados:', 14, 30);
         doc.setFontSize(10);
@@ -410,7 +410,7 @@ function ReporteReparaciones() {
         doc.text(`Costo Promedio (Completadas): $${estadisticas.costoPromedio.toFixed(2)}`, 14, 86);
         doc.text(`Costo Total (Todas las filtradas): $${estadisticas.costoTotalGeneral.toFixed(2)}`, 14, 92);
 
-        // Tabla de reparaciones
+        
         const tableColumn = ['ID', 'Equipo', 'Técnico', 'F. Recep.', 'Estado', 'Tiempo (min)', 'Costo ($)'];
         const tableRows = [];
 
@@ -450,35 +450,35 @@ function ReporteReparaciones() {
         doc.autoTable({
             head: [tableColumn],
             body: tableRows,
-            startY: 100, // Ajustar inicio de tabla
+            startY: 100, 
             theme: 'grid',
             styles: {
                 fontSize: 8,
-                cellPadding: 1.5, // Ajustar padding
-                overflow: 'linebreak' // Para texto largo
+                cellPadding: 1.5, 
+                overflow: 'linebreak' 
             },
             headStyles: {
-                fillColor: [41, 128, 185], // Azul más oscuro
+                fillColor: [41, 128, 185], 
                 textColor: 255,
                 fontStyle: 'bold'
             },
              columnStyles: { // Ajustar anchos si es necesario
-                 0: { cellWidth: 10 }, // ID
-                 1: { cellWidth: 40 }, // Equipo
-                 2: { cellWidth: 30 }, // Tecnico
-                 3: { cellWidth: 20 }, // Fecha
-                 4: { cellWidth: 25 }, // Estado
-                 5: { cellWidth: 20 }, // Tiempo
-                 6: { cellWidth: 20 }  // Costo
+                 0: { cellWidth: 10 }, 
+                 1: { cellWidth: 40 }, 
+                 2: { cellWidth: 30 }, 
+                 3: { cellWidth: 20 }, 
+                 4: { cellWidth: 25 }, 
+                 5: { cellWidth: 20 }, 
+                 6: { cellWidth: 20 }  
              }
         });
 
-        // Guardar el PDF
+        
         const nombreArchivo = `reporte_reparaciones_${new Date().toISOString().split('T')[0]}.pdf`;
         doc.save(nombreArchivo);
     };
 
-    // --- Renderizado Condicional ---
+    
     if (loading) {
         return <div className="reporte-reparaciones"><p>Cargando datos...</p></div>;
     }
@@ -486,9 +486,9 @@ function ReporteReparaciones() {
     if (error) {
         return <div className="reporte-reparaciones"><p style={{ color: 'red' }}>Error al cargar: {error}</p></div>;
     }
-    // --- Fin Renderizado Condicional ---
+    
 
-    // Si no hay carga ni error, muestra el componente principal
+   
     return (
         <div className="reporte-reparaciones">
             <div className="reporte-header">
@@ -594,7 +594,7 @@ function ReporteReparaciones() {
                                     data={datosGraficoTiempo}
                                     options={{
                                         responsive: true,
-                                         indexAxis: 'y', // Barras horizontales si hay muchos técnicos
+                                         indexAxis: 'y', 
                                         plugins: {
                                             legend: { display: false },
                                             title: { display: true, text: 'Minutos Promedio por Reparación' }
@@ -634,10 +634,10 @@ function ReporteReparaciones() {
                     <div className="estadisticas-resumen">
                         <h5>Resumen Estadístico (Datos Filtrados)</h5>
                         {(() => {
-                            const reparacionesFiltradasEst = filtrarReparaciones(); // Recalcular para la vista previa
+                            const reparacionesFiltradasEst = filtrarReparaciones(); 
                             const estadisticas = calcularEstadisticas(reparacionesFiltradasEst);
 
-                            // Evitar renderizar si no hay datos filtrados
+                            
                             if (reparacionesFiltradasEst.length === 0) {
                                 return <p>No hay reparaciones que coincidan con los filtros seleccionados.</p>;
                             }
