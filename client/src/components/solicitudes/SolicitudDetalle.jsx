@@ -1,4 +1,4 @@
-// client/src/components/solicitudes/SolicitudDetalle.jsx
+
 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -17,7 +17,7 @@ function SolicitudDetalle({ id, onClose, onRefresh }) {
     const [observacionesReparacion, setObservacionesReparacion] = useState('');
 
     useEffect(() => {
-        // Obtener usuario actual del localStorage
+        
         const usuario = JSON.parse(localStorage.getItem('usuario'));
         if (usuario) {
             setUsuarioActual(usuario);
@@ -31,7 +31,7 @@ function SolicitudDetalle({ id, onClose, onRefresh }) {
         try {
             setLoading(true);
 
-            // Cargar datos de la solicitud (que ahora incluye info de usuario y equipo)
+            
             const responseSolicitud = await axios.get(`http://localhost:8080/api/solicitudes/${id}`);
             setSolicitud(responseSolicitud.data);
 
@@ -45,7 +45,7 @@ function SolicitudDetalle({ id, onClose, onRefresh }) {
     const cargarTecnicos = async () => {
         try {
             const response = await axios.get('http://localhost:8080/api/tecnicos');
-            // Filtrar solo técnicos activos si hay un campo de estado
+            
             const tecnicosActivos = response.data.filter(tecnico => 
                 tecnico.estado === 'activo' || tecnico.estado === undefined
             );
@@ -85,7 +85,7 @@ function SolicitudDetalle({ id, onClose, onRefresh }) {
             cargarDatos();
 
             if (onRefresh) {
-                onRefresh(); // Actualizar listado de solicitudes si es necesario
+                onRefresh(); 
             }
         } catch (err) {
             setError(`Error al guardar comentario: ${err.message}`);
@@ -109,15 +109,15 @@ function SolicitudDetalle({ id, onClose, onRefresh }) {
 
             setCargandoAccion(true);
 
-            // Formatear la fecha actual para MySQL
+            
             const fechaActual = new Date().toISOString().split('T')[0];
 
-            // Primero actualizar estado de solicitud
+            
             await axios.put(`http://localhost:8080/api/solicitudes/${id}`, {
                 estado: 'asignada',
             });
 
-            // Crear nueva reparación
+            
             const reparacionData = {
                 id_solicitud: id,
                 id_equipo: solicitud.id_equipo,
@@ -131,12 +131,12 @@ function SolicitudDetalle({ id, onClose, onRefresh }) {
 
             const responseReparacion = await axios.post('http://localhost:8080/api/reparaciones', reparacionData);
 
-            // También, actualizar el estado del equipo a 'en_reparacion'
+            
             await axios.put(`http://localhost:8080/api/equipos/${solicitud.id_equipo}`, {
                 estado: 'en_reparacion'
             });
 
-            // Registrar el evento en la tabla de auditoría si existe
+            
             try {
                 await axios.post('http://localhost:8080/api/auditoria', {
                     tabla_afectada: 'reparaciones',
@@ -148,10 +148,10 @@ function SolicitudDetalle({ id, onClose, onRefresh }) {
                 });
             } catch (auditError) {
                 console.error("Error al registrar auditoría:", auditError);
-                // No interrumpimos el flujo si falla la auditoría
+                
             }
 
-            // Registrar una bitácora inicial para la reparación
+            
             try {
                 await axios.post('http://localhost:8080/api/bitacoras-reparacion', {
                     id_reparacion: responseReparacion.data.id_reparacion,
@@ -165,7 +165,7 @@ function SolicitudDetalle({ id, onClose, onRefresh }) {
                 });
             } catch (bitacoraError) {
                 console.error("Error al crear bitácora inicial:", bitacoraError);
-                // No interrumpimos el flujo si falla la creación de la bitácora
+                
             }
 
             alert(`Reparación creada con ID: ${responseReparacion.data.id_reparacion} y asignada al técnico seleccionado.`);
@@ -207,18 +207,18 @@ function SolicitudDetalle({ id, onClose, onRefresh }) {
         }
     };
 
-    // Función para formatear fechas
+    
     const formatearFecha = (fechaStr) => {
         if (!fechaStr) return 'No disponible';
         return new Date(fechaStr).toLocaleString();
     };
 
-    // Función para verificar si el usuario actual es el dueño de la solicitud
+    
     const esSolicitudDelUsuario = () => {
         return usuarioActual && solicitud && usuarioActual.id_usuarios === solicitud.id_usuario;
     };
 
-    // Función para verificar si el usuario es admin o técnico
+    
     const esAdminOTecnico = () => {
         return usuarioActual && (usuarioActual.rol === 'admin' || usuarioActual.rol === 'tecnico');
     };
@@ -392,7 +392,7 @@ function SolicitudDetalle({ id, onClose, onRefresh }) {
                 </div>
             )}
 
-            {/* Sección para mostrar la reparación asociada si existe */}
+            {}
             {solicitud.id_reparacion && (
                 <div className="reparacion-asociada">
                     <h3>Reparación Asociada</h3>
