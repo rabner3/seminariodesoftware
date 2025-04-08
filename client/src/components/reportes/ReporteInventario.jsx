@@ -1,4 +1,4 @@
-// client/src/components/reportes/ReporteInventario.jsx
+
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { jsPDF } from 'jspdf';
@@ -43,7 +43,7 @@ function ReporteInventario() {
         datasets: []
     });
 
-    // Obtener equipos filtrados
+    
     const equiposFiltrados = useCallback(() => {
         let filtrados = [...equipos];
 
@@ -64,11 +64,11 @@ function ReporteInventario() {
         return filtrados;
     }, [equipos, filtroTipo, filtroEstado, filtroDepartamento]);
 
-    // Generar datos para gráficos
+    
     const generarDatosGraficos = useCallback(() => {
         const filtrados = equiposFiltrados();
 
-        // Gráfico por estado
+        
         const conteoEstados = {
             disponible: 0,
             asignado: 0,
@@ -106,7 +106,7 @@ function ReporteInventario() {
             }]
         });
 
-        // Gráfico por departamento
+        
         const conteoDepartamentos = {};
         filtrados.forEach(equipo => {
             const departamento = departamentos.find(d => 
@@ -179,15 +179,15 @@ function ReporteInventario() {
         const equiposFiltrados = filtrarEquipos();
         const doc = new jsPDF();
 
-        // Título
+        
         doc.setFontSize(16);
         doc.text('Reporte de Inventario de Equipos', 105, 15, { align: 'center' });
 
-        // Fecha de generación
+        
         doc.setFontSize(10);
         doc.text(`Fecha: ${new Date().toLocaleDateString()}`, 105, 22, { align: 'center' });
 
-        // Filtros aplicados
+        
         doc.setFontSize(12);
         doc.text('Filtros aplicados:', 14, 30);
         doc.setFontSize(10);
@@ -196,7 +196,7 @@ function ReporteInventario() {
         doc.text(`Departamento: ${filtroDepartamento === 'todos' ? 'Todos' :
             departamentos.find(d => d.id_departamento === parseInt(filtroDepartamento))?.nombre || filtroDepartamento}`, 14, 48);
 
-        // Tabla de equipos
+        
         const tableColumn = ['ID', 'Tipo', 'Marca', 'Modelo', 'Serie', 'Estado', 'Departamento'];
         const tableRows = [];
 
@@ -228,7 +228,7 @@ function ReporteInventario() {
             }
         });
 
-        // Resumen estadístico
+        
         const finalY = doc.autoTable.previous.finalY + 10;
         doc.setFontSize(12);
         doc.text('Resumen Estadístico', 14, finalY);
@@ -236,7 +236,7 @@ function ReporteInventario() {
         doc.setFontSize(10);
         doc.text(`Total de Equipos: ${equiposFiltrados.length}`, 14, finalY + 6);
 
-        // Conteo por estado
+        
         const conteoEstados = {};
         equiposFiltrados.forEach(equipo => {
             if (equipo.estado) {
@@ -255,7 +255,7 @@ function ReporteInventario() {
         doc.save('reporte_inventario.pdf');
     };
 
-    // Obtener los tipos únicos de equipos
+    
     const tiposUnicos = [...new Set(equipos.map(equipo => equipo.tipo).filter(Boolean))];
 
     return (
