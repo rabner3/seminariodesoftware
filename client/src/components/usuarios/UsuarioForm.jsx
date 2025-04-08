@@ -1,4 +1,4 @@
-// client/src/components/usuarios/UsuarioForm.jsx
+
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -21,7 +21,7 @@ function UsuarioForm({ usuario, onSave, onCancel }) {
     const [showPassword, setShowPassword] = useState(!usuario); // Mostrar campo de contraseña solo para nuevos usuarios
 
     useEffect(() => {
-        // Si tenemos un usuario para editar, actualizamos el formData
+        
         if (usuario) {
             setFormData({
                 nombre: usuario.nombre || '',
@@ -32,11 +32,11 @@ function UsuarioForm({ usuario, onSave, onCancel }) {
                 id_departamento: usuario.id_departamento || '',
                 rol: usuario.rol || 'usuario',
                 estado: usuario.estado || 'activo',
-                password: '' // Dejamos vacío para edición
+                password: '' 
             });
-            setShowPassword(false); // No mostrar el campo de contraseña por defecto en edición
+            setShowPassword(false); 
         } else {
-            // Si estamos creando un nuevo usuario, reseteamos el formulario
+            
             setFormData({
                 nombre: '',
                 apellido: '',
@@ -48,7 +48,7 @@ function UsuarioForm({ usuario, onSave, onCancel }) {
                 estado: 'activo',
                 password: ''
             });
-            setShowPassword(true); // Mostrar campo de contraseña para nuevo usuario
+            setShowPassword(true); 
         }
 
         fetchDepartamentos();
@@ -77,7 +77,7 @@ function UsuarioForm({ usuario, onSave, onCancel }) {
         setError(null);
 
         try {
-            // Si no se proporciona contraseña en edición, eliminamos el campo
+            
             const datosParaEnviar = { ...formData };
             if (!datosParaEnviar.password) {
                 delete datosParaEnviar.password;
@@ -85,15 +85,15 @@ function UsuarioForm({ usuario, onSave, onCancel }) {
 
             let response;
             if (usuario) {
-                // Actualizar usuario existente
+                
                 response = await axios.put(`http://localhost:8080/api/usuarios/${usuario.id_usuarios}`, datosParaEnviar);
             } else {
-                // Crear nuevo usuario
+                
                 response = await axios.post('http://localhost:8080/api/usuarios', datosParaEnviar);
             }
 
             setLoading(false);
-            // Llamar a la función de callback con los datos guardados
+            
             onSave(response.data);
         } catch (err) {
             setError('Error al guardar el usuario: ' + (err.response?.data?.message || err.message));
