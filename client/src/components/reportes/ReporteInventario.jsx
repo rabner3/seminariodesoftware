@@ -1,5 +1,5 @@
 // client/src/components/reportes/ReporteInventario.jsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
@@ -15,7 +15,6 @@ import {
     Legend
 } from 'chart.js';
 
-// Registrar los componentes necesarios para Chart.js
 ChartJS.register(
     ArcElement,
     CategoryScale,
@@ -32,11 +31,9 @@ function ReporteInventario() {
     const [filtroEstado, setFiltroEstado] = useState('todos');
     const [filtroDepartamento, setFiltroDepartamento] = useState('todos');
     const [departamentos, setDepartamentos] = useState([]);
-    const [ setLoading] = useState(true);
-    const [setError] = useState(null);
+    const [_loading, setLoading] = useState(true);
+    const [_error, setError] = useState(null);
     const [vistaPrevia, setVistaPrevia] = useState(false);
-
-    // Datos para gráficos
     const [datosGraficoEstado, setDatosGraficoEstado] = useState({
         labels: [],
         datasets: []
@@ -46,39 +43,32 @@ function ReporteInventario() {
         datasets: []
     });
 
-    useEffect(() => {
-        // Cargar datos iniciales
-        cargarDatos();
-    }, []);
+    // Obtener equipos filtrados
+    const equiposFiltrados = useCallback(() => {
+        let filtrados = [...equipos];
 
-    useEffect(() => {
-        // Generar datos para gráficos cuando cambien los equipos
-        if (equipos.length > 0) {
-            generarDatosGraficos();
+        if (filtroTipo !== 'todos') {
+            filtrados = filtrados.filter(equipo => equipo.tipo === filtroTipo);
         }
-    }, [equipos]);
 
-    const cargarDatos = async () => {
-        try {
-            setLoading(true);
-
-            // Cargar equipos
-            const responseEquipos = await axios.get('http://localhost:8080/api/equipos');
-            setEquipos(responseEquipos.data);
-
-            // Cargar departamentos
-            const responseDepartamentos = await axios.get('http://localhost:8080/api/departamentos');
-            setDepartamentos(responseDepartamentos.data);
-
-            setLoading(false);
-        } catch (err) {
-            setError(`Error al cargar datos: ${err.message}`);
-            setLoading(false);
+        if (filtroEstado !== 'todos') {
+            filtrados = filtrados.filter(equipo => equipo.estado === filtroEstado);
         }
-    };
 
-    const generarDatosGraficos = () => {
-        // Datos para gráfico por estado
+        if (filtroDepartamento !== 'todos') {
+            filtrados = filtrados.filter(equipo => 
+                equipo.id_departamento === parseInt(filtroDepartamento)
+            );
+        }
+
+        return filtrados;
+    }, [equipos, filtroTipo, filtroEstado, filtroDepartamento]);
+
+    // Generar datos para gráficos
+    const generarDatosGraficos = useCallback(() => {
+        const filtrados = equiposFiltrados();
+
+        // Gráfico por estado
         const conteoEstados = {
             disponible: 0,
             asignado: 0,
@@ -87,64 +77,82 @@ function ReporteInventario() {
             baja: 0
         };
 
-        equipos.forEach(equipo => {
-            if (equipo.estado) {
-                conteoEstados[equipo.estado] = (conteoEstados[equipo.estado] || 0) + 1;
+        filtrados.forEach(equipo => {
+            if (equipo.estado && Object.hasOwn(conteoEstados, equipo.estado)) {
+                conteoEstados[equipo.estado]++;
             }
         });
 
         setDatosGraficoEstado({
             labels: Object.keys(conteoEstados),
-            datasets: [
-                {
-                    label: 'Equipos por Estado',
-                    data: Object.values(conteoEstados),
-                    backgroundColor: [
-                        'rgba(75, 192, 192, 0.6)',
-                        'rgba(54, 162, 235, 0.6)',
-                        'rgba(255, 206, 86, 0.6)',
-                        'rgba(255, 99, 132, 0.6)',
-                        'rgba(153, 102, 255, 0.6)'
-                    ],
-                    borderColor: [
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(153, 102, 255, 1)'
-                    ],
-                    borderWidth: 1
-                }
-            ]
+            datasets: [{
+                label: 'Equipos por Estado',
+                data: Object.values(conteoEstados),
+                backgroundColor: [
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(255, 206, 86, 0.6)',
+                    'rgba(255, 99, 132, 0.6)',
+                    'rgba(153, 102, 255, 0.6)'
+                ],
+                borderColor: [
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(153, 102, 255, 1)'
+                ],
+                borderWidth: 1
+            }]
         });
 
-        // Datos para gráfico por departamento
+        // Gráfico por departamento
         const conteoDepartamentos = {};
-
-        equipos.forEach(equipo => {
-            if (equipo.id_departamento) {
-                // Buscar nombre del departamento
-                const departamento = departamentos.find(d => d.id_departamento === equipo.id_departamento);
-                const nombreDepartamento = departamento ? departamento.nombre : `Depto ID: ${equipo.id_departamento}`;
-
-                conteoDepartamentos[nombreDepartamento] = (conteoDepartamentos[nombreDepartamento] || 0) + 1;
-            } else {
-                conteoDepartamentos['Sin Departamento'] = (conteoDepartamentos['Sin Departamento'] || 0) + 1;
-            }
+        filtrados.forEach(equipo => {
+            const departamento = departamentos.find(d => 
+                d.id_departamento === equipo.id_departamento
+            );
+            const nombre = departamento?.nombre || 'Sin Departamento';
+            
+            conteoDepartamentos[nombre] = (conteoDepartamentos[nombre] || 0) + 1;
         });
 
         setDatosGraficoDepartamento({
             labels: Object.keys(conteoDepartamentos),
-            datasets: [
-                {
-                    label: 'Equipos por Departamento',
-                    data: Object.values(conteoDepartamentos),
-                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                }
-            ]
+            datasets: [{
+                label: 'Equipos por Departamento',
+                data: Object.values(conteoDepartamentos),
+                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
         });
+    }, [equiposFiltrados, departamentos]);
+
+    useEffect(() => {
+        cargarDatos();
+    }, []);
+
+    useEffect(() => {
+        if (equipos.length > 0 && departamentos.length > 0) {
+            generarDatosGraficos();
+        }
+    }, [equipos, departamentos, generarDatosGraficos]);
+
+    const cargarDatos = async () => {
+        try {
+            setLoading(true);
+            const [equiposRes, deptosRes] = await Promise.all([
+                axios.get('http://localhost:8080/api/equipos'),
+                axios.get('http://localhost:8080/api/departamentos')
+            ]);
+            setEquipos(equiposRes.data);
+            setDepartamentos(deptosRes.data);
+            setLoading(false);
+        } catch (err) {
+            setError(`Error al cargar datos: ${err.message}`);
+            setLoading(false);
+        }
     };
 
     const filtrarEquipos = () => {
@@ -243,6 +251,7 @@ function ReporteInventario() {
         });
 
         // Guardar el PDF
+        
         doc.save('reporte_inventario.pdf');
     };
 
