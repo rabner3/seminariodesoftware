@@ -1,4 +1,3 @@
-// server/routes/diagnosticosRoutes.js (modificado)
 const express = require('express');
 const router = express.Router();
 const diagnosticosController = require('../controllers/diagnosticosController');

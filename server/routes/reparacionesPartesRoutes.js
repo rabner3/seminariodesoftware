@@ -1,4 +1,3 @@
-// server/routes/reparacionesPartesRoutes.js
 const express = require('express');
 const router = express.Router();
 const reparacionesPartesController = require('../controllers/reparacionesPartesController');

@@ -1,4 +1,4 @@
-// server/routes/bitacorasAsignRoutes.js
+
 const express = require('express');
 const router = express.Router();
 const bitacorasAsignController = require('../controllers/bitacorasAsignController');

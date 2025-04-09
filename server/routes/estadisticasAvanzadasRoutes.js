@@ -1,4 +1,4 @@
-// server/routes/estadisticasAvanzadasRoutes.js
+
 const express = require('express');
 const router = express.Router();
 const estadisticasAvanzadasController = require('../controllers/estadisticasAvanzadasController');
