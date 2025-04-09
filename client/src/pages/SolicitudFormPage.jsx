@@ -1,4 +1,4 @@
-// client/src/pages/SolicitudFormPage.jsx
+
 import { useEffect, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { TitleContext } from '../context/TitleContext';
@@ -7,7 +7,7 @@ import SolicitudForm from '../components/solicitudes/SolicitudForm';
 function SolicitudFormPage() {
     const { setTitle } = useContext(TitleContext);
     const navigate = useNavigate();
-    const { id } = useParams(); // ID del equipo si se proporciona
+    const { id } = useParams(); 
 
     useEffect(() => {
         setTitle("NUEVA SOLICITUD");
@@ -18,7 +18,7 @@ function SolicitudFormPage() {
     };
 
     const handleCancel = () => {
-        navigate(-1); // Volver a la página anterior
+        navigate(-1); 
     };
 
     return (

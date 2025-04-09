@@ -1,4 +1,4 @@
-// client/src/pages/Solicitudes.jsx
+
 
 import { useEffect, useContext, useState } from 'react';
 import { TitleContext } from '../context/TitleContext';
@@ -21,30 +21,30 @@ function Solicitudes() {
 
     useEffect(() => {
         setTitle("SOLICITUDES DE REPARACIÓN");
-        // Obtener el usuario actual del localStorage
+
         const usuarioActual = JSON.parse(localStorage.getItem('usuario'));
         setUsuario(usuarioActual);
 
-        // Verificar si hay una solicitud seleccionada en localStorage
+
         const solicitudId = localStorage.getItem('solicitudSeleccionada');
 
         if (solicitudId) {
-            // Si hay una solicitud seleccionada, mostrar su detalle
+
             setSolicitudSeleccionada(parseInt(solicitudId));
             setVista('detalle');
-            // Limpiar del localStorage para futuras visitas
+
             localStorage.removeItem('solicitudSeleccionada');
         }
 
         if (usuarioActual) {
-            // Si es técnico, necesitamos obtener su ID de técnico
+
             if (usuarioActual.rol === 'tecnico') {
                 obtenerIdTecnico(usuarioActual.id_usuarios);
             } else if (usuarioActual.rol === 'admin') {
-                // Si es administrador, cargar todas las solicitudes
+
                 cargarTodasSolicitudes();
             } else {
-                // Si es usuario normal, cargar solo sus solicitudes
+   
                 cargarSolicitudesUsuario(usuarioActual.id_usuarios);
             }
         } else {
@@ -53,13 +53,13 @@ function Solicitudes() {
         }
     }, [setTitle]);
 
-    // Nueva función para obtener el ID del técnico
+
     const obtenerIdTecnico = async (userId) => {
         try {
             const response = await axios.get(`http://localhost:8080/api/tecnicos/usuario/${userId}`);
             if (response.data && response.data.id_tecnico) {
                 setTecnicoId(response.data.id_tecnico);
-                // Una vez que tenemos el ID del técnico, cargamos sus solicitudes
+
                 cargarSolicitudesTecnico(response.data.id_tecnico);
             } else {
                 setError('No se encontró información del técnico asociado a su usuario');
@@ -95,39 +95,35 @@ function Solicitudes() {
         }
     };
 
-    // Nueva función para cargar solicitudes asignadas a un técnico
+
     const cargarSolicitudesTecnico = async (tecnicoId) => {
         try {
             setLoading(true);
-            // Necesitamos un nuevo endpoint en la API para esto o filtrar las reparaciones
-            // Para este ejemplo, usaré un enfoque donde obtenemos las reparaciones del técnico
-            // y luego filtramos las solicitudes basadas en esas reparaciones
 
-            // Primero obtenemos las reparaciones asignadas al técnico
             const responseReparaciones = await axios.get(`http://localhost:8080/api/reparaciones/tecnico/${tecnicoId}`);
 
             if (responseReparaciones.data && responseReparaciones.data.length > 0) {
-                // Extraemos los IDs de solicitudes de las reparaciones
+
                 const idsSolicitudes = responseReparaciones.data
-                    .filter(rep => rep.id_solicitud) // Solo las que tienen ID de solicitud
+                    .filter(rep => rep.id_solicitud) 
                     .map(rep => rep.id_solicitud);
 
                 if (idsSolicitudes.length > 0) {
-                    // Obtenemos todas las solicitudes
+
                     const responseSolicitudes = await axios.get('http://localhost:8080/api/solicitudes');
 
-                    // Filtramos solo las solicitudes que corresponden a las reparaciones del técnico
+
                     const solicitudesFiltradas = responseSolicitudes.data.filter(sol =>
                         idsSolicitudes.includes(sol.id_solicitud)
                     );
 
                     setSolicitudes(solicitudesFiltradas);
                 } else {
-                    // No hay solicitudes asociadas a las reparaciones de este técnico
+
                     setSolicitudes([]);
                 }
             } else {
-                // No hay reparaciones asignadas a este técnico
+
                 setSolicitudes([]);
             }
 
@@ -149,7 +145,7 @@ function Solicitudes() {
     };
 
     const handleGuardarSolicitud = () => {
-        // Después de guardar, recargar las solicitudes según el rol del usuario
+ 
         if (usuario.rol === 'admin') {
             cargarTodasSolicitudes();
         } else if (usuario.rol === 'tecnico' && tecnicoId) {
@@ -170,12 +166,12 @@ function Solicitudes() {
 
         let solicitudesFiltradas = [...solicitudes];
 
-        // Aplicar filtro por estado
+   
         if (filtro !== 'todas') {
             solicitudesFiltradas = solicitudesFiltradas.filter(sol => sol.estado === filtro);
         }
 
-        // Aplicar búsqueda
+   
         if (busqueda.trim() !== '') {
             const terminoBusqueda = busqueda.toLowerCase();
             solicitudesFiltradas = solicitudesFiltradas.filter(sol =>
@@ -187,7 +183,6 @@ function Solicitudes() {
         return solicitudesFiltradas;
     };
 
-    // Renderizado condicional
     if (vista === 'form') {
         return (
             <div className="contenedor-padre">
@@ -206,7 +201,7 @@ function Solicitudes() {
                     id={solicitudSeleccionada}
                     onClose={handleVolverLista}
                     onRefresh={() => {
-                        // Recargar solicitudes basado en el rol cuando se actualiza una solicitud
+
                         if (usuario.rol === 'admin') {
                             cargarTodasSolicitudes();
                         } else if (usuario.rol === 'tecnico' && tecnicoId) {
@@ -220,13 +215,13 @@ function Solicitudes() {
         );
     }
 
-    // Vista de lista (default)
+
     const solicitudesFiltradas = filtrarSolicitudes();
 
     return (
         <div className="contenedor-padre">
             <div className="container-widgets">
-                {/* Solo mostramos el botón de Nueva Solicitud para usuarios normales, no para técnicos */}
+
                 {usuario && usuario.rol !== 'tecnico' && (
                     <div className="container-botones">
                         <button className="button azul-claro" onClick={handleNuevaSolicitud}>

@@ -1,4 +1,4 @@
-// client/src/pages/TecnicoAgregarParte.jsx
+
 import { useEffect, useContext, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { TitleContext } from '../context/TitleContext';
@@ -29,11 +29,10 @@ function TecnicoAgregarParte() {
         try {
             setLoading(true);
 
-            // Cargar datos de la reparación
             const responseReparacion = await axios.get(`http://localhost:8080/api/reparaciones/${id}`);
             setReparacion(responseReparacion.data);
 
-            // Cargar listado de partes disponibles
+
             const responsePartes = await axios.get('http://localhost:8080/api/partes');
             setPartes(responsePartes.data);
 
@@ -51,7 +50,7 @@ function TecnicoAgregarParte() {
             [name]: value
         }));
 
-        // Si cambia la parte seleccionada, actualizar el costo unitario
+
         if (name === 'id_parte') {
             const parteSeleccionada = partes.find(p => p.id_parte === parseInt(value));
             if (parteSeleccionada) {
@@ -69,10 +68,10 @@ function TecnicoAgregarParte() {
         setError(null);
 
         try {
-            // Obtener usuario actual
+
             const usuario = JSON.parse(localStorage.getItem('usuario'));
 
-            // Crear registro de parte utilizada
+
             const parteData = {
                 id_reparacion: parseInt(id),
                 id_parte: parseInt(formData.id_parte),
@@ -85,7 +84,7 @@ function TecnicoAgregarParte() {
 
             await axios.post('http://localhost:8080/api/reparaciones-partes', parteData);
 
-            // Registrar en bitácora
+
             const parteSeleccionada = partes.find(p => p.id_parte === parseInt(formData.id_parte));
 
             await axios.post('http://localhost:8080/api/bitacoras-reparacion', {
@@ -99,7 +98,6 @@ function TecnicoAgregarParte() {
                 fecha_creacion: new Date()
             });
 
-            // Actualizar costo estimado de la reparación
             const responsePartes = await axios.get(`http://localhost:8080/api/reparaciones-partes/reparacion/${id}`);
             const costoTotal = responsePartes.data.reduce((total, parte) => {
                 return total + (parte.cantidad * parte.costo_unitario);

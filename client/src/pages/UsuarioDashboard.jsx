@@ -1,4 +1,4 @@
-// client/src/pages/UsuarioDashboard.jsx
+
 import { useEffect, useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { TitleContext } from '../context/TitleContext';
@@ -30,16 +30,16 @@ function UsuarioDashboard() {
         try {
             setLoading(true);
 
-            // Cargar equipos asignados al usuario - solo asignaciones activas
+
             try {
                 const responseAsignaciones = await axios.get(`http://localhost:8080/api/asignaciones?id_usuario=${userId}&estado=activa`);
 
-                // Para cada asignación, obtener los detalles del equipo
+
                 const equiposPromises = responseAsignaciones.data.map(async (asignacion) => {
                     if (asignacion.id_equipo) {
                         try {
                             const equipoResponse = await axios.get(`http://localhost:8080/api/equipos/${asignacion.id_equipo}`);
-                            // Solo agregar si el equipo está en estado activo (asignado o disponible)
+
                             if (['disponible', 'asignado'].includes(equipoResponse.data.estado)) {
                                 return {
                                     ...equipoResponse.data,
@@ -56,7 +56,7 @@ function UsuarioDashboard() {
 
                 const equipos = await Promise.all(equiposPromises);
                 
-                // Filtrar nulos y eliminar duplicados por id_equipo
+
                 const equiposFiltrados = equipos.filter(equipo => equipo !== null);
                 const equiposUnicos = [];
                 const idsEquipos = new Set();
@@ -74,10 +74,10 @@ function UsuarioDashboard() {
                 setEquiposAsignados([]);
             }
 
-            // Cargar solicitudes del usuario - solo las activas
+
             try {
                 const responseSolicitudes = await axios.get(`http://localhost:8080/api/solicitudes/usuario/${userId}`);
-                // Filtrar solo las solicitudes activas (pendientes, asignadas, en_proceso)
+
                 const solicitudesActivas = responseSolicitudes.data.filter(
                     solicitud => ['pendiente', 'asignada', 'en_proceso'].includes(solicitud.estado)
                 );
@@ -94,15 +94,15 @@ function UsuarioDashboard() {
         }
     };
 
-    // Función para ver detalle de solicitud
+
     const verDetalleSolicitud = (id) => {
-        // Guardar ID de solicitud en localStorage
+        
         localStorage.setItem('solicitudSeleccionada', id);
-        // Navegar a la página de solicitudes
+
         navigate('/solicitudes');
     };
 
-    // Función para formatear fechas
+
     const formatearFecha = (fechaStr) => {
         if (!fechaStr) return 'No disponible';
         return new Date(fechaStr).toLocaleDateString();
@@ -113,13 +113,13 @@ function UsuarioDashboard() {
 
     return (
         <div className="contenedor-padre" id="contenedor-padre">
-            {/* Tarjeta de bienvenida */}
+
             <div className="container-widgets">
                 <h2>Bienvenido, {usuario?.nombre || 'Usuario'}</h2>
                 <p>Desde aquí puedes gestionar tus equipos asignados y solicitudes de soporte técnico.</p>
             </div>
 
-            {/* Sección de equipos asignados */}
+
             <div className="container-widgets">
                 <div className="seccion-header">
                     <h3>Mis Equipos Asignados ({equiposAsignados.length})</h3>
@@ -172,7 +172,7 @@ function UsuarioDashboard() {
                 )}
             </div>
 
-            {/* Sección de solicitudes activas */}
+
             <div className="container-widgets">
                 <div className="seccion-header">
                     <h3>Mis Solicitudes Activas ({solicitudesActivas.length})</h3>

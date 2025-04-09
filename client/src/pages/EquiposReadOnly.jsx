@@ -1,8 +1,8 @@
-// client/src/pages/EquiposReadOnly.jsx
+
 
 import { useEffect, useContext, useState } from 'react';
 import { TitleContext } from '../context/TitleContext';
-import { Link } from 'react-router-dom'; // Importamos Link de react-router-dom
+import { Link } from 'react-router-dom'; 
 import axios from 'axios';
 import '../assets/equipos.css';
 
@@ -20,7 +20,7 @@ function EquiposReadOnly() {
     }, [setTitle]);
 
     useEffect(() => {
-        // Filtrar equipos cuando cambia la búsqueda
+
         if (busqueda.trim() === '') {
             setEquiposFiltrados(equipos);
         } else {
@@ -49,7 +49,7 @@ function EquiposReadOnly() {
         }
     };
 
-    // Función para obtener la clase CSS según el estado
+
     const getEstadoClass = (estado) => {
         switch (estado) {
             case 'disponible': return 'estado-badge estado-disponible';
@@ -117,7 +117,7 @@ function EquiposReadOnly() {
                                             <td>{equipo.departamento_nombre || 'No asignado'}</td>
                                             <td>
                                                 <div className="botones-accion">
-                                                    {/* Cambiamos por un componente Link */}
+
                                                     <Link 
                                                         to={`/equipos/detalle/${equipo.id_equipo}`}
                                                         className="button azul-claro"

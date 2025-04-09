@@ -29,15 +29,14 @@ function TecnicoPartes() {
         }
     };
 
-    // Filtrar partes según los criterios
     const partesFiltradas = () => {
         return partes.filter(parte => {
-            // Filtrar por estado
+
             if (filtroEstado !== 'todos' && parte.estado !== filtroEstado) {
                 return false;
             }
 
-            // Filtrar por búsqueda
+
             if (filtroBusqueda.trim() !== '') {
                 const busqueda = filtroBusqueda.toLowerCase();
                 return (

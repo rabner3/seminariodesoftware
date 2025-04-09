@@ -1,4 +1,4 @@
-// client/src/pages/Reportes.jsx
+
 import { useEffect, useContext, useState } from 'react';
 import { TitleContext } from '../context/TitleContext';
 import ReporteInventario from '../components/reportes/ReporteInventario';
@@ -9,23 +9,23 @@ import '../assets/reportes.css';
 function Reportes() {
     const { setTitle } = useContext(TitleContext);
     const [tipoReporte, setTipoReporte] = useState('inventario');
-    const [usuario, setUsuario] = useState(null);
+    const [ setUsuario] = useState(null);
 
     useEffect(() => {
         setTitle("REPORTES");
 
-        // Obtener el usuario actual del localStorage
+
         const usuarioActual = JSON.parse(localStorage.getItem('usuario'));
         setUsuario(usuarioActual);
 
-        // Verificar si el usuario tiene permisos de administrador
+
         if (!usuarioActual || usuarioActual.rol !== 'admin') {
             alert('No tienes permisos para acceder a esta sección');
             window.location.href = '/';
         }
     }, [setTitle]);
 
-    // Función para renderizar el componente de reporte seleccionado
+
     const renderReporte = () => {
         switch (tipoReporte) {
             case 'inventario':

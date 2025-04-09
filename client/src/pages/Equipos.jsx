@@ -4,7 +4,7 @@ import { TitleContext } from '../context/TitleContext';
 import axios from 'axios';
 import EquipoDetalle from '../components/equipos/EquipoDetalle';
 import EquipoForm from '../components/equipos/EquipoForm';
-import '../assets/equipos.css'; // Importamos los estilos
+import '../assets/equipos.css'; 
 
 function Equipos() {
     const { setTitle } = useContext(TitleContext);
@@ -53,7 +53,7 @@ function Equipos() {
         }
     };
 
-    // Función para obtener la clase CSS según el estado
+
     const getEstadoClass = (estado) => {
         switch (estado) {
             case 'disponible': return 'estado-badge estado-disponible';
@@ -125,7 +125,7 @@ function Equipos() {
         );
     }
 
-    // Vista por defecto (lista)
+
     return (
         <div className="contenedor-padre" id="contenedor-padre">
             <div className="container-widgets">

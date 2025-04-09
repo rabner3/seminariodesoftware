@@ -1,4 +1,4 @@
-// client/src/pages/Notificaciones.jsx (corregido)
+
 import { useEffect, useContext, useState, useRef } from 'react';
 import { TitleContext } from '../context/TitleContext';
 import axios from 'axios';
@@ -17,9 +17,9 @@ function Notificaciones() {
     useEffect(() => {
         setTitle("MIS NOTIFICACIONES");
         
-        // Solo cargar una vez cuando el componente se monta
+
         if (usuario) {
-            // Si el usuario es técnico, primero obtener su ID de técnico
+
             if (usuario.rol === 'tecnico') {
                 obtenerIdTecnico().then(() => {
                     cargarNotificaciones();
@@ -29,25 +29,25 @@ function Notificaciones() {
             }
         }
         
-        // Sin dependencias para que solo se ejecute al montar
+
     }, []);
     
-    // Función para obtener el ID del técnico (solo la primera vez)
+
     const obtenerIdTecnico = async () => {
         try {
-            // Verificar si ya tenemos el ID en localStorage
+
             const tecnicoIdAlmacenado = localStorage.getItem(`tecnicoId_${usuario.id_usuarios}`);
             if (tecnicoIdAlmacenado) {
                 tecnicoIdRef.current = parseInt(tecnicoIdAlmacenado);
                 return;
             }
             
-            // Si no, solicitarlo al servidor
+
             const responseTecnico = await axios.get(`http://localhost:8080/api/tecnicos/usuario/${usuario.id_usuarios}`);
             
             if (responseTecnico.data && responseTecnico.data.id_tecnico) {
                 tecnicoIdRef.current = responseTecnico.data.id_tecnico;
-                // Almacenar para uso futuro
+
                 localStorage.setItem(`tecnicoId_${usuario.id_usuarios}`, responseTecnico.data.id_tecnico);
             }
         } catch (err) {
@@ -67,7 +67,7 @@ function Notificaciones() {
             if (usuario.rol === 'tecnico' && tecnicoIdRef.current) {
                 endpoint = `/api/notificaciones/tecnico/${tecnicoIdRef.current}`;
             } else if (usuario.rol === 'tecnico') {
-                // Si no tenemos el ID del técnico pero sabemos que es un técnico
+
                 try {
                     const responseTecnico = await axios.get(`http://localhost:8080/api/tecnicos/usuario/${usuario.id_usuarios}`);
                     
@@ -100,16 +100,16 @@ function Notificaciones() {
     
     const marcarComoLeida = async (id) => {
         try {
-            // Actualizar localmente primero (optimistic update)
+
             setNotificaciones(notificaciones.map(notif => 
                 notif.id_notificacion === id ? { ...notif, estado: 'leida' } : notif
             ));
             
-            // Luego actualizar en el servidor
+
             await axios.put(`http://localhost:8080/api/notificaciones/leer/${id}`);
         } catch (error) {
             console.error('Error al marcar notificación como leída:', error);
-            // Revertir cambios locales en caso de error
+
             cargarNotificaciones();
         }
     };

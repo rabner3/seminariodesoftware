@@ -2,7 +2,7 @@
 const NotificacionesModel = require('../models/NotificacionesModel');
 
 class NotificacionesService {
-    // Cuando un usuario crea una solicitud, notificar al admin
+
     static async notificarNuevaSolicitud(solicitud, usuario) {
         try {
 

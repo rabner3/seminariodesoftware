@@ -1,4 +1,4 @@
-// client/src/pages/TecnicoReparacionDetalle.jsx
+
 import { useEffect, useContext, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { TitleContext } from '../context/TitleContext';
@@ -31,7 +31,7 @@ function TecnicoReparacionDetalle() {
     }, [id, setTitle]);
 
     useEffect(() => {
-        // Calcular tiempo total cada vez que cambian las bitácoras
+
         if (bitacoras && bitacoras.length > 0) {
             const totalMinutos = bitacoras.reduce((total, bitacora) => {
                 return total + (parseInt(bitacora.duracion_minutos) || 0);
@@ -44,21 +44,21 @@ function TecnicoReparacionDetalle() {
         try {
             setLoading(true);
 
-            // Obtener datos de la reparación
+
             const responseReparacion = await axios.get(`http://localhost:8080/api/reparaciones/${id}`);
             setReparacion(responseReparacion.data);
 
-            // Obtener datos del equipo
+
             const responseEquipo = await axios.get(`http://localhost:8080/api/equipos/${responseReparacion.data.id_equipo}`);
             setEquipo(responseEquipo.data);
 
-            // Obtener datos de la solicitud (si existe)
+
             if (responseReparacion.data.id_solicitud) {
                 const responseSolicitud = await axios.get(`http://localhost:8080/api/solicitudes/${responseReparacion.data.id_solicitud}`);
                 setSolicitud(responseSolicitud.data);
             }
 
-            // Obtener diagnóstico (si existe)
+    
             try {
                 const responseDiagnostico = await axios.get(`http://localhost:8080/api/diagnosticos/reparacion/${id}`);
                 if (responseDiagnostico.data && responseDiagnostico.data.length > 0) {
@@ -68,11 +68,11 @@ function TecnicoReparacionDetalle() {
                 console.log('No se encontró diagnóstico');
             }
 
-            // Obtener bitácoras
+
             const responseBitacoras = await axios.get(`http://localhost:8080/api/bitacoras-reparacion?id_reparacion=${id}`);
             setBitacoras(responseBitacoras.data);
 
-            // Obtener partes utilizadas
+
             const responsePartes = await axios.get(`http://localhost:8080/api/reparaciones-partes/reparacion/${id}`);
             setPartes(responsePartes.data);
 
@@ -89,12 +89,12 @@ function TecnicoReparacionDetalle() {
                 estado: nuevoEstado
             };
 
-            // Si estamos completando la reparación, añadimos la fecha_fin y el tiempo_total
+       
             if (nuevoEstado === 'completada' || nuevoEstado === 'descarte') {
                 dataToUpdate.fecha_fin = new Date().toISOString().split('T')[0];
-                dataToUpdate.tiempo_total = tiempoTotal; // Usar el tiempo total calculado de las bitácoras
+                dataToUpdate.tiempo_total = tiempoTotal; 
 
-                // Si es descarte, añadir una observación
+
                 if (nuevoEstado === 'descarte') {
                     const observacionActual = reparacion.observaciones || '';
                     dataToUpdate.observaciones = observacionActual
@@ -103,14 +103,14 @@ function TecnicoReparacionDetalle() {
                 }
             }
 
-            // Si estamos iniciando la reparación y no tiene fecha de inicio, añadimos la fecha_inicio
+  
             if (nuevoEstado === 'en_reparacion' && !reparacion.fecha_inicio) {
                 dataToUpdate.fecha_inicio = new Date().toISOString().split('T')[0];
             }
 
             await axios.put(`http://localhost:8080/api/reparaciones/${id}`, dataToUpdate);
 
-            // Si cambiamos a descarte, actualizar también el estado del equipo
+
             if (nuevoEstado === 'descarte') {
                 try {
                     await axios.put(`http://localhost:8080/api/equipos/${reparacion.id_equipo}`, {
@@ -121,17 +121,17 @@ function TecnicoReparacionDetalle() {
                 }
             }
 
-            // Registrar bitácora del cambio de estado - asegurando que tipo_accion sea válido
-            let tipoAccion = 'otro'; // Valor por defecto
+        
+            let tipoAccion = 'otro';
 
-            // Mapear estados a tipos de acción válidos
+
             if (nuevoEstado === 'diagnostico') tipoAccion = 'diagnostico';
             else if (nuevoEstado === 'en_reparacion') tipoAccion = 'reparacion';
             else if (nuevoEstado === 'completada') tipoAccion = 'entrega';
             else if (nuevoEstado === 'espera_repuestos') tipoAccion = 'espera';
             else if (nuevoEstado === 'descarte') tipoAccion = 'otro';
 
-            // Formatear la fecha correctamente para MySQL
+
             const fechaActual = new Date();
             const fechaFormateada = fechaActual.toISOString().slice(0, 19).replace('T', ' ');
 
@@ -146,10 +146,10 @@ function TecnicoReparacionDetalle() {
                 fecha_creacion: fechaFormateada
             });
 
-            // Recargar datos
+
             cargarDatos();
 
-            // Cerrar el menú de opciones
+
             setMostrarOpcionesEstado(false);
         } catch (err) {
             setError(`Error al actualizar estado: ${err.message}`);
@@ -170,7 +170,7 @@ function TecnicoReparacionDetalle() {
         if (window.confirm('¿Está seguro de eliminar esta parte de la reparación?')) {
             try {
                 await axios.delete(`http://localhost:8080/api/reparaciones-partes/${idParte}`);
-                // Actualizar la lista de partes eliminando la parte borrada
+
                 setPartes(partes.filter(parte => parte.id_reparacion_partes !== idParte));
             } catch (err) {
                 setError(`Error al eliminar parte: ${err.message}`);
@@ -178,13 +178,13 @@ function TecnicoReparacionDetalle() {
         }
     };
 
-    // Formatear fecha
+
     const formatearFecha = (fechaStr) => {
         if (!fechaStr) return 'No disponible';
         return new Date(fechaStr).toLocaleString();
     };
 
-    // Formatear tiempo total en horas y minutos
+
     const formatearTiempoTotal = (minutos) => {
         if (!minutos || minutos === 0) return '0 minutos';
         const horas = Math.floor(minutos / 60);
@@ -205,7 +205,7 @@ function TecnicoReparacionDetalle() {
 
     return (
         <div className="contenedor-padre" id="contenedor-padre">
-            {/* Cabecera con información principal */}
+
             <div className="reparacion-header container-widgets">
                 <div className="header-content">
                     <div className="header-title">
@@ -222,7 +222,7 @@ function TecnicoReparacionDetalle() {
                             Volver
                         </button>
 
-                        {/* Botón para mostrar opciones de cambio de estado */}
+
                         {reparacion.estado !== 'completada' && reparacion.estado !== 'descarte' && (
                             <button
                                 onClick={() => setMostrarOpcionesEstado(!mostrarOpcionesEstado)}
@@ -232,7 +232,7 @@ function TecnicoReparacionDetalle() {
                             </button>
                         )}
 
-                        {/* Panel desplegable con opciones de estados */}
+
                         {mostrarOpcionesEstado && (
                             <div className="estado-opciones">
                                 {reparacion.estado !== 'pendiente' && (
@@ -312,7 +312,7 @@ function TecnicoReparacionDetalle() {
                 </div>
             </div>
 
-            {/* Pestañas de navegación */}
+
             <div className="tabs-container">
                 <div className="tabs">
                     <button
@@ -342,7 +342,7 @@ function TecnicoReparacionDetalle() {
                 </div>
             </div>
 
-            {/* Contenido según la pestaña activa */}
+
             <div className="tab-content container-widgets">
                 {activeTab === 'info' && (
                     <div className="tab-info">

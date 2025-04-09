@@ -1,4 +1,4 @@
-// client/src/pages/TecnicoBitacoras.jsx
+
 import { useEffect, useContext, useState } from 'react';
 import { TitleContext } from '../context/TitleContext';
 import axios from 'axios';
@@ -21,7 +21,7 @@ function TecnicoBitacoras() {
         try {
             setLoading(true);
 
-            // Obtener ID del técnico basado en el usuario logueado
+
             const usuario = JSON.parse(localStorage.getItem('usuario'));
 
             if (!usuario || usuario.rol !== 'tecnico') {
@@ -30,7 +30,7 @@ function TecnicoBitacoras() {
                 return;
             }
 
-            // Obtener información del técnico
+
             const responseTecnico = await axios.get(`http://localhost:8080/api/tecnicos/usuario/${usuario.id_usuarios}`);
 
             if (!responseTecnico.data) {
@@ -39,7 +39,6 @@ function TecnicoBitacoras() {
                 return;
             }
 
-            // Cargar bitácoras del técnico
             const responseBitacoras = await axios.get(`http://localhost:8080/api/bitacoras-reparacion?id_tecnico=${responseTecnico.data.id_tecnico}`);
             setBitacoras(responseBitacoras.data);
 
@@ -50,15 +49,15 @@ function TecnicoBitacoras() {
         }
     };
 
-    // Filtrar bitácoras según los criterios
+
     const bitacorasFiltradas = () => {
         return bitacoras.filter(bitacora => {
-            // Filtrar por tipo
+
             if (filtroTipo !== 'todos' && bitacora.tipo_accion !== filtroTipo) {
                 return false;
             }
 
-            // Filtrar por búsqueda
+
             if (filtroBusqueda.trim() !== '') {
                 const busqueda = filtroBusqueda.toLowerCase();
                 return (
@@ -71,7 +70,7 @@ function TecnicoBitacoras() {
         });
     };
 
-    // Función para formatear fechas
+
     const formatearFecha = (fechaStr) => {
         if (!fechaStr) return 'N/A';
         return new Date(fechaStr).toLocaleString();

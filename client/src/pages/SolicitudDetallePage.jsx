@@ -1,4 +1,4 @@
-// client/src/pages/SolicitudDetallePage.jsx
+
 import { useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { TitleContext } from '../context/TitleContext';
@@ -18,7 +18,7 @@ function SolicitudDetallePage() {
     };
     
     const handleRefresh = () => {
-        // Simplemente volvemos a cargar la página actual
+
         window.location.reload();
     };
     

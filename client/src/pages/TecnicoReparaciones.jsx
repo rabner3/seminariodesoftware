@@ -29,7 +29,7 @@ function TecnicoReparaciones() {
         try {
             setLoading(true);
 
-            // Obtener ID del técnico basado en el usuario logueado
+
             const usuario = JSON.parse(localStorage.getItem('usuario'));
 
             if (!usuario || usuario.rol !== 'tecnico') {
@@ -38,7 +38,7 @@ function TecnicoReparaciones() {
                 return;
             }
 
-            // Obtener información del técnico
+
             const responseTecnico = await axios.get(`http://localhost:8080/api/tecnicos/usuario/${usuario.id_usuarios}`);
 
             if (!responseTecnico.data) {
@@ -47,7 +47,7 @@ function TecnicoReparaciones() {
                 return;
             }
 
-            // Cargar reparaciones asignadas al técnico
+    
             const responseReparaciones = await axios.get(`http://localhost:8080/api/reparaciones/tecnico/${responseTecnico.data.id_tecnico}`);
             setReparaciones(responseReparaciones.data);
 
@@ -61,12 +61,12 @@ function TecnicoReparaciones() {
     const aplicarFiltros = () => {
         let reparacionesTemp = [...reparaciones];
 
-        // Filtrar por estado
+
         if (filtroEstado !== 'todos') {
             reparacionesTemp = reparacionesTemp.filter(r => r.estado === filtroEstado);
         }
 
-        // Filtrar por búsqueda (en equipo, serie, descripción)
+   
         if (filtroBusqueda) {
             const busqueda = filtroBusqueda.toLowerCase();
             reparacionesTemp = reparacionesTemp.filter(r => {
@@ -106,13 +106,13 @@ function TecnicoReparaciones() {
         }
     };
 
-    // Función para formatear fechas
+
     const formatearFecha = (fechaStr) => {
         if (!fechaStr) return 'N/A';
         return new Date(fechaStr).toLocaleDateString();
     };
 
-    // Función para calcular días en reparación
+
     const calcularDiasEnReparacion = (fechaInicio) => {
         if (!fechaInicio) return 'N/A';
 
@@ -125,14 +125,14 @@ function TecnicoReparaciones() {
         // Obtener la fecha actual sin hora
         const hoy = new Date();
 
-        // Establecer ambas fechas a medianoche para calcular días completos
+
         inicio.setHours(0, 0, 0, 0);
         hoy.setHours(0, 0, 0, 0);
 
-        // Calcular diferencia en milisegundos
+
         const diferenciaMilisegundos = hoy - inicio;
 
-        // Convertir a días (1 día = 24 horas * 60 minutos * 60 segundos * 1000 milisegundos)
+
         const diferenciaDias = Math.round(diferenciaMilisegundos / (1000 * 60 * 60 * 24));
 
         return diferenciaDias >= 0 ? diferenciaDias : 0;

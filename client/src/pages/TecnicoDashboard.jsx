@@ -1,4 +1,4 @@
-// client/src/pages/TecnicoDashboard.jsx
+
 import { useEffect, useContext, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { TitleContext } from '../context/TitleContext';
@@ -33,11 +33,11 @@ function TecnicoDashboard() {
     return Math.round(tiempoTotal / tiemposTotales.length);
   }, []);
 
-  // Definimos la función usando useCallback para evitar el warning de dependencias
+
   const cargarDatosTecnico = useCallback(async () => {
     try {
       setLoading(true);
-      // Obtener información del usuario logueado del localStorage
+
       const usuarioJSON = localStorage.getItem('usuario');
       if (!usuarioJSON) {
         setError('No se encontró información de usuario');
@@ -53,17 +53,17 @@ function TecnicoDashboard() {
         return;
       }
 
-      // Cargar datos del técnico
+
       try {
         const responseTecnico = await axios.get(`http://localhost:8080/api/tecnicos/usuario/${usuario.id_usuarios}`);
         setTecnico(responseTecnico.data);
 
         if (responseTecnico.data) {
-          // Cargar reparaciones asignadas al técnico
+ 
           const responseReparaciones = await axios.get(`http://localhost:8080/api/reparaciones/tecnico/${responseTecnico.data.id_tecnico}`);
           
           if (responseReparaciones.data) {
-            // Filtrar por estado con comprobaciones de seguridad
+       
             const pendientes = responseReparaciones.data.filter(rep => 
               rep && (rep.estado === 'pendiente' || rep.estado === 'diagnostico'));
             const enProceso = responseReparaciones.data.filter(rep => 
@@ -74,7 +74,7 @@ function TecnicoDashboard() {
             setReparacionesPendientes(pendientes || []);
             setReparacionesEnProceso(enProceso || []);
             
-            // Calcular estadísticas
+     
             setStats({
               totalAsignadas: responseReparaciones.data.length,
               totalPendientes: pendientes ? pendientes.length : 0,
@@ -108,7 +108,7 @@ function TecnicoDashboard() {
 
   return (
     <div className="contenedor-padre" id="contenedor-padre">
-      {/* Tarjetas de estadísticas */}
+
       <div className="stats-cards">
         <div className="stat-card">
           <h3>Reparaciones Asignadas</h3>
@@ -132,7 +132,7 @@ function TecnicoDashboard() {
         </div>
       </div>
 
-      {/* Sección de reparaciones pendientes */}
+ 
       <div className="container-widgets">
         <h2>Reparaciones Pendientes ({reparacionesPendientes.length})</h2>
         {reparacionesPendientes && reparacionesPendientes.length > 0 ? (
@@ -181,7 +181,7 @@ function TecnicoDashboard() {
         )}
       </div>
 
-      {/* Sección de reparaciones en proceso */}
+
       <div className="container-widgets">
         <h2>Reparaciones En Proceso ({reparacionesEnProceso.length})</h2>
         {reparacionesEnProceso && reparacionesEnProceso.length > 0 ? (
@@ -235,7 +235,7 @@ function TecnicoDashboard() {
         )}
       </div>
 
-      {/* Botones de acción rápida */}
+
       <div className="quick-actions">
         <Link to="/tecnico/reparaciones" className="action-button">
           <i className="fas fa-tools"></i>

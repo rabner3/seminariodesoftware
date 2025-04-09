@@ -1,4 +1,4 @@
-// client/src/pages/Usuarios.jsx
+
 import { useEffect, useContext, useState } from 'react';
 import { TitleContext } from '../context/TitleContext';
 import UsuariosList from '../components/usuarios/UsuariosList';
@@ -8,7 +8,7 @@ import '../assets/usuarios.css';
 
 function Usuarios() {
   const { setTitle } = useContext(TitleContext);
-  const [vista, setVista] = useState('lista'); // 'lista', 'detalle', 'form'
+  const [vista, setVista] = useState('lista'); 
   const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(null);
 
   useEffect(() => {
@@ -36,16 +36,16 @@ function Usuarios() {
   };
 
   const handleGuardarUsuario = () => {
-    // Volver a la lista después de guardar
+
     setVista('lista');
   };
 
   const handleEliminarUsuario = () => {
-    // Volver a la lista después de eliminar
+
     setVista('lista');
   };
 
-  // Renderizado condicional según la vista actual
+
   if (vista === 'detalle' && usuarioSeleccionado) {
     return (
       <div className="contenedor-padre" id="contenedor-padre">
@@ -71,7 +71,7 @@ function Usuarios() {
     );
   }
 
-  // Vista por defecto (lista)
+
   return (
     <div className="contenedor-padre" id="contenedor-padre">
       <div className="container-widgets">
