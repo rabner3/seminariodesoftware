@@ -1,9 +1,9 @@
-// Archivo: models/asignacionModel.jsconst db = require('../config/db'); // Asegúrate que la ruta es correcta
+const db = require('../config/db'); // Asegúrate que la ruta es correcta
 
 class InventarioModel {
-    // Modificamos getAllAsignaciones para incluir datos básicos de usuario y equipo
+
     static getAllInventario() {
-        // Seleccionamos campos específicos y les damos alias para claridad
+
         const sql = `
             SELECT
                 a.id_asignacion,

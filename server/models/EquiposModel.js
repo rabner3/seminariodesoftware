@@ -1,4 +1,4 @@
-// server/models/EquiposModel.js
+
 const db = require('../config/db');
 
 class EquiposModel {
@@ -31,7 +31,7 @@ class EquiposModel {
         return db.query(query, [id_departamento]);
     }
 
-    // Nuevo método para obtener el último ID
+
     static async getUltimoId() {
         return db.query('SELECT MAX(id_equipo) as max_id FROM equipos');
     }

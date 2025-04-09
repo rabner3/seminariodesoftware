@@ -5,18 +5,18 @@ exports.getAllBitacoras = async (req, res, next) => {
     try {
         let bitacoras;
         
-        // Filtrar por id_reparacion si se proporciona
+
         if (req.query.id_reparacion) {
             const [filtradas] = await BitacorasReparModel.getBitacorasByReparacion(req.query.id_reparacion);
             bitacoras = filtradas;
         } 
-        // Filtrar por id_tecnico si se proporciona
+
         else if (req.query.id_tecnico) {
             const [filtradas] = await BitacorasReparModel.getBitacorasByTecnico(req.query.id_tecnico);
             bitacoras = filtradas;
         }
         else {
-            // Obtener todas las bitácoras si no hay filtro
+
             const [todas] = await BitacorasReparModel.getAllBitacoras();
             bitacoras = todas;
         }
@@ -48,7 +48,7 @@ exports.createBitacora = async (req, res, next) => {
             });
         }
         
-        // Verificar que tipo_accion sea válido
+
         const tiposValidos = ['recepcion', 'diagnostico', 'reparacion', 'espera', 'prueba', 'entrega', 'otro'];
         if (!tiposValidos.includes(req.body.tipo_accion)) {
             return res.status(400).json({
@@ -56,7 +56,7 @@ exports.createBitacora = async (req, res, next) => {
             });
         }
         
-        // Establecer y formatear fecha_accion si no se proporciona
+
         if (!req.body.fecha_accion) {
             const fechaActual = new Date();
             req.body.fecha_accion = fechaActual.toISOString().slice(0, 19).replace('T', ' ');
@@ -66,12 +66,12 @@ exports.createBitacora = async (req, res, next) => {
             req.body.fecha_accion = fecha.toISOString().slice(0, 19).replace('T', ' ');
         }
         
-        // Establecer y formatear fecha_creacion si no se proporciona
+
         if (!req.body.fecha_creacion) {
             const fechaActual = new Date();
             req.body.fecha_creacion = fechaActual.toISOString().slice(0, 19).replace('T', ' ');
         } else if (typeof req.body.fecha_creacion === 'string' && req.body.fecha_creacion.includes('T')) {
-            // Si es una fecha en formato ISO, convertirla al formato de MySQL
+
             const fecha = new Date(req.body.fecha_creacion);
             req.body.fecha_creacion = fecha.toISOString().slice(0, 19).replace('T', ' ');
         }
@@ -88,7 +88,7 @@ exports.createBitacora = async (req, res, next) => {
 };
 exports.updateBitacora = async (req, res, next) => {
     try {
-        // Verificar que tipo_accion sea válido si está presente
+
         if (req.body.tipo_accion) {
             const tiposValidos = ['recepcion', 'diagnostico', 'reparacion', 'espera', 'prueba', 'entrega', 'otro'];
             if (!tiposValidos.includes(req.body.tipo_accion)) {

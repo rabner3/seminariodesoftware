@@ -56,7 +56,6 @@ exports.deleteTecnico = async (req, res, next) => {
 };
 exports.getTecnicoByUsuario = async (req, res, next) => {
     try {
-        // Consulta para obtener el técnico asociado a un usuario específico
         const [tecnicos] = await TecnicosModel.getTecnicoByUsuario(req.params.userId);
         
         if (tecnicos.length === 0) {

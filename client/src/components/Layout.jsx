@@ -33,7 +33,7 @@ const Layout = ({ children, user, onLogout }) => {
     <div>
       {/* Barra superior */}
       <div className="top-bar">
-        <h3>PROYECTO SEMINARIO</h3>
+        <h3>Sistema de Gestion de Equipos</h3>
         <h2>{title}</h2>
 
         {user ? (

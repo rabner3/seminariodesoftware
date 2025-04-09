@@ -1,16 +1,16 @@
-// server/controllers/bitacorasAsignController.js
+
 const BitacorasAsignModel = require('../models/BitacorasAsignModel');
 
 exports.getAllBitacoras = async (req, res, next) => {
     try {
         let bitacoras;
         
-        // Filtrar por id_asignacion si se proporciona en la consulta
+
         if (req.query.id_asignacion) {
             const [filtradas] = await BitacorasAsignModel.getBitacorasByAsignacion(req.query.id_asignacion);
             bitacoras = filtradas;
         } else {
-            // Obtener todas las bitácoras si no hay filtro
+
             const [todas] = await BitacorasAsignModel.getAllBitacoras();
             bitacoras = todas;
         }
@@ -35,14 +35,14 @@ exports.getBitacoraById = async (req, res, next) => {
 
 exports.createBitacora = async (req, res, next) => {
     try {
-        // Validar campos requeridos
+
         if (!req.body.id_asignacion || !req.body.accion) {
             return res.status(400).json({ 
                 message: 'Se requieren id_asignacion y accion para crear una bitácora' 
             });
         }
         
-        // Establecer fecha_accion si no se proporciona
+
         if (!req.body.fecha_accion) {
             req.body.fecha_accion = new Date();
         }

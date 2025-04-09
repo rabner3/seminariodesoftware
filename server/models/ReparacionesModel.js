@@ -1,4 +1,4 @@
-// server/models/ReparacionesModel.js
+
 const db = require('../config/db');
 
 class ReparacionesModel {
@@ -29,7 +29,6 @@ class ReparacionesModel {
     }
 
     static async updateReparacion(id, reparacionData) {
-        // Eliminar el campo fecha_actualizacion si está presente
         if (reparacionData.fecha_actualizacion !== undefined) {
             delete reparacionData.fecha_actualizacion;
         }

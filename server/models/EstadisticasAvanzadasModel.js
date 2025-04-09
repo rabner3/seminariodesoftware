@@ -1,8 +1,8 @@
-// server/models/EstadisticasAvanzadasModel.js
+
 const db = require('../config/db');
 
 class EstadisticasAvanzadasModel {
-    // Obtener cantidad de equipos por estado
+
     static async getEquiposPorEstado() {
         const query = `
             SELECT estado, COUNT(*) as cantidad
@@ -13,7 +13,6 @@ class EstadisticasAvanzadasModel {
         return db.query(query);
     }
 
-    // Obtener cantidad de equipos por departamento
     static async getEquiposPorDepartamento() {
         const query = `
             SELECT d.nombre as departamento, COUNT(e.id_equipo) as cantidad
@@ -25,7 +24,7 @@ class EstadisticasAvanzadasModel {
         return db.query(query);
     }
 
-    // Obtener reparaciones por técnico
+
     static async getReparacionesPorTecnico() {
         const query = `
             SELECT t.id_tecnico, t.nombre, t.apellido, 
@@ -40,7 +39,6 @@ class EstadisticasAvanzadasModel {
         return db.query(query);
     }
 
-    // Obtener tiempo promedio de reparación por técnico
     static async getTiempoPromedioReparacion() {
         const query = `
             SELECT t.id_tecnico, t.nombre, t.apellido, 
@@ -54,7 +52,7 @@ class EstadisticasAvanzadasModel {
         return db.query(query);
     }
 
-    // Obtener solicitudes por departamento
+
     static async getSolicitudesPorDepartamento() {
         const query = `
             SELECT d.nombre as departamento, COUNT(s.id_solicitud) as total_solicitudes,
@@ -70,7 +68,7 @@ class EstadisticasAvanzadasModel {
         return db.query(query);
     }
 
-    // Obtener equipos con más reparaciones
+
     static async getEquiposConMasReparaciones() {
         const query = `
             SELECT e.id_equipo, e.tipo, e.marca, e.modelo, e.numero_serie,
@@ -85,7 +83,7 @@ class EstadisticasAvanzadasModel {
         return db.query(query);
     }
 
-    // Obtener estadísticas de asignaciones mensuales
+ 
     static async getAsignacionesMensuales() {
         const query = `
             SELECT 
@@ -101,7 +99,7 @@ class EstadisticasAvanzadasModel {
         return db.query(query);
     }
 
-    // Obtener estadísticas de reparaciones mensuales
+
     static async getReparacionesMensuales() {
         const query = `
             SELECT 
@@ -119,7 +117,7 @@ class EstadisticasAvanzadasModel {
         return db.query(query);
     }
 
-    // Obtener ranking de departamentos por costos de reparación
+
     static async getRankingDepartamentosPorCostos() {
         const query = `
             SELECT d.id_departamento, d.nombre as departamento,

@@ -43,7 +43,14 @@ exports.getUltimoId = async (req, res, next) => {
 
 exports.createEquipo = async (req, res, next) => {
     try {
-        const [result] = await EquiposModel.createEquipo(req.body);
+
+        const datosEquipo = {...req.body};
+        
+        if (datosEquipo.id_departamento === '') {
+            datosEquipo.id_departamento = null;
+        }
+        
+        const [result] = await EquiposModel.createEquipo(datosEquipo);
         res.status(201).json({ id_equipo: req.body.id_equipo, ...req.body });
     } catch (error) {
         next(error);
@@ -52,7 +59,15 @@ exports.createEquipo = async (req, res, next) => {
 
 exports.updateEquipo = async (req, res, next) => {
     try {
-        const [result] = await EquiposModel.updateEquipo(req.params.id, req.body);
+
+        const datosEquipo = {...req.body};
+        
+
+        if (datosEquipo.id_departamento === '') {
+            datosEquipo.id_departamento = null;
+        }
+        
+        const [result] = await EquiposModel.updateEquipo(req.params.id, datosEquipo);
         if (result.affectedRows === 0) {
             return res.status(404).json({ message: 'Equipo not found or no data changed' });
         }

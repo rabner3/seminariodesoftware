@@ -4,11 +4,22 @@ const bcrypt = require('bcrypt'); // Aún usamos bcrypt para hashear contraseña
 
 class UsuariosModel {
     static async getAllUsuarios() {
-        return db.query('SELECT * FROM usuarios');
+        const query = `
+            SELECT u.*, d.nombre as departamento_nombre 
+            FROM usuarios u
+            LEFT JOIN departamentos d ON u.id_departamento = d.id_departamento
+        `;
+        return db.query(query);
     }
 
     static async getUsuarioById(id) {
-        return db.query('SELECT * FROM usuarios WHERE id_usuarios = ?', [id]);
+        const query = `
+            SELECT u.*, d.nombre as departamento_nombre 
+            FROM usuarios u
+            LEFT JOIN departamentos d ON u.id_departamento = d.id_departamento
+            WHERE u.id_usuarios = ?
+        `;
+        return db.query(query, [id]);
     }
     static async getUsuariosByDepartamento(id_departamento) {
         return db.query('SELECT * FROM usuarios WHERE id_departamento = ?', [id_departamento]);

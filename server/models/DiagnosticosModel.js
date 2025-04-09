@@ -1,4 +1,4 @@
-// server/models/DiagnosticosModel.js (con métodos adicionales)
+
 const db = require('../config/db');
 
 class DiagnosticosModel {
@@ -19,18 +19,17 @@ class DiagnosticosModel {
     }
 
     static async createDiagnostico(diagnosticoData) {
-        // Formatear la fecha_diagnostico si existe
+
         if (diagnosticoData.fecha_diagnostico) {
-            // Si la fecha es un objeto Date o una cadena en formato ISO
+
             if (diagnosticoData.fecha_diagnostico instanceof Date ||
                 (typeof diagnosticoData.fecha_diagnostico === 'string' && diagnosticoData.fecha_diagnostico.includes('T'))) {
 
                 const fecha = new Date(diagnosticoData.fecha_diagnostico);
-                // Convertir a formato MySQL YYYY-MM-DD HH:MM:SS
                 diagnosticoData.fecha_diagnostico = fecha.toISOString().slice(0, 19).replace('T', ' ');
             }
         } else {
-            // Si no se proporciona fecha, usar la fecha actual formateada
+
             const fecha = new Date();
             diagnosticoData.fecha_diagnostico = fecha.toISOString().slice(0, 19).replace('T', ' ');
         }
@@ -49,7 +48,6 @@ class DiagnosticosModel {
     }
 
     static async updateDiagnostico(id, diagnosticoData) {
-        // También formatear fechas al actualizar
         if (diagnosticoData.fecha_diagnostico) {
             if (diagnosticoData.fecha_diagnostico instanceof Date ||
                 (typeof diagnosticoData.fecha_diagnostico === 'string' && diagnosticoData.fecha_diagnostico.includes('T'))) {

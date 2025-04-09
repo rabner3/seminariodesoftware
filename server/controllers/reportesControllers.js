@@ -30,7 +30,7 @@ exports.createReporte = async (req, res) => {
     }
 };
 
-// Corregir nombre del método
+
 exports.updateReporte = async (req, res) => {
     try {
         const [result] = await ReportesModel.update(req.params.id, req.body);
@@ -42,7 +42,7 @@ exports.updateReporte = async (req, res) => {
     }
 };
 
-// Corregir nombre del método
+
 exports.deleteReporte = async (req, res) => {
     try {
         const [result] = await ReportesModel.delete(req.params.id);

@@ -1,4 +1,4 @@
-// server/controllers/estadisticasAvanzadasController.js
+
 const EstadisticasAvanzadasModel = require('../models/EstadisticasAvanzadasModel');
 
 exports.getEquiposPorEstado = async (req, res, next) => {

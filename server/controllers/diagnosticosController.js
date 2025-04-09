@@ -1,4 +1,4 @@
-// server/controllers/diagnosticosController.js (con métodos añadidos)
+
 const DiagnosticosModel = require('../models/DiagnosticosModel');
 
 exports.getAllDiagnosticos = async (req, res, next) => {

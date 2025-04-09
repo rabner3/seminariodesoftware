@@ -1,9 +1,9 @@
-// server/models/SolicitudesModel.js
+
 const db = require('../config/db');
 
 class SolicitudesModel {
     static async getAllSolicitudes() {
-        // Consulta mejorada con JOIN para traer datos del usuario
+
         const query = `
             SELECT s.*, 
                    u.nombre AS nombre_usuario,
@@ -20,7 +20,7 @@ class SolicitudesModel {
     }
 
     static async getSolicitudById(id) {
-        // Consulta mejorada con JOIN para ver una solicitud específica
+
         const query = `
             SELECT s.*, 
                    u.nombre AS nombre_usuario,
@@ -51,7 +51,7 @@ class SolicitudesModel {
         return db.query('DELETE FROM solicitudes WHERE id_solicitud = ?', [id]);
     }
     
-    // Método para obtener solicitudes por usuario
+
     static async getSolicitudesByUsuario(idUsuario) {
         const query = `
             SELECT s.*, 

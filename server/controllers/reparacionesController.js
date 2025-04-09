@@ -28,28 +28,28 @@ exports.getReparacionById = async (req, res, next) => {
 
 exports.createReparacion = async (req, res, next) => {
     try {
-        // Formatear fechas correctamente antes de guardar
+
         const reparacionData = { ...req.body };
         
-        // Convertir fecha_recepcion a formato YYYY-MM-DD
+
         if (reparacionData.fecha_recepcion) {
             const fecha = new Date(reparacionData.fecha_recepcion);
             reparacionData.fecha_recepcion = fecha.toISOString().split('T')[0];
         }
         
-        // Convertir fecha_creacion a formato YYYY-MM-DD
+
         if (reparacionData.fecha_creacion) {
             const fecha = new Date(reparacionData.fecha_creacion);
             reparacionData.fecha_creacion = fecha.toISOString().split('T')[0];
         }
         
-        // Crear la reparación
+
         const [result] = await ReparacionesModel.createReparacion(reparacionData);
         
-        // Si la reparación está vinculada a una solicitud, actualizamos la solicitud
+
         if (reparacionData.id_solicitud) {
             try {
-                // Optionally, update the related solicitud to link to this reparacion
+
                 const solicitudUpdate = {
                     id_reparacion: result.insertId,
                     estado: 'asignada'
@@ -61,7 +61,7 @@ exports.createReparacion = async (req, res, next) => {
                 );
             } catch (err) {
                 console.error('Error al actualizar solicitud vinculada:', err);
-                // No interrumpir el flujo principal si esto falla
+
             }
         }
         
@@ -92,22 +92,22 @@ exports.createReparacion = async (req, res, next) => {
 
 exports.updateReparacion = async (req, res, next) => {
     try {
-        // Formatear fechas correctamente antes de actualizar
+
         const reparacionData = { ...req.body };
         
-        // Si estamos cambiando el estado a "completada", asegurémonos de establecer la fecha_fin
+
         if (reparacionData.estado === 'completada' && !reparacionData.fecha_fin) {
             reparacionData.fecha_fin = new Date().toISOString().split('T')[0];
 
             if (reparacionData.estado === 'descarte' && !reparacionData.observaciones) {
-                // Complementar observaciones existentes o agregar nuevas
+
                 const observacionActual = reparacionesAnteriores[0].observaciones || '';
                 reparacionData.observaciones = observacionActual 
                     ? `${observacionActual}\n[${new Date().toLocaleDateString()}] EQUIPO DESCARTADO.`
                     : `[${new Date().toLocaleDateString()}] EQUIPO DESCARTADO.`;
             }
             
-            // Si no se proporciona tiempo_total pero cambiamos a completada, calcularlo a partir de las bitácoras
+ 
             if (!reparacionData.tiempo_total) {
                 try {
                     const [bitacoras] = await db.query(
@@ -128,7 +128,7 @@ exports.updateReparacion = async (req, res, next) => {
             }
         }
         
-        // Procesar campos de fecha si existen
+
         const camposFecha = ['fecha_recepcion', 'fecha_inicio', 'fecha_fin', 'fecha_creacion'];
         
         camposFecha.forEach(campo => {
@@ -140,26 +140,26 @@ exports.updateReparacion = async (req, res, next) => {
 
         if (reparacionData.estado === 'descarte') {
             try {
-                // Obtener el ID del equipo
+
                 const equipoId = reparacionesAnteriores[0].id_equipo;
                 
-                // Actualizar el estado del equipo a "descarte"
+
                 await db.query(
                     'UPDATE equipos SET estado = "descarte" WHERE id_equipo = ?',
                     [equipoId]
                 );
             } catch (equipoError) {
                 console.error('Error al actualizar estado del equipo:', equipoError);
-                // No interrumpimos el flujo principal si esto falla
+
             }
         }
         
-        // Eliminar fecha_actualizacion si está presente ya que no existe en la tabla
+
         if (reparacionData.fecha_actualizacion) {
             delete reparacionData.fecha_actualizacion;
         }
         
-        // Obtener datos de la reparación antes de actualizarla
+
         const [reparacionesAnteriores] = await ReparacionesModel.getReparacionById(req.params.id);
         if (reparacionesAnteriores.length === 0) {
             return res.status(404).json({ message: 'Reparación not found' });
@@ -172,14 +172,14 @@ exports.updateReparacion = async (req, res, next) => {
             return res.status(404).json({ message: 'Reparación not found or no data changed' });
         }
         
-        // Si la reparación se marca como completada y antes no lo estaba, notificar al usuario
+
         if (reparacionData.estado === 'completada' && reparacionAnterior.estado !== 'completada') {
             try {
-                // Obtener datos completos de la reparación
+
                 const [reparacionActualizada] = await ReparacionesModel.getReparacionById(req.params.id);
                 
                 if (reparacionActualizada.length > 0) {
-                    // Buscar la solicitud asociada para obtener el id del usuario
+
                     if (reparacionActualizada[0].id_solicitud) {
                         const [solicitudes] = await db.query(
                             'SELECT * FROM solicitudes WHERE id_solicitud = ?', 
@@ -187,7 +187,7 @@ exports.updateReparacion = async (req, res, next) => {
                         );
                         
                         if (solicitudes.length > 0) {
-                            // Obtener los detalles del equipo
+
                             const [equipos] = await db.query(
                                 'SELECT * FROM equipos WHERE id_equipo = ?',
                                 [reparacionActualizada[0].id_equipo]
@@ -197,7 +197,7 @@ exports.updateReparacion = async (req, res, next) => {
                                 `${equipos[0].tipo} ${equipos[0].marca} ${equipos[0].modelo}` : 
                                 `equipo #${reparacionActualizada[0].id_equipo}`;
                             
-                            // Crear notificación
+
                             await NotificacionesModel.createNotificacion({
                                 id_usuario_destino: solicitudes[0].id_usuario,
                                 id_tecnico_destino: null,
@@ -210,7 +210,7 @@ exports.updateReparacion = async (req, res, next) => {
                                 creado_por: reparacionActualizada[0].id_tecnico || req.body.id_tecnico
                             });
                             
-                            // También notificar al técnico si se completó por un admin
+
                             if (reparacionActualizada[0].id_tecnico && req.body.creado_por !== reparacionActualizada[0].id_tecnico) {
                                 await NotificacionesModel.createNotificacion({
                                     id_usuario_destino: null,
@@ -229,7 +229,7 @@ exports.updateReparacion = async (req, res, next) => {
                 }
             } catch (notifError) {
                 console.error('Error al enviar notificación de reparación completada:', notifError);
-                // No interrumpimos el flujo principal si falla la notificación
+
             }
         }
         

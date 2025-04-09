@@ -2,7 +2,6 @@
 const db = require('../config/db');
 
 class ReportesAvanzadosModel {
-    // Reporte de inventario completo
     static async getReporteInventarioCompleto() {
         const query = `
             SELECT e.*, d.nombre as departamento,
@@ -18,7 +17,7 @@ class ReportesAvanzadosModel {
         return db.query(query);
     }
 
-    // Reporte de asignaciones activas
+
     static async getReporteAsignacionesActivas() {
         const query = `
             SELECT a.*, 
@@ -37,7 +36,6 @@ class ReportesAvanzadosModel {
         return db.query(query);
     }
 
-    // Reporte de historial completo de asignaciones
     static async getReporteHistorialAsignaciones(filtros = {}) {
         let query = `
             SELECT a.*, 
@@ -54,7 +52,7 @@ class ReportesAvanzadosModel {
 
         const params = [];
 
-        // Agregar filtros
+
         if (filtros.estado) {
             query += " AND a.estado = ?";
             params.push(filtros.estado);
@@ -90,7 +88,7 @@ class ReportesAvanzadosModel {
         return db.query(query, params);
     }
 
-    // Reporte de reparaciones en proceso
+
     static async getReporteReparacionesEnProceso() {
         const query = `
             SELECT r.*, 
@@ -110,7 +108,7 @@ class ReportesAvanzadosModel {
         return db.query(query);
     }
 
-    // Reporte de historial completo de reparaciones
+
     static async getReporteHistorialReparaciones(filtros = {}) {
         let query = `
             SELECT r.*, 
@@ -161,7 +159,7 @@ class ReportesAvanzadosModel {
         return db.query(query, params);
     }
 
-    // Reporte de solicitudes pendientes
+
     static async getReporteSolicitudesPendientes() {
         const query = `
             SELECT s.*, 
@@ -186,7 +184,6 @@ class ReportesAvanzadosModel {
         return db.query(query);
     }
 
-    // Reporte de costos de reparación por período
     static async getReporteCostosReparacion(fechaDesde, fechaHasta) {
         const query = `
             SELECT r.id_reparacion, r.fecha_fin, r.costo_final, 
@@ -207,12 +204,12 @@ class ReportesAvanzadosModel {
         return db.query(query, [fechaDesde, fechaHasta]);
     }
 
-    // Guarda el reporte generado en la tabla de reportes
+
     static async guardarReporte(reporteData) {
         return db.query('INSERT INTO reportes SET ?', [reporteData]);
     }
 
-    // Obtener un reporte guardado previamente
+
     static async getReporteById(id) {
         return db.query('SELECT * FROM reportes WHERE id_reporte = ?', [id]);
     }

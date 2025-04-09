@@ -1,7 +1,7 @@
 // server/controllers/solicitudesController.js
 const SolicitudesModel = require('../models/SolicitudesModel');
-const UsuariosModel = require('../models/UsuariosModel'); // Añadir esta importación
-const db = require('../config/db'); // También necesitamos la conexión a la base de datos
+const UsuariosModel = require('../models/UsuariosModel');
+const db = require('../config/db'); 
 const NotificacionesModel = require('../models/NotificacionesModel');
 
 exports.getAllSolicitudes = async (req, res, next) => {
@@ -36,10 +36,10 @@ exports.getSolicitudesByUsuario = async (req, res, next) => {
 
 exports.createSolicitud = async (req, res, next) => {
     try {
-        // Formatear las fechas correctamente para MySQL
+
         const solicitudData = { ...req.body };
         
-        // Convertir fecha_solicitud a formato YYYY-MM-DD
+
         if (solicitudData.fecha_solicitud) {
             const fecha = new Date(solicitudData.fecha_solicitud);
             solicitudData.fecha_solicitud = fecha.toISOString().split('T')[0];
@@ -47,7 +47,7 @@ exports.createSolicitud = async (req, res, next) => {
             solicitudData.fecha_solicitud = new Date().toISOString().split('T')[0];
         }
         
-        // Convertir fecha_creacion a formato YYYY-MM-DD
+
         if (solicitudData.fecha_creacion) {
             const fecha = new Date(solicitudData.fecha_creacion);
             solicitudData.fecha_creacion = fecha.toISOString().split('T')[0];
@@ -57,13 +57,13 @@ exports.createSolicitud = async (req, res, next) => {
         
         const [result] = await SolicitudesModel.createSolicitud(solicitudData);
         
-        // Notificar a los administradores sobre la nueva solicitud
+
         try {
-            // Obtener datos del usuario que creó la solicitud
+
             const [usuario] = await UsuariosModel.getUsuarioById(solicitudData.id_usuario);
             
             if (usuario.length > 0) {
-                // Obtener todos los usuarios con rol admin
+
                 const [admins] = await db.query('SELECT * FROM usuarios WHERE rol = "admin"');
                 
                 for (const admin of admins) {
@@ -82,7 +82,7 @@ exports.createSolicitud = async (req, res, next) => {
             }
         } catch (notifError) {
             console.error('Error al enviar notificaciones:', notifError);
-            // No interrumpimos el flujo principal si falla la notificación
+
         }
         
         res.status(201).json({ id_solicitud: result.insertId, ...solicitudData });
@@ -93,22 +93,22 @@ exports.createSolicitud = async (req, res, next) => {
 
 exports.updateSolicitud = async (req, res, next) => {
     try {
-        // Formatear las fechas correctamente para MySQL
+
         const solicitudData = { ...req.body };
         
-        // Convertir fecha_solicitud a formato YYYY-MM-DD si existe
+
         if (solicitudData.fecha_solicitud) {
             const fecha = new Date(solicitudData.fecha_solicitud);
             solicitudData.fecha_solicitud = fecha.toISOString().split('T')[0];
         }
         
-        // Convertir fecha_creacion a formato YYYY-MM-DD si existe
+
         if (solicitudData.fecha_creacion) {
             const fecha = new Date(solicitudData.fecha_creacion);
             solicitudData.fecha_creacion = fecha.toISOString().split('T')[0];
         }
         
-        // Convertir fecha_cierre a formato YYYY-MM-DD si existe
+
         if (solicitudData.fecha_cierre) {
             const fecha = new Date(solicitudData.fecha_cierre);
             solicitudData.fecha_cierre = fecha.toISOString().split('T')[0];
@@ -145,7 +145,7 @@ exports.asignarReparacion = async (req, res, next) => {
             return res.status(400).json({ message: 'Se requiere id_tecnico' });
         }
         
-        // Obtener datos de la solicitud
+
         const [solicitudes] = await SolicitudesModel.getSolicitudById(id_solicitud);
         
         if (solicitudes.length === 0) {
@@ -154,7 +154,7 @@ exports.asignarReparacion = async (req, res, next) => {
         
         const solicitud = solicitudes[0];
         
-        // Crear la reparación
+        
         const reparacionData = {
             id_solicitud,
             id_equipo: solicitud.id_equipo,
@@ -167,23 +167,23 @@ exports.asignarReparacion = async (req, res, next) => {
         
         const [resultReparacion] = await ReparacionesModel.createReparacion(reparacionData);
         
-        // Actualizar estado de la solicitud
+
         await SolicitudesModel.updateSolicitud(id_solicitud, {
             estado: 'asignada'
         });
         
-        // Actualizar estado del equipo
+    
         await EquiposModel.updateEquipo(solicitud.id_equipo, {
             estado: 'en_reparacion'
         });
         
-        // Enviar notificación al técnico
+     
         try {
-            // Obtener datos del técnico
+  
             const [tecnicos] = await db.query('SELECT * FROM tecnicos WHERE id_tecnico = ?', [id_tecnico]);
             
             if (tecnicos.length > 0) {
-                // Obtener información del equipo
+
                 const [equipos] = await db.query('SELECT * FROM equipos WHERE id_equipo = ?', [solicitud.id_equipo]);
                 
                 const infoEquipo = equipos.length > 0 ? 
@@ -204,7 +204,7 @@ exports.asignarReparacion = async (req, res, next) => {
             }
         } catch (notifError) {
             console.error('Error al enviar notificación al técnico:', notifError);
-            // No interrumpimos el flujo principal si falla la notificación
+
         }
         
         res.status(201).json({

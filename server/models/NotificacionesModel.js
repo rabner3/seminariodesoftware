@@ -1,4 +1,4 @@
-// server/models/NotificacionesModel.js
+
 const db = require('../config/db');
 
 class NotificacionesModel {

@@ -61,7 +61,7 @@ exports.deleteNotificacion = async (req, res, next) => {
     }
 };
 
-// Métodos adicionales
+
 exports.getNotificacionesByUsuario = async (req, res, next) => {
     try {
         const [notificaciones] = await NotificacionesModel.getNotificacionesByUsuario(req.params.idUsuario);

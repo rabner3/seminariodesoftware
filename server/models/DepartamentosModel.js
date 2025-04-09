@@ -1,4 +1,4 @@
-// server/models/DepartamentosModel.js (modificación)
+
 const db = require('../config/db');
 
 class DepartamentosModel {

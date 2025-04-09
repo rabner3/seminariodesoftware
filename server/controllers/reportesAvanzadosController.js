@@ -6,7 +6,7 @@ const { promisify } = require('util');
 const writeFileAsync = promisify(fs.writeFile);
 const mkdirAsync = promisify(fs.mkdir);
 
-// Función auxiliar para asegurar que exista un directorio
+
 const asegurarDirectorio = async (ruta) => {
     try {
         await mkdirAsync(ruta, { recursive: true });
@@ -35,7 +35,7 @@ exports.getReporteAsignacionesActivas = async (req, res, next) => {
 
 exports.getReporteHistorialAsignaciones = async (req, res, next) => {
     try {
-        // Obtener filtros de la consulta
+ 
         const filtros = {
             estado: req.query.estado,
             id_equipo: req.query.id_equipo,
@@ -63,7 +63,7 @@ exports.getReporteReparacionesEnProceso = async (req, res, next) => {
 
 exports.getReporteHistorialReparaciones = async (req, res, next) => {
     try {
-        // Obtener filtros de la consulta
+
         const filtros = {
             estado: req.query.estado,
             id_equipo: req.query.id_equipo,
@@ -100,10 +100,10 @@ exports.getReporteCostosReparacion = async (req, res, next) => {
     }
 };
 
-// Método para guardar un reporte como archivo (PDF o Excel se simula aquí)
+
 exports.generarYGuardarReporte = async (req, res, next) => {
     try {
-        // Obtener datos según el tipo de reporte
+
         let datos;
         const tipoReporte = req.body.tipo;
         const formatoReporte = req.body.formato || 'json';
@@ -137,31 +137,29 @@ exports.generarYGuardarReporte = async (req, res, next) => {
             default:
                 return res.status(400).json({ message: 'Tipo de reporte no válido' });
         }
-        
-        // Crear nombre para el reporte
+
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
         const nombreArchivo = `reporte_${tipoReporte}_${timestamp}.${formatoReporte}`;
         
-        // Directorio para guardar reportes
+    
         const dirReportes = path.join(__dirname, '..', 'reportes');
         await asegurarDirectorio(dirReportes);
         
-        // Ruta completa del archivo
+
         const rutaArchivo = path.join(dirReportes, nombreArchivo);
         
-        // Guardar el archivo según el formato solicitado
-        // Aquí solo se simula, en producción se utilizaría una librería para PDF o Excel
+
         await writeFileAsync(
             rutaArchivo, 
             JSON.stringify(datos, null, 2), 
             'utf8'
         );
         
-        // Registrar el reporte en la base de datos
+  
         const reporteData = {
             nombre: `Reporte de ${tipoReporte}`,
             tipo: tipoReporte,
-            id_usuario_generador: req.body.id_usuario_generador || 1, // Usuario que genera el reporte
+            id_usuario_generador: req.body.id_usuario_generador || 1, 
             formato: formatoReporte,
             ruta_archivo: rutaArchivo,
             fecha_generacion: new Date(),
@@ -183,7 +181,7 @@ exports.generarYGuardarReporte = async (req, res, next) => {
     }
 };
 
-// Método para obtener un reporte previamente generado
+
 exports.getReporteById = async (req, res, next) => {
     try {
         const [reporte] = await ReportesAvanzadosModel.getReporteById(req.params.id);
@@ -192,15 +190,15 @@ exports.getReporteById = async (req, res, next) => {
             return res.status(404).json({ message: 'Reporte no encontrado' });
         }
         
-        // Verificar si el archivo existe
+
         const rutaArchivo = reporte[0].ruta_archivo;
         
         try {
             if (fs.existsSync(rutaArchivo)) {
-                // Leer el archivo
+
                 const contenido = fs.readFileSync(rutaArchivo, 'utf8');
                 
-                // Devolver tanto los metadatos como el contenido
+   
                 res.json({
                     ...reporte[0],
                     contenido: JSON.parse(contenido)

@@ -65,14 +65,13 @@ class BitacorasReparModel {
     }
 
     static async createBitacora(bitacoraData) {
-        // Asegurar que el tipo_accion está en los valores permitidos
         const tiposValidos = ['recepcion', 'diagnostico', 'reparacion', 'espera', 'prueba', 'entrega', 'otro'];
         
         if (bitacoraData.tipo_accion && !tiposValidos.includes(bitacoraData.tipo_accion)) {
-            bitacoraData.tipo_accion = 'otro'; // Valor por defecto si no es válido
+            bitacoraData.tipo_accion = 'otro';
         }
         
-        // Formatear las fechas correctamente para MySQL
+     
         if (bitacoraData.fecha_accion) {
             if (bitacoraData.fecha_accion instanceof Date) {
                 bitacoraData.fecha_accion = bitacoraData.fecha_accion.toISOString().slice(0, 19).replace('T', ' ');
@@ -95,14 +94,14 @@ class BitacorasReparModel {
     }
 
     static async updateBitacora(id, bitacoraData) {
-        // Asegurar que el tipo_accion está en los valores permitidos
+  
         const tiposValidos = ['recepcion', 'diagnostico', 'reparacion', 'espera', 'prueba', 'entrega', 'otro'];
         
         if (bitacoraData.tipo_accion && !tiposValidos.includes(bitacoraData.tipo_accion)) {
-            bitacoraData.tipo_accion = 'otro'; // Valor por defecto si no es válido
+            bitacoraData.tipo_accion = 'otro';
         }
         
-        // Formatear las fechas correctamente para MySQL
+     
         if (bitacoraData.fecha_accion) {
             if (bitacoraData.fecha_accion instanceof Date) {
                 bitacoraData.fecha_accion = bitacoraData.fecha_accion.toISOString().slice(0, 19).replace('T', ' ');

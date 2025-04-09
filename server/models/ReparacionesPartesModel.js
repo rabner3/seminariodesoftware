@@ -1,4 +1,4 @@
-// server/models/ReparacionesPartesModel.js
+
 const db = require('../config/db');
 
 class ReparacionesPartesModel {
@@ -32,7 +32,6 @@ class ReparacionesPartesModel {
     }
 
     static async createReparacionParte(data) {
-        // Formatear fechas correctamente para MySQL
         if (data.fecha_creacion) {
             if (data.fecha_creacion instanceof Date) {
                 data.fecha_creacion = data.fecha_creacion.toISOString().slice(0, 19).replace('T', ' ');
@@ -46,7 +45,6 @@ class ReparacionesPartesModel {
     }
 
     static async updateReparacionParte(id, data) {
-        // Formatear fechas correctamente para MySQL
         if (data.fecha_creacion) {
             if (data.fecha_creacion instanceof Date) {
                 data.fecha_creacion = data.fecha_creacion.toISOString().slice(0, 19).replace('T', ' ');

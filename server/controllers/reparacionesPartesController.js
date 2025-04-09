@@ -33,15 +33,15 @@ exports.getReparacionesByReparacion = async (req, res, next) => {
 
 exports.createReparacionParte = async (req, res, next) => {
     try {
-        // Preparar datos con formato correcto para fechas
+ 
         const datosParaEnviar = { ...req.body };
         
-        // Asegurarnos de que la fecha tenga el formato correcto para MySQL
+
         if (datosParaEnviar.fecha_creacion) {
             const fecha = new Date(datosParaEnviar.fecha_creacion);
             datosParaEnviar.fecha_creacion = fecha.toISOString().slice(0, 19).replace('T', ' ');
         } else {
-            // Si no se proporciona una fecha, usar la fecha actual en formato correcto
+
             const fechaActual = new Date();
             datosParaEnviar.fecha_creacion = fechaActual.toISOString().slice(0, 19).replace('T', ' ');
         }
@@ -55,10 +55,10 @@ exports.createReparacionParte = async (req, res, next) => {
 
 exports.updateReparacionParte = async (req, res, next) => {
     try {
-        // Preparar datos con formato correcto para fechas
+
         const datosParaEnviar = { ...req.body };
         
-        // Si hay fecha de creación, formatearla correctamente
+
         if (datosParaEnviar.fecha_creacion) {
             const fecha = new Date(datosParaEnviar.fecha_creacion);
             datosParaEnviar.fecha_creacion = fecha.toISOString().slice(0, 19).replace('T', ' ');
