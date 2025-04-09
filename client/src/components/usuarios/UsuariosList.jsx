@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-function UsuariosList({ onEdit, onView, onDelete }) {
+function UsuariosList({ onEdit, onView }) {
     const [usuarios, setUsuarios] = useState([]);
     const [usuariosFiltrados, setUsuariosFiltrados] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -59,7 +59,7 @@ function UsuariosList({ onEdit, onView, onDelete }) {
         if (window.confirm('¿Está seguro de eliminar este usuario?')) {
             try {
                 await axios.delete(`http://localhost:8080/api/usuarios/${id}`);
-                // Actualizar la lista después de eliminar
+
                 fetchUsuarios();
             } catch (err) {
                 alert('Error al eliminar el usuario: ' + err.message);

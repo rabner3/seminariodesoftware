@@ -52,7 +52,7 @@ function AdminDashboard() {
             const responseUsuarios = await axios.get('http://localhost:8080/api/usuarios');
             const totalUsuarios = responseUsuarios.data.length;
 
-            // Contar solicitudes pendientes
+
             const responseSolicitudes = await axios.get('http://localhost:8080/api/solicitudes');
             const solicitudes = responseSolicitudes.data;
             const solicitudesPendientes = solicitudes.filter(s => s.estado === 'pendiente').length;
@@ -102,7 +102,7 @@ function AdminDashboard() {
 
     
     const renderPieChart = () => {
-        // Verificar que tengamos datos válidos
+
         if (estadisticas.totalEquipos === 0) {
             return <div>No hay datos disponibles</div>;
         }
@@ -156,7 +156,7 @@ function AdminDashboard() {
         return (
             <div className="pie-chart">
                 <div className="pie-chart-wrapper" style={{ position: 'relative', width: '250px', height: '250px' }}>
-                    {/* Fondo del gráfico */}
+
                     <div style={{
                         position: 'absolute',
                         width: '100%',
@@ -165,7 +165,7 @@ function AdminDashboard() {
                         background: '#f0f0f0'
                     }}></div>
 
-                    {/* Segmento de Disponibles */}
+
                     {disponiblesPercent > 0 && (
                         <div style={{
                             position: 'absolute',
@@ -176,7 +176,6 @@ function AdminDashboard() {
                         }}></div>
                     )}
 
-                    {/* Segmento de Asignados */}
                     {asignadosPercent > 0 && (
                         <div style={{
                             position: 'absolute',
@@ -187,7 +186,7 @@ function AdminDashboard() {
                         }}></div>
                     )}
 
-                    {/* Segmento de En Reparación */}
+
                     {enReparacionPercent > 0 && (
                         <div style={{
                             position: 'absolute',
@@ -198,7 +197,7 @@ function AdminDashboard() {
                         }}></div>
                     )}
 
-                    {/* Segmento de Otros */}
+
                     {otrosPercent > 0 && (
                         <div style={{
                             position: 'absolute',
@@ -209,7 +208,7 @@ function AdminDashboard() {
                         }}></div>
                     )}
 
-                    {/* Círculo central para crear efecto de dona */}
+
                     <div style={{
                         position: 'absolute',
                         top: '50%',
@@ -249,7 +248,7 @@ function AdminDashboard() {
 
     return (
         <div className="contenedor-padre" id="contenedor-padre">
-            {/* Tarjetas de estadísticas */}
+
             <div className="stats-cards">
                 <div className="stat-card">
                     <h3>Total Equipos</h3>
@@ -296,15 +295,15 @@ function AdminDashboard() {
                 </div>
             </div>
 
-            {/* Gráfico de distribución de equipos */}
+
             <div className="chart-container container-widgets">
                 <h3>Distribución de Equipos</h3>
                 {renderPieChart()}
             </div>
 
-            {/* Sección de Contenido Principal */}
+
             <div className="dashboard-main-content">
-                {/* Últimos equipos registrados */}
+
                 <div className="container-widgets">
                     <div className="section-header">
                         <h3>Últimos Equipos Registrados</h3>
@@ -344,7 +343,7 @@ function AdminDashboard() {
                     )}
                 </div>
 
-                {/* Últimas solicitudes */}
+
                 <div className="container-widgets">
                     <div className="section-header">
                         <h3>Últimas Solicitudes</h3>
@@ -385,7 +384,7 @@ function AdminDashboard() {
                 </div>
             </div>
 
-            {/* Acciones rápidas */}
+
             <div className="quick-actions">
                 <Link to="/equipos" className="action-button">
                     <i className="fas fa-laptop"></i>

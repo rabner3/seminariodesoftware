@@ -10,7 +10,7 @@ const Layout = ({ children, user, onLogout }) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const userMenuRef = useRef(null);
 
-  // Cerrar el menú al hacer clic fuera de él
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
@@ -31,7 +31,6 @@ const Layout = ({ children, user, onLogout }) => {
 
   return (
     <div>
-      {/* Barra superior */}
       <div className="top-bar">
         <h3>Sistema de Gestion de Equipos</h3>
         <h2>{title}</h2>
@@ -44,7 +43,7 @@ const Layout = ({ children, user, onLogout }) => {
               {user.nombre.charAt(0)}
             </span>
 
-            {/* Menú desplegable del usuario */}
+  
             {showUserMenu && (
               <div className="user-menu">
                 <div className="user-menu-header">
@@ -73,7 +72,7 @@ const Layout = ({ children, user, onLogout }) => {
         )}
       </div>
 
-      {/* Barra lateral */}
+
       <header>
         <div>
           <div className="logo-container">
@@ -133,7 +132,7 @@ const Layout = ({ children, user, onLogout }) => {
         )}
       </header>
 
-      {/* Contenido dinámico */}
+
       <main>
         <div id="main-container" className="main-container">{children}</div>
       </main>

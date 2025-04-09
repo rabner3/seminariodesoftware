@@ -1,4 +1,4 @@
-// client/src/pages/Equipos.jsx
+
 import { useEffect, useContext, useState } from 'react';
 import { TitleContext } from '../context/TitleContext';
 import axios from 'axios';
@@ -14,8 +14,8 @@ function Equipos() {
     const [error, setError] = useState(null);
     const [busqueda, setBusqueda] = useState('');
 
-    // Estados para manejo de vistas
-    const [vista, setVista] = useState('lista'); // 'lista', 'detalle', 'form'
+
+    const [vista, setVista] = useState('lista'); 
     const [equipoSeleccionado, setEquipoSeleccionado] = useState(null);
 
     useEffect(() => {
@@ -24,7 +24,7 @@ function Equipos() {
     }, [setTitle]);
 
     useEffect(() => {
-        // Filtrar equipos cuando cambia la búsqueda
+
         if (busqueda.trim() === '') {
             setEquiposFiltrados(equipos);
         } else {
@@ -90,16 +90,16 @@ function Equipos() {
     };
 
     const handleGuardarEquipo = () => {
-        fetchEquipos(); // Recargamos los equipos
+        fetchEquipos();
         setVista('lista');
     };
 
     const handleEliminarEquipo = () => {
-        fetchEquipos(); // Recargamos los equipos
+        fetchEquipos(); 
         setVista('lista');
     };
 
-    // Renderizado condicional según la vista actual
+
     if (vista === 'detalle' && equipoSeleccionado) {
         return (
             <div className="contenedor-padre" id="contenedor-padre">

@@ -1,4 +1,4 @@
-// client/src/pages/Home.jsx
+
 import { useEffect, useContext } from 'react';
 import { TitleContext } from '../context/TitleContext';
 

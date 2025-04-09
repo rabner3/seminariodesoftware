@@ -248,7 +248,7 @@ function SolicitudDetalle({ id, onClose, onRefresh }) {
                         </button>
                     )}
 
-                    {/* Botones para administrador/técnico */}
+
                     {esAdminOTecnico() && solicitud.estado === 'pendiente' && (
                         <button onClick={handleIniciarReparacion} className="button azul-claro" disabled={cargandoAccion}>
                             {cargandoAccion ? 'Procesando...' : 'Crear Reparación'}
@@ -309,7 +309,7 @@ function SolicitudDetalle({ id, onClose, onRefresh }) {
                 <p>{solicitud.descripcion}</p>
             </div>
 
-            {/* Mostrar información de cierre si ya está cerrada */}
+
             {(solicitud.estado === 'resuelta' || solicitud.estado === 'cancelada') && (
                 <div className="cierre-box">
                     <h3>Comentario de Cierre</h3>
@@ -318,7 +318,7 @@ function SolicitudDetalle({ id, onClose, onRefresh }) {
                 </div>
             )}
 
-            {/* Formulario para comentario de cierre al cancelar */}
+
             {mostrarFormCierre && (
                 <div className="form-cierre">
                     <h3>Comentario de Cancelación</h3>
@@ -340,7 +340,7 @@ function SolicitudDetalle({ id, onClose, onRefresh }) {
                 </div>
             )}
 
-            {/* Formulario para crear reparación */}
+
             {mostrarFormReparacion && (
                 <div className="form-reparacion">
                     <h3>Crear Nueva Reparación</h3>
@@ -399,7 +399,7 @@ function SolicitudDetalle({ id, onClose, onRefresh }) {
                     <p>
                         <strong>ID de Reparación:</strong> {solicitud.id_reparacion}
                         <button className="button azul-claro ml-3" onClick={() => {
-                            // Navegar a la página de detalle de reparación
+
                             window.location.href = `/tecnico/reparaciones/${solicitud.id_reparacion}`;
                         }}>
                             Ver Reparación

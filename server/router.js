@@ -22,14 +22,13 @@ router.get('/client',(req,res)=>{
                 return;
             }
             else{
-           // res.send(resultado);
-            //let hola="hola y adios";
+
             res.render('client/index',{clientes:resultado});
             }
     });
 });
 
-//Ruta para llenar formulario de crear cliente
+
 router.get('/crear',(req,res)=>{
     
   res.render('client/crear');

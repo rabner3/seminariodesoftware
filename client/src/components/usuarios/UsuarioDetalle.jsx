@@ -52,7 +52,7 @@ function UsuarioDetalle({ id, onClose, onEdit, onDelete }) {
         if (window.confirm('¿Está seguro de eliminar este usuario?')) {
             try {
                 await axios.delete(`http://localhost:8080/api/usuarios/${id}`);
-                onDelete(); // Callback para informar al componente padre
+                onDelete(); 
             } catch (err) {
                 setError('Error al eliminar el usuario: ' + err.message);
             }

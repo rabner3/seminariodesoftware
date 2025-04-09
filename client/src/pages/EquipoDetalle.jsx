@@ -1,4 +1,4 @@
-// client/src/pages/EquipoDetalle.jsx
+
 import { useEffect, useContext, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { TitleContext } from '../context/TitleContext';
@@ -11,7 +11,7 @@ function EquipoDetalle() {
     const { setTitle } = useContext(TitleContext);
     const [equipo, setEquipo] = useState(null);
     const [asignacion, setAsignacion] = useState(null);
-    const [historialAsignaciones, setHistorialAsignaciones] = useState([]);
+    const [setHistorialAsignaciones] = useState([]);
     const [historialReparaciones, setHistorialReparaciones] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -25,15 +25,14 @@ function EquipoDetalle() {
         try {
             setLoading(true);
 
-            // Cargar detalles del equipo
+
             const responseEquipo = await axios.get(`http://localhost:8080/api/equipos/${id}`);
             setEquipo(responseEquipo.data);
 
-            // Obtener el usuario actual
             const usuarioActual = JSON.parse(localStorage.getItem('usuario'));
             
 
-            // Cargar asignación actual
+    
             try {
                 const responseAsignaciones = await axios.get(`http://localhost:8080/api/asignaciones?id_equipo=${id}&estado=activa`);
                 const asignacionActual = responseAsignaciones.data.find(
@@ -44,7 +43,7 @@ function EquipoDetalle() {
                 console.error("Error al cargar asignación:", err);
             }
 
-            // Cargar historial de asignaciones
+
             try {
                 const responseHistorialAsign = await axios.get(`http://localhost:8080/api/asignaciones?id_equipo=${id}`);
                 setHistorialAsignaciones(responseHistorialAsign.data);
@@ -52,7 +51,7 @@ function EquipoDetalle() {
                 console.error("Error al cargar historial de asignaciones:", err);
             }
 
-            // Cargar historial de reparaciones
+
             try {
                 const responseHistorialRepar = await axios.get(`http://localhost:8080/api/reparaciones?id_equipo=${id}`);
                 setHistorialReparaciones(responseHistorialRepar.data);
@@ -67,7 +66,7 @@ function EquipoDetalle() {
         }
     };
 
-    // Función para formatear fechas
+
     const formatearFecha = (fechaStr) => {
         if (!fechaStr) return 'No disponible';
         return new Date(fechaStr).toLocaleDateString();
@@ -90,7 +89,7 @@ function EquipoDetalle() {
                     <button onClick={() => navigate('/')} className="button">
                         Volver
                     </button>
-                    {/* Solo mostrar el botón de solicitar soporte si no es técnico */}
+
                     {!esTecnico && (
                         <button onClick={handleCrearSolicitud} className="button azul-claro">
                             Solicitar Soporte
@@ -140,7 +139,7 @@ function EquipoDetalle() {
                 )}
             </div>
 
-            {/* Historial de reparaciones */}
+
             <div className="container-widgets">
                 <h3>Historial de Reparaciones</h3>
 

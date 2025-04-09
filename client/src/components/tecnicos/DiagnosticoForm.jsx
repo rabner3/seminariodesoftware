@@ -51,7 +51,7 @@ function DiagnosticoForm({ reparacionId, tecnicoId, diagnosticoId, onDiagnostico
         try {
             const usuario = JSON.parse(localStorage.getItem('usuario'));
     
-            // Formatear fecha para MySQL
+
             const fechaActual = new Date();
             const fechaFormateada = fechaActual.toISOString().slice(0, 19).replace('T', ' ');
     
@@ -61,9 +61,9 @@ function DiagnosticoForm({ reparacionId, tecnicoId, diagnosticoId, onDiagnostico
                 descripcion: formData.descripcion,
                 causa_raiz: formData.causa_raiz,
                 solucion_propuesta: formData.solucion_propuesta,
-                fecha_diagnostico: fechaFormateada, // Formato correcto para MySQL
+                fecha_diagnostico: fechaFormateada, 
                 creado_por: usuario?.id_usuarios || null,
-                fecha_creacion: fechaFormateada // Formato correcto para MySQL
+                fecha_creacion: fechaFormateada
             };
     
             if (isEditing) {

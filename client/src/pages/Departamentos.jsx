@@ -1,4 +1,4 @@
-// client/src/pages/Departamentos.jsx
+
 import { useEffect, useContext, useState } from 'react';
 import { TitleContext } from '../context/TitleContext';
 import DepartamentosList from '../components/departamentos/DepartamentosList';
@@ -8,7 +8,7 @@ import '../assets/departamentos.css';
 
 function Departamentos() {
     const { setTitle } = useContext(TitleContext);
-    const [vista, setVista] = useState('lista'); // 'lista', 'detalle', 'form'
+    const [vista, setVista] = useState('lista');
     const [departamentoSeleccionado, setDepartamentoSeleccionado] = useState(null);
 
     useEffect(() => {
@@ -36,16 +36,16 @@ function Departamentos() {
     };
 
     const handleGuardarDepartamento = () => {
-        // Volver a la lista después de guardar
+
         setVista('lista');
     };
 
     const handleEliminarDepartamento = () => {
-        // Volver a la lista después de eliminar
+
         setVista('lista');
     };
 
-    // Renderizado condicional según la vista actual
+
     if (vista === 'detalle' && departamentoSeleccionado) {
         return (
             <div className="contenedor-padre" id="contenedor-padre">
@@ -71,7 +71,7 @@ function Departamentos() {
         );
     }
 
-    // Vista por defecto (lista)
+
     return (
         <div className="contenedor-padre" id="contenedor-padre">
             <div className="container-widgets">

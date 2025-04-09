@@ -1,9 +1,9 @@
 
-require('dotenv').config(); // Carga .env al inicio
+require('dotenv').config(); 
 const express = require('express');
 const cors = require('cors');
 
-// Importar todas las rutas
+
 const asignacionRoutes = require('./routes/asignacionRoutes');
 const usuariosRoutes = require('./routes/usuariosRoutes');
 const equiposRoutes = require('./routes/equiposRoutes');
@@ -26,17 +26,17 @@ const reparacionesPartesRoutes = require('./routes/reparacionesPartesRoutes');
 
 const app = express();
 
-// Configuración de CORS
+
 const corsOptions = {
     origin: process.env.CORS_ORIGIN || 'http://localhost:5173'
 };
 app.use(cors(corsOptions));
 
-// Middleware para parsear JSON y URL-encoded bodies
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Rutas de la API (con prefijo /api)
+
 app.use('/api/asignaciones', asignacionRoutes);
 app.use('/api/usuarios', usuariosRoutes);
 app.use('/api/equipos', equiposRoutes);
@@ -63,7 +63,7 @@ app.get('/api', (req, res) => {
     res.json({ message: "Bienvenido a la API del proyecto." });
 });
 
-// Middleware básico de manejo de errores
+
 app.use((err, req, res, next) => {
     console.error(err.stack);
     const statusCode = err.statusCode || 500;
@@ -71,7 +71,7 @@ app.use((err, req, res, next) => {
     res.status(statusCode).json({ error: message });
 });
 
-// Iniciar el servidor
+
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

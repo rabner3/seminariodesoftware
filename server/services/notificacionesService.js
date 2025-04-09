@@ -1,11 +1,11 @@
-// server/services/notificacionesService.js
+
 const NotificacionesModel = require('../models/NotificacionesModel');
 
 class NotificacionesService {
     // Cuando un usuario crea una solicitud, notificar al admin
     static async notificarNuevaSolicitud(solicitud, usuario) {
         try {
-            // Obtener todos los usuarios administradores
+
             const db = require('../config/db');
             const [admins] = await db.query('SELECT id_usuarios FROM usuarios WHERE rol = "admin"');
             
@@ -32,7 +32,7 @@ class NotificacionesService {
         }
     }
     
-    // Cuando se asigna una reparación, notificar al técnico
+
     static async notificarAsignacionReparacion(reparacion, tecnico, solicitud) {
         try {
             const notificacionData = {
@@ -56,7 +56,7 @@ class NotificacionesService {
         }
     }
     
-    // Cuando se completa una reparación, notificar al usuario
+
     static async notificarReparacionCompletada(reparacion, usuario) {
         try {
             const notificacionData = {
